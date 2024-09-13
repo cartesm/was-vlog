@@ -1,0 +1,14 @@
+{
+  "name": "was_vlog",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "workspaces": [
+    "./apps/*"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "Write Any Sh*t"
+}
