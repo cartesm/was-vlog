@@ -5,3 +5,6 @@ export const MongoDBUri: string =
 export const PortApp: number = process.env.PORT
   ? Number(process.env.PORT)
   : 3000;
+
+export const JwtSecret: string = process.env.JSWT_SECRET || 'metallica_rules';
+export const ExpiresInJwt: string = '6h'; // ?6 horas en segundos

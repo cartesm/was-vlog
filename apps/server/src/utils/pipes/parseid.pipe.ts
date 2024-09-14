@@ -12,7 +12,6 @@ import { I18nContext, I18nService } from 'nestjs-i18n';
 export class ParseidPipe implements PipeTransform {
   constructor(private readonly i18n: I18nService) {}
   transform(value: ParamId, metadata: ArgumentMetadata): ParamId {
-    console.log(I18nContext.current().lang);
     if (!isValidObjectId(value.id))
       throw new NotAcceptableException(
         this.i18n.translate('test.idNotAcceptable', {

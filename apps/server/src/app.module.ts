@@ -4,6 +4,7 @@ import { MongoDBUri } from './configs';
 import { UsersModule } from './users/users.module';
 import { join } from 'path';
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     MongooseModule.forRoot(MongoDBUri),
@@ -22,6 +23,7 @@ import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
       ],
     }),
     UsersModule,
+    AuthModule,
   ],
   controllers: [],
 })

@@ -1,4 +1,14 @@
 {
   "LANG": "Español",
-  "idNotAcceptable": "El parametro de la id no es una id aceptable."
+  "idNotAcceptable": "El parametro de la id no es una id aceptable.",
+  "users": {
+    "notFound": "Usuario no encontrado"
+  },
+  "auth": {
+    "incorrectPass": "Contraseña incorrecta",
+    "loginMessage": "Inicio de sesión iniciado correctamente",
+    "conflicWithUsername": "Este nombre de usuario ya está en uso",
+    "conflicWithEmail": "Ya existe un usuario registrado con este correo electrónico",
+    "registerMessage": "Usuario creado exitosamente"
+  }
 }

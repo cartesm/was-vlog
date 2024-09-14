@@ -1,4 +1,14 @@
 {
   "LANG": "English",
-  "idNotAcceptable": "The id parameter is not an acceptable id."
+  "idNotAcceptable": "The id parameter is not an acceptable id.",
+  "users": {
+    "notFound": "User not found"
+  },
+  "auth": {
+    "incorrectPass": "Incorrect password",
+    "loginMessage": "Login successfully initiated",
+    "conflicWithUsername": "This username is already taken",
+    "conflicWithEmail": "A user is already registered with this email address",
+    "registerMessage": "User created successfully"
+  }
 }
