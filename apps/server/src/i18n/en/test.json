@@ -9,6 +9,7 @@
     "loginMessage": "Login successfully initiated",
     "conflicWithUsername": "This username is already taken",
     "conflicWithEmail": "A user is already registered with this email address",
-    "registerMessage": "User created successfully"
+    "registerMessage": "User created successfully",
+    "passwordEmpty": "You must create a password to log in"
   }
 }

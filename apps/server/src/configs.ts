@@ -8,3 +8,8 @@ export const PortApp: number = process.env.PORT
 
 export const JwtSecret: string = process.env.JSWT_SECRET || 'metallica_rules';
 export const ExpiresInJwt: string = '6h'; // ?6 horas en segundos
+
+export const GoogleClientId: string = process.env.GOOGLE_CLIENT_ID;
+export const GoogleClientSecret: string = process.env.GOOGLE_CLIENT_SECRET;
+
+export const frontUrl: string = process.env.FRONT_BASE_URL || 'localhost:3001';

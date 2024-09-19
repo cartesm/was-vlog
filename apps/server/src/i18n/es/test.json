@@ -9,6 +9,7 @@
     "loginMessage": "Inicio de sesión iniciado correctamente",
     "conflicWithUsername": "Este nombre de usuario ya está en uso",
     "conflicWithEmail": "Ya existe un usuario registrado con este correo electrónico",
-    "registerMessage": "Usuario creado exitosamente"
+    "registerMessage": "Usuario creado exitosamente",
+    "passwordEmpty": "Debes crear una contraseña para iniciar sesión"
   }
 }

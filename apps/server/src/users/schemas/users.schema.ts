@@ -26,7 +26,7 @@ export class Users {
   @Prop({ type: String, required: true, unique: true })
   email: string;
 
-  @Prop({ required: true, unique: false, type: String })
+  @Prop({ required: false, unique: false, type: String })
   pass: string;
 
   @Prop({ type: String, unique: false, required: false })

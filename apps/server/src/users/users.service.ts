@@ -1,16 +1,14 @@
 import {
   ConflictException,
   Injectable,
-  NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Users, UsersType } from './schemas/users.schema';
 import { Model, Types } from 'mongoose';
-import { I18n, I18nContext, I18nService } from 'nestjs-i18n';
-import { RegisterDto } from 'src/auth/dto/register.dto';
-import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
-
+import { I18nContext, I18nService } from 'nestjs-i18n';
+import * as bcrypt from 'bcrypt';
+import { CreateUser } from 'src/users/interfaces/createUser.interface';
 @Injectable()
 export class UsersService {
   constructor(
@@ -39,8 +37,13 @@ export class UsersService {
       );
     return userMatch;
   }
+  async userExists(email: string): Promise<UsersType | null> {
+    const userMatch: UsersType = await this.UsersModel.findOne({ email });
+    if (!userMatch) return null;
+    return userMatch;
+  }
 
-  async createUser(userData: RegisterDto): Promise<UsersType> {
+  async createUser(userData: CreateUser): Promise<UsersType> {
     const userEmailMatch: UsersType = await this.UsersModel.findOne({
       email: userData.email,
     });
@@ -53,12 +56,14 @@ export class UsersService {
     const userUsernameMatch: UsersType = await this.UsersModel.findOne({
       username: userData.username,
     });
+
     if (userUsernameMatch)
       throw new ConflictException(
         this.i18n.t('test.auth.conflicWithUsername', {
           lang: I18nContext.current().lang,
         }),
       );
+    if (userData.pass) userData.pass = await bcrypt.hash(userData.pass, 12);
     return await new this.UsersModel(userData).save();
   }
 }

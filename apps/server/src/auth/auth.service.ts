@@ -7,6 +7,8 @@ import { Payload } from './interfaces/payload.interface';
 import { RegisterDto } from './dto/register.dto';
 import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { JwtService } from '@nestjs/jwt';
+import { nanoid } from 'nanoid';
+import { GoogleDataProfile } from './interfaces/googleData.interface';
 @Injectable()
 export class AuthService {
   constructor(
@@ -16,6 +18,12 @@ export class AuthService {
   ) {}
   async validateUser(email: string, pass: string): Promise<Payload> {
     const user: UsersType = await this.usersService.getUserDataByEmail(email);
+    if (!user.pass)
+      throw new UnauthorizedException(
+        this.i18n.t('test.auth.passwordEmpty', {
+          lang: I18nContext.current().lang,
+        }),
+      );
     const verifyPass: Boolean = bcrypt.compareSync(pass, user.pass);
     if (!verifyPass)
       throw new UnauthorizedException(
@@ -37,6 +45,31 @@ export class AuthService {
       }),
       data: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async loginUserWithGoogle(req: any): Promise<string> {
+    const { user }: { user: GoogleDataProfile } = req;
+    if (!user) throw new UnauthorizedException();
+
+    const userMatch: UsersType = await this.usersService.userExists(user.email);
+    if (userMatch)
+      return await this.jwtService.signAsync(<Payload>{
+        id: userMatch._id,
+        username: userMatch.username,
+        email: userMatch.name,
+        img: userMatch.img,
+      });
+    console.log('no existe');
+    const newUser: UsersType = await this.usersService.createUser({
+      ...user,
+      username: 'user-' + nanoid(),
+    });
+    return await this.jwtService.signAsync(<Payload>{
+      id: newUser._id,
+      username: newUser.username,
+      email: newUser.name,
+      img: newUser.img,
+    });
   }
 
   async registerUser(userData: RegisterDto): Promise<ResponseWithMessage> {

@@ -10,10 +10,17 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ExpiresInJwt, JwtSecret } from 'src/configs';
 import { JwtStrategy } from './strategies/jwt';
+import { GoogleStrategy } from './strategies/google';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, UsersService, LocalStrategy, JwtStrategy],
+  providers: [
+    AuthService,
+    UsersService,
+    LocalStrategy,
+    JwtStrategy,
+    GoogleStrategy,
+  ],
   imports: [
     MongooseModule.forFeature([
       {
