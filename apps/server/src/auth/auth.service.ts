@@ -38,13 +38,8 @@ export class AuthService {
     };
   }
 
-  async loginUser(payload: Payload): Promise<ResponseWithMessage> {
-    return {
-      message: this.i18n.t('test.auth.loginMessage', {
-        lang: I18nContext.current().lang,
-      }),
-      data: await this.jwtService.signAsync(payload),
-    };
+  async loginUser(payload: Payload): Promise<string> {
+    return await this.jwtService.signAsync(payload);
   }
 
   async loginUserWithGoogle(req: any): Promise<string> {
@@ -72,18 +67,13 @@ export class AuthService {
     });
   }
 
-  async registerUser(userData: RegisterDto): Promise<ResponseWithMessage> {
+  async registerUser(userData: RegisterDto): Promise<string> {
     const user: UsersType = await this.usersService.createUser(userData);
-    return {
-      message: this.i18n.t('test.auth.registerMessage', {
-        lang: I18nContext.current().lang,
-      }),
-      data: await this.jwtService.signAsync(<Payload>{
-        id: user._id,
-        email: user.email,
-        username: user.username,
-        img: user.img,
-      }),
-    };
+    return await this.jwtService.signAsync(<Payload>{
+      id: user._id,
+      email: user.email,
+      username: user.username,
+      img: user.img,
+    });
   }
 }

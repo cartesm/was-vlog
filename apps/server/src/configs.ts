@@ -12,4 +12,7 @@ export const ExpiresInJwt: string = '6h'; // ?6 horas en segundos
 export const GoogleClientId: string = process.env.GOOGLE_CLIENT_ID;
 export const GoogleClientSecret: string = process.env.GOOGLE_CLIENT_SECRET;
 
-export const frontUrl: string = process.env.FRONT_BASE_URL || 'localhost:3001';
+export const sixHoursInMiliseconds: number = 21600000;
+
+export const frontUrl: string =
+  process.env.FRONT_BASE_URL || 'http://localhost:3001';
