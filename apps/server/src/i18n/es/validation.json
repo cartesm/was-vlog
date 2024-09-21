@@ -1,14 +1,4 @@
 {
-  "PROPERTIES": {
-    "USER": {
-      "USERNAME": "Nombre de usuario",
-      "NAME": "Nombre",
-      "EMAIL": "Correo electrónico",
-      "IMG": "Imagen",
-      "PASS": "Contraseña",
-      "DESCRIPTION": "Descripción"
-    }
-  },
   "INVALID_URL": "La {property} no es una URL válida",
   "INVALID_STRING": "{property} debe ser un valor de texto",
   "INVALID_EMAIL": "El formato de {property} no es email válido",

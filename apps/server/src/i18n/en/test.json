@@ -2,7 +2,13 @@
   "LANG": "English",
   "idNotAcceptable": "The id parameter is not an acceptable id.",
   "users": {
-    "notFound": "User not found"
+    "notFound": "User not found",
+    "notPass": "You must create your password to continue",
+    "nameChanged": "The name has been successfully updated",
+    "descriptionChanged": "The description has been successfully updated",
+    "usernameChanged": "Username updated successfully",
+    "passwordChanged": "The password has been successfully updated",
+    "errorPass": "Validation password not found"
   },
   "auth": {
     "incorrectPass": "Incorrect password",

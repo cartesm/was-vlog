@@ -2,7 +2,13 @@
   "LANG": "Español",
   "idNotAcceptable": "El parametro de la id no es una id aceptable.",
   "users": {
-    "notFound": "Usuario no encontrado"
+    "notFound": "Usuario no encontrado",
+    "notPass": "Debes crear tu contraseña para continuar",
+    "nameChanged": "El nombre ha sido actualizado exitosamente",
+    "descriptionChanged": "La descripción ha sido actualizada exitosamente",
+    "usernameChanged": "Nombre de usuario actualizado con éxito",
+    "passwordChanged": "La contraseña ha sido actualizada exitosamente",
+    "errorPass": "Contraseña de validación no encontrada"
   },
   "auth": {
     "incorrectPass": "Contraseña incorrecta",
