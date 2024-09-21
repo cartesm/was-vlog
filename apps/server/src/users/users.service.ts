@@ -44,25 +44,24 @@ export class UsersService {
   }
 
   async createUser(userData: CreateUser): Promise<UsersType> {
-    const userEmailMatch: UsersType = await this.UsersModel.findOne({
-      email: userData.email,
+    const userMatch: UsersType = await this.UsersModel.findOne({
+      $or: [{ username: userData.username }, { email: userData.email }],
     });
-    if (userEmailMatch)
+
+    if (userMatch.email)
       throw new ConflictException(
         this.i18n.t('test.auth.conflicWithEmail', {
           lang: I18nContext.current().lang,
         }),
       );
-    const userUsernameMatch: UsersType = await this.UsersModel.findOne({
-      username: userData.username,
-    });
 
-    if (userUsernameMatch)
+    if (userMatch.username)
       throw new ConflictException(
         this.i18n.t('test.auth.conflicWithUsername', {
           lang: I18nContext.current().lang,
         }),
       );
+
     if (userData.pass) userData.pass = await bcrypt.hash(userData.pass, 12);
     return await new this.UsersModel(userData).save();
   }

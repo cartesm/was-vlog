@@ -1,3 +1,4 @@
+import { Expose } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
@@ -7,37 +8,41 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-
+import { I18nContext, i18nValidationMessage } from 'nestjs-i18n';
 export class RegisterDto {
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(5)
-  @MaxLength(27)
+  @IsNotEmpty({
+    message: i18nValidationMessage('validation.REQUIRED'),
+  })
+  @IsString({ message: i18nValidationMessage('validation.INVALID_STRING') })
+  @MinLength(5, { message: i18nValidationMessage('validation.MIN_LENGTH') })
+  @MaxLength(27, { message: i18nValidationMessage('validation.MAX_LENGTH') })
   username: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(6)
-  @MaxLength(60)
+  @IsNotEmpty({ message: i18nValidationMessage('validation.REQUIRED') })
+  @IsString({ message: i18nValidationMessage('validation.INVALID_STRING') })
+  @MinLength(6, { message: i18nValidationMessage('validation.MIN_LENGTH') })
+  @MaxLength(60, { message: i18nValidationMessage('validation.MAX_LENGTH') })
   name: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @IsEmail()
+  @IsNotEmpty({
+    message: i18nValidationMessage('validation.REQUIRED'),
+  })
+  @IsString({ message: i18nValidationMessage('validation.INVALID_STRING') })
+  @IsEmail({}, { message: i18nValidationMessage('validation.INVALID_EMAIL') })
   email: string;
 
   @IsOptional()
-  @IsString()
-  @IsUrl()
+  @IsString({ message: i18nValidationMessage('validaiton.INVALID_STRING') })
+  @IsUrl({}, { message: i18nValidationMessage('validation.INVALID_URL') })
   img: string;
 
-  @IsNotEmpty()
-  @IsString()
+  @IsNotEmpty({ message: i18nValidationMessage('validation.REQUIRED') })
+  @IsString({ message: i18nValidationMessage('validation.INVALID_STRING') })
   pass: string;
 
   @IsOptional()
-  @IsString()
-  @MinLength(10)
-  @MaxLength(250)
+  @IsString({ message: i18nValidationMessage('validation.INVALID_STRING') })
+  @MinLength(10, { message: i18nValidationMessage('validation.MIN_LENGTH') })
+  @MaxLength(250, { message: i18nValidationMessage('validation.MAX_LENGTH') })
   descrption: string;
 }

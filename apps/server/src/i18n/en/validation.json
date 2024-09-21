@@ -1,0 +1,10 @@
+{
+  "INVALID_STRING": "{property} must be a string value",
+  "INVALID_EMAIL": "The format of {property} is not a valid email",
+  "INVALID_URL": "The {property} is not a valid url",
+  "INVALID_BOOLEAN": "{property} must be a boolean value",
+  "MIN_LENGTH": "{property} must be at least {constraints.0} characters long",
+  "MAX_LENGTH": "{property} must be at most {constraints.0} characters long.",
+  "REQUIRED": "{property} is a required field and cannot be empty",
+  "NOT_IN_LIST": "{property} must be one of the following values: {constraints}"
+}
