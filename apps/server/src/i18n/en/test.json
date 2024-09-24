@@ -25,5 +25,10 @@
     "deleteSuccess": "The content has been successfully deleted",
     "deleteFailure": "Unable to delete the content",
     "nameNotFound": "File name was not provided"
+  },
+  "tags": {
+    "notFound": "The tag you were looking for was not found",
+    "conflict": "A tag with that name already exists",
+    "created": "Tag created successfully"
   }
 }

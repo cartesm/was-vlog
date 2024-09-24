@@ -25,5 +25,10 @@
     "deleteSuccess": "El contenido se ha eliminado correctamente",
     "deleteFailure": "No se pudo eliminar el contenido. Por favor, intenta nuevamente más tarde",
     "nameNotFound": "No se proporcionó el nombre del archivo"
+  },
+  "tags": {
+    "notFound": "No se encontró la etiqueta que buscabas",
+    "conflict": "Ya existe una etiqueta con ese nombre",
+    "created": "Etiqueta creada exitosamente"
   }
 }
