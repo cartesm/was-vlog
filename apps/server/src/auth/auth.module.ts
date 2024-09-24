@@ -11,6 +11,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ExpiresInJwt, JwtSecret } from 'src/configs';
 import { JwtStrategy } from './strategies/jwt';
 import { GoogleStrategy } from './strategies/google';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Module({
   controllers: [AuthController],
@@ -20,6 +21,7 @@ import { GoogleStrategy } from './strategies/google';
     LocalStrategy,
     JwtStrategy,
     GoogleStrategy,
+    CloudinaryService,
   ],
   imports: [
     MongooseModule.forFeature([

@@ -8,7 +8,8 @@
     "descriptionChanged": "The description has been successfully updated",
     "usernameChanged": "Username updated successfully",
     "passwordChanged": "The password has been successfully updated",
-    "errorPass": "Validation password not found"
+    "errorPass": "Validation password not found",
+    "imgChanged": "Profile picture has been successfully updated"
   },
   "auth": {
     "incorrectPass": "Incorrect password",
@@ -17,5 +18,12 @@
     "conflicWithEmail": "A user is already registered with this email address",
     "registerMessage": "User created successfully",
     "passwordEmpty": "You must create a password to log in"
+  },
+  "cloudinary": {
+    "imgSuccess": "Image uploaded successfully",
+    "errorFileUpload": "An error occurred while uploading the file",
+    "deleteSuccess": "The content has been successfully deleted",
+    "deleteFailure": "Unable to delete the content",
+    "nameNotFound": "File name was not provided"
   }
 }

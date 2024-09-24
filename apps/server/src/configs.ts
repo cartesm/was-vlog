@@ -15,4 +15,8 @@ export const GoogleClientSecret: string = process.env.GOOGLE_CLIENT_SECRET;
 export const sixHoursInMiliseconds: number = 21600000;
 
 export const frontUrl: string =
-  process.env.FRONT_BASE_URL || 'http://localhost:3001';
+  process.env.FRONT_BASE_URL || 'http://localhost:4000';
+
+export const CloudinaryApiSecret: string = process.env.CLOUDINARY_API_SECRET;
+export const CloudinaryApiKEY: string = process.env.CLOUDINARY_API_KEY;
+export const CloudinaryCloudName: string = process.env.CLOUDINARY_CLOUD_NAME;

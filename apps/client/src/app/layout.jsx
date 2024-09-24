@@ -1,4 +1,3 @@
-import { CookiesProvider } from "next-client-cookies/dist";
 import "./globals.css";
 
 export const metadata = {

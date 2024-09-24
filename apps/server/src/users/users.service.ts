@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -11,11 +12,14 @@ import { I18nContext, I18nService } from 'nestjs-i18n';
 import * as bcrypt from 'bcrypt';
 import { CreateUser } from 'src/users/interfaces/createUser.interface';
 import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { AuthService } from 'src/auth/auth.service';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(Users.name) private UsersModel: Model<UsersType>,
     private readonly i18n: I18nService,
+    private cloudinaryService: CloudinaryService,
   ) {}
 
   async getPublicUserData(userId: Types.ObjectId): Promise<UsersType> {
@@ -46,11 +50,14 @@ export class UsersService {
     const userMatch: UsersType = await this.UsersModel.findOne({
       $or: [{ email, username }],
     });
+    console.error('existe:');
+    console.log(userMatch);
     if (!userMatch) return null;
     return userMatch;
   }
 
   async createUser(userData: CreateUser): Promise<UsersType> {
+    console.log(userData.username);
     const userMatch: UsersType = await this.UsersModel.findOne({
       $or: [{ username: userData.username }, { email: userData.email }],
     });
@@ -77,15 +84,16 @@ export class UsersService {
     userID: Types.ObjectId,
     name: string,
   ): Promise<ResponseWithMessage> {
-    await this.UsersModel.findOneAndUpdate(
+    const updatedName: UsersType = await this.UsersModel.findOneAndUpdate(
       { _id: userID },
       { name },
-      { new: false },
+      { new: true },
     );
     return {
       message: this.i18n.t('test.users.nameChanged', {
         lang: I18nContext.current().lang,
       }),
+      data: updatedName.name,
     };
   }
 
@@ -93,15 +101,17 @@ export class UsersService {
     userID: Types.ObjectId,
     description: string,
   ): Promise<ResponseWithMessage> {
-    await this.UsersModel.findOneAndUpdate(
-      { _id: userID },
-      { description },
-      { new: false },
-    );
+    const updatedDescription: UsersType =
+      await this.UsersModel.findOneAndUpdate(
+        { _id: userID },
+        { description },
+        { new: true },
+      );
     return {
       message: this.i18n.t('test.users.descriptionChanged', {
         lang: I18nContext.current().lang,
       }),
+      data: updatedDescription.description,
     };
   }
 
@@ -118,9 +128,18 @@ export class UsersService {
           lang: I18nContext.current().lang,
         }),
       );
+
+    const updatedUsername: UsersType = await this.UsersModel.findOneAndUpdate(
+      { _id: userId },
+      { username },
+      { new: true },
+    ).select('username');
     // TODO: NOTIFICAR VIA EMAIL
 
-    return { message: this.i18n.t('test.users.usernameChanged') };
+    return {
+      message: this.i18n.t('test.users.usernameChanged'),
+      data: updatedUsername.username,
+    };
   }
   async changePassword(
     userId: Types.ObjectId,
@@ -137,5 +156,35 @@ export class UsersService {
         lang: I18nContext.current().lang,
       }),
     };
+  }
+
+  async changeUserProfileImage(
+    file: Express.Multer.File,
+    userId: Types.ObjectId,
+  ): Promise<ResponseWithMessage> {
+    try {
+      const { url } = await this.cloudinaryService.uploadFile(file);
+
+      await this.UsersModel.findOneAndUpdate(
+        { _id: userId },
+        {
+          img: url,
+        },
+        { new: true },
+      );
+      console.log('he');
+      return {
+        message: this.i18n.t('test.users.imgChanged', {
+          lang: I18nContext.current().lang,
+        }),
+        data: url,
+      };
+    } catch ({ message }) {
+      throw new InternalServerErrorException(
+        this.i18n.t('test.cloudinary.errorFileUpload', {
+          lang: I18nContext.current().lang,
+        }),
+      );
+    }
   }
 }

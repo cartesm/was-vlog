@@ -8,7 +8,8 @@
     "descriptionChanged": "La descripción ha sido actualizada exitosamente",
     "usernameChanged": "Nombre de usuario actualizado con éxito",
     "passwordChanged": "La contraseña ha sido actualizada exitosamente",
-    "errorPass": "Contraseña de validación no encontrada"
+    "errorPass": "Contraseña de validación no encontrada",
+    "imgChanged": "La imagen de perfil se ha actualizado correctamente"
   },
   "auth": {
     "incorrectPass": "Contraseña incorrecta",
@@ -17,5 +18,12 @@
     "conflicWithEmail": "Ya existe un usuario registrado con este correo electrónico",
     "registerMessage": "Usuario creado exitosamente",
     "passwordEmpty": "Debes crear una contraseña para iniciar sesión"
+  },
+  "cloudinary": {
+    "imgSuccess": "Imagen subida exitosamente",
+    "errorFileUpload": "Ha ocurrido un error al subir el archivo",
+    "deleteSuccess": "El contenido se ha eliminado correctamente",
+    "deleteFailure": "No se pudo eliminar el contenido. Por favor, intenta nuevamente más tarde",
+    "nameNotFound": "No se proporcionó el nombre del archivo"
   }
 }

@@ -1,9 +1,12 @@
+import Link from "next/link";
 import React from "react";
-import Button from "@/components/Button";
 function page() {
   return (
-    <div>
-      <Button />
+    <div className="flex flex-col">
+      default
+      <Link href={"/protected"}>protected</Link>
+      <Link href={"http://localhost:3000/auth/google"}>auth</Link>
+      
     </div>
   );
 }

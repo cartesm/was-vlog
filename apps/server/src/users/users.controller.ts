@@ -5,10 +5,13 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseFilePipe,
   Patch,
   Post,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ParamId } from 'src/utils/interfaces/paramId.interface';
@@ -24,6 +27,7 @@ import { JwtGuard } from 'src/auth/guards/jwt-guard.guard';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { ValidatePasswordGuard } from './guards/validatePassword.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -73,5 +77,15 @@ export class UsersController {
     @Body() body: ChangePasswordDto,
   ): Promise<ResponseWithMessage> {
     return this.usersService.changePassword(req.user.id, body.password);
+  }
+
+  @Post('image')
+  @UseInterceptors(FileInterceptor('img'))
+  @HttpCode(HttpStatus.OK)
+  async uploadProfilePhoto(
+    @Req() req: UserRequest,
+    @UploadedFile(ParseFilePipe) file: Express.Multer.File,
+  ): Promise<ResponseWithMessage> {
+    return await this.usersService.changeUserProfileImage(file, req.user.id);
   }
 }
