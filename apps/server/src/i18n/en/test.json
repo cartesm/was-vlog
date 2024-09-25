@@ -1,6 +1,7 @@
 {
   "LANG": "English",
   "idNotAcceptable": "The id parameter is not an acceptable id.",
+  "pageNotAceptable": "The page parameter must be a number",
   "users": {
     "notFound": "User not found",
     "notPass": "You must create your password to continue",
@@ -31,5 +32,11 @@
     "conflict": "A tag with that name already exists",
     "created": "Tag created successfully",
     "put": "Tag updated"
+  },
+  "followers": {
+    "exists": "Ahora sigues a este usuario",
+    "follow": "You are now following this user",
+    "unfollow": "You have unfollowed this user",
+    "deleteFollower": "You have removed this follower"
   }
 }

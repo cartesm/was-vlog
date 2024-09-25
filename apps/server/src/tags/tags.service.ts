@@ -9,7 +9,6 @@ import { Tags, TagsType } from './schemas/tag.schema';
 import { PaginateModel, Types } from 'mongoose';
 import { CreateTagDto } from './dto/createTag.dto';
 import { I18nContext, I18nService } from 'nestjs-i18n';
-import { retry } from 'rxjs';
 
 @Injectable()
 export class TagsService {

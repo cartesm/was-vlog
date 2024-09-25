@@ -1,6 +1,7 @@
 {
   "LANG": "Español",
   "idNotAcceptable": "El parametro de la id no es una id aceptable.",
+  "pageNotAceptable": "El parámetro de la página debe de ser un número",
   "users": {
     "notFound": "Usuario no encontrado",
     "notPass": "Debes crear tu contraseña para continuar",
@@ -31,5 +32,11 @@
     "conflict": "Ya existe una etiqueta con ese nombre",
     "created": "Etiqueta creada exitosamente",
     "put": "Etiqueta actualizada"
+  },
+  "followers": {
+    "exists": "Ya sigues a este usuario",
+    "follow": "Ahora sigues a este usuario",
+    "unfollow": "Has dejado de seguir a este usuario",
+    "deleteFollower": "Has eliminado a este seguidor"
   }
 }

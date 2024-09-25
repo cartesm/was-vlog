@@ -7,6 +7,8 @@ import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { AuthModule } from './auth/auth.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { TagsModule } from './tags/tags.module';
+import { FollowersModule } from './followers/followers.module';
+import { PostsModule } from './posts/posts.module';
 @Module({
   imports: [
     MongooseModule.forRoot(MongoDBUri),
@@ -28,6 +30,8 @@ import { TagsModule } from './tags/tags.module';
     AuthModule,
     CloudinaryModule,
     TagsModule,
+    FollowersModule,
+    PostsModule,
   ],
   controllers: [],
 })
