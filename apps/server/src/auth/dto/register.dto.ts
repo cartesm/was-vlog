@@ -7,6 +7,7 @@ import {
   IsUrl,
   MaxLength,
   MinLength,
+  NotContains,
 } from 'class-validator';
 import { I18nContext, i18nValidationMessage } from 'nestjs-i18n';
 export class RegisterDto {
@@ -16,6 +17,9 @@ export class RegisterDto {
   @IsString({ message: i18nValidationMessage('validation.INVALID_STRING') })
   @MinLength(5, { message: i18nValidationMessage('validation.MIN_LENGTH') })
   @MaxLength(27, { message: i18nValidationMessage('validation.MAX_LENGTH') })
+  @NotContains(' ', {
+    message: i18nValidationMessage('validation.CONTAIN_BACKSPACE'),
+  })
   username: string;
 
   @IsNotEmpty({ message: i18nValidationMessage('validation.REQUIRED') })

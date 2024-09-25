@@ -29,6 +29,7 @@
   "tags": {
     "notFound": "No se encontró la etiqueta que buscabas",
     "conflict": "Ya existe una etiqueta con ese nombre",
-    "created": "Etiqueta creada exitosamente"
+    "created": "Etiqueta creada exitosamente",
+    "put": "Etiqueta actualizada"
   }
 }

@@ -6,5 +6,6 @@
   "MIN_LENGTH": "{property} debe tener al menos {constraints.0} caracteres",
   "MAX_LENGTH": "{property} debe tener como maximo {constraints.0} caracteres",
   "REQUIRED": "{property} es un campo obligatorio y no puede estar vacio",
-  "NOT_IN_LIST": "{property} debe ser uno de los siguientes valores: {constraints}."
+  "NOT_IN_LIST": "{property} debe ser uno de los siguientes valores: {constraints}.",
+  "CONTAIN_BACKSPACE": "{property} no debe contener espacios en blanco"
 }

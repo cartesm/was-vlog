@@ -29,6 +29,7 @@
   "tags": {
     "notFound": "The tag you were looking for was not found",
     "conflict": "A tag with that name already exists",
-    "created": "Tag created successfully"
+    "created": "Tag created successfully",
+    "put": "Tag updated"
   }
 }

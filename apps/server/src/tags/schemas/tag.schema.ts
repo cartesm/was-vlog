@@ -5,7 +5,7 @@ import { Users } from 'src/users/schemas/users.schema';
 
 export type TagsType = HydratedDocument<Tags>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Tags {
   @Prop({
     type: String,
@@ -27,7 +27,7 @@ export class Tags {
   @Prop({
     type: String,
     unique: false,
-    required: true,
+    required: false,
     minlength: 10,
     maxlength: 250,
   })
