@@ -9,9 +9,11 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { TagsModule } from './tags/tags.module';
 import { FollowersModule } from './followers/followers.module';
 import { PostsModule } from './posts/posts.module';
+import { CacheModule } from '@nestjs/cache-manager';
 @Module({
   imports: [
     MongooseModule.forRoot(MongoDBUri),
+    CacheModule.register({ isGlobal: true }),
     I18nModule.forRoot({
       fallbackLanguage: 'es',
       loaderOptions: {

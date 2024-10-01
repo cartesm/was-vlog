@@ -2,6 +2,9 @@
   "LANG": "English",
   "idNotAcceptable": "The id parameter is not an acceptable id.",
   "pageNotAceptable": "The page parameter must be a number",
+  "orderPageNotNumber": "The order parameter must be a number",
+  "orderPageInvalid": "The order parameter must be 1 or -1",
+  "pageInvalidValue": "The page parameter must be greater than 0",
   "users": {
     "notFound": "User not found",
     "notPass": "You must create your password to continue",
@@ -38,5 +41,12 @@
     "follow": "You are now following this user",
     "unfollow": "You have unfollowed this user",
     "deleteFollower": "You have removed this follower"
+  },
+  "posts": {
+    "alraedyExists": "The name of this post is not available",
+    "created": "Your post has been created successfully",
+    "deleted": "Your post has been deleted",
+    "updated": "Your post has been updated successfully",
+    "notExists": "The post was not found"
   }
 }

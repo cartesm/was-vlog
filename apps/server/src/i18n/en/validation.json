@@ -3,10 +3,16 @@
   "INVALID_EMAIL": "The format of {property} is not a valid email",
   "INVALID_URL": "The {property} is not a valid url",
   "INVALID_BOOLEAN": "{property} must be a boolean value",
+  "INVALIDA_NUMBER": "{property} must be a number",
   "MIN_LENGTH": "{property} must be at least {constraints.0} characters long",
   "MAX_LENGTH": "{property} must be at most {constraints.0} characters long.",
+  "MIN": "{property} must be at least {constraints.0}",
+  "MAX": "The value of {property} must be at most {constraints.0}",
   "REQUIRED": "{property} is a required field and cannot be empty",
-  "NOT_IN_LIST": "{property} must be one of the following values: {constraints}",
+  "NOT_IN_LIST": "{property} must be one of the following values: {constraints.1}",
   "CONTAIN_BACKSPACE": "{property} must not contain whitespace",
-  "INVALID_MONGO_ID": "{property} is not a valid ID"
+  "INVALID_MONGO_ID": "{property} is not a valid ID",
+  "ARRAY_MIN_LENGTH": "{property} must have at least {constraints.0} elements",
+  "INVALID_ARRAY": "{property} must be a list of elements",
+  "INVALID_NESTED": "{property} must be an object or an array"
 }

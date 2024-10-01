@@ -2,6 +2,9 @@
   "LANG": "Español",
   "idNotAcceptable": "El parametro de la id no es una id aceptable.",
   "pageNotAceptable": "El parámetro de la página debe de ser un número",
+  "orderPageNotNumber": "El parámetro del orden debe de ser un número",
+  "orderPageInvalid": "El parámetro order debe de ser 1 o -1",
+  "pageInvalidValue": "El parámetro de la página debe de ser mayor a 0",
   "users": {
     "notFound": "Usuario no encontrado",
     "notPass": "Debes crear tu contraseña para continuar",
@@ -38,5 +41,12 @@
     "follow": "Ahora sigues a este usuario",
     "unfollow": "Has dejado de seguir a este usuario",
     "deleteFollower": "Has eliminado a este seguidor"
+  },
+  "posts": {
+    "alreadyExists": "El nombre de esta publicación no está disponible",
+    "notExists": "No se encontró la publicación",
+    "created": "La publicación se ha creado correctamente",
+    "deleted": "Se ha borrado la publicación",
+    "updated": "Se ha actualizado correctamente la publicación"
   }
 }
