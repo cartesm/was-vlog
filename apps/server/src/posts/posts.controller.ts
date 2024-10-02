@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
   Query,
   Req,
@@ -17,7 +18,12 @@ import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { UserRequest } from 'src/auth/interfaces/userRequest.interface';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { PostsType } from './schemas/post.schema';
-import { GetUserQuerryPipe } from './pipes/get-user-querry.pipe';
+import { PageAndUserPipe } from 'src/followers/pipes/page-and-user.pipe';
+import { Types } from 'mongoose';
+import { promises } from 'dns';
+import { ParseidPipe } from 'src/utils/pipes/parseid.pipe';
+import { query } from 'express';
+import { SearchPipe } from './pipes/search.pipe';
 
 @UseGuards(JwtGuard)
 @Controller('posts')
@@ -33,15 +39,51 @@ export class PostsController {
 
   @Public()
   @HttpCode(HttpStatus.OK)
-  @Get('/:user/:page')
+  @Get('user/:user/:page')
   async getUserPost(
-    @Query(GetUserQuerryPipe) querry: { page: number; order: number },
-    @Req() req: UserRequest,
+    @Query('order', ParseIntPipe) querry: { order: number },
+    @Param(PageAndUserPipe) param: { page: number; user: Types.ObjectId },
   ): Promise<any> {
-    // TODO: refactor el pipe
-    // TODO: continuar con el tomar posts del user
-    return this.postsService.getPostOfAnUser(req.user.id, 1);
+    return this.postsService.getPostOfAnUser(
+      param.user,
+      param.page,
+      querry.order,
+    );
   }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Get('best/:user/:page')
+  async getBestOfAnUser(
+    @Param(PageAndUserPipe) param: { page: number; user: Types.ObjectId },
+  ): Promise<any> {
+    return this.postsService.getBestOfAnUser(param.user, param.page);
+  }
+
+  @Public()
+  @Get('search/:page')
+  @HttpCode(HttpStatus.OK)
+  async searchPosts(
+    @Param('page', ParseIntPipe) param: { page: number },
+    @Query(SearchPipe)
+    query: {
+      name: string;
+      tags: Array<Types.ObjectId>;
+      created: number;
+      alphabetical: number;
+    },
+  ) {
+    const { alphabetical, created, name, tags } = query;
+    return await this.postsService.search(
+      name,
+      param.page,
+      created,
+      alphabetical,
+      tags,
+    );
+  }
+
+  // ? para tomar posts por tag se usa els easrch con solo el tag
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

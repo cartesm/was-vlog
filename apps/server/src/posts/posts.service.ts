@@ -32,7 +32,9 @@ export class PostsService {
     );
     if (cacheMatch) return JSON.parse(cacheMatch);
 
-    const postMatch: PostsType = await this.postModel.findOne({ name });
+    const postMatch: PostsType = await this.postModel
+      .findOne({ name })
+      .populate('user tags', 'username name _id img');
 
     if (!postMatch)
       throw new NotFoundException(
@@ -52,7 +54,10 @@ export class PostsService {
     page: number = 1,
     order: number = 1,
   ) {
-    await this.postModel.paginate(
+    console.log(order);
+    // ? -1 mas nuevo primero
+    // ? mas viejo primero
+    return await this.postModel.paginate(
       { user: userID },
       {
         page: page,
@@ -60,8 +65,56 @@ export class PostsService {
         sort: {
           createdAt: order,
         },
+        select: '-user -updatedAt -__v -content',
+        populate: {
+          path: 'tags',
+          select: '_id name',
+        },
       },
     );
+  }
+
+  async getBestOfAnUser(user: Types.ObjectId, page: number = 1): Promise<any> {
+    return await this.postModel.paginate(
+      { user },
+      {
+        limit: 20,
+        sort: {
+          likeCount: -1,
+        },
+        page,
+        select: '-user -updatedAt -__v -content',
+        populate: {
+          path: 'tags',
+          select: '_id name',
+        },
+      },
+    );
+  }
+
+  async search(
+    name: string,
+    page: number,
+    created: number,
+    alphabetical: number,
+    tags: Array<Types.ObjectId>,
+  ): Promise<any> {
+    let query: any = {};
+    if (name) query = { name: { $regex: name } };
+    if (tags) query.tags = tags;
+    return await this.postModel.paginate(query, {
+      limit: 30,
+      page,
+      sort: {
+        createdAt: created,
+        name: alphabetical,
+      },
+      select: '-user -updatedAt -__v -content',
+      populate: {
+        path: 'tags',
+        select: '_id name',
+      },
+    });
   }
 
   async createPost(

@@ -5,6 +5,11 @@
   "orderPageNotNumber": "El parámetro del orden debe de ser un número",
   "orderPageInvalid": "El parámetro order debe de ser 1 o -1",
   "pageInvalidValue": "El parámetro de la página debe de ser mayor a 0",
+  "pipes": {
+    "notArrayTags": "El parámetro de las etiquetas debe ser una lista con mínimo un elemento",
+    "notSearchName": "El parámetro del nombre no puede estar vacío",
+    "notMongoIdTag": "Todas las etiquetas deben ser IDs válidas"
+  },
   "users": {
     "notFound": "Usuario no encontrado",
     "notPass": "Debes crear tu contraseña para continuar",

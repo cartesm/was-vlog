@@ -98,6 +98,9 @@ export class Posts {
 
   @Prop({ enum: LanguajeEnum, type: String, required: true, unique: false })
   languaje: string;
+
+  @Prop({ required: true, unique: false, type: Number, default: 0 })
+  likeCount: Number;
 }
 
 const schema = SchemaFactory.createForClass(Posts);
