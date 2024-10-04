@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -14,15 +15,20 @@ import { CreateUser } from 'src/users/interfaces/createUser.interface';
 import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { AuthService } from 'src/auth/auth.service';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(Users.name) private UsersModel: Model<UsersType>,
     private readonly i18n: I18nService,
     private cloudinaryService: CloudinaryService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async getPublicUserData(userId: Types.ObjectId): Promise<UsersType> {
+    const cacheMatch: string = await this.cacheManager.get('user:' + userId);
+    if (cacheMatch) return JSON.parse(cacheMatch);
+
     const userMatch: UsersType =
       await this.UsersModel.findById(userId).select('-email -password');
     if (!userMatch)
@@ -31,6 +37,10 @@ export class UsersService {
           lang: I18nContext.current().lang,
         }),
       );
+    await this.cacheManager.set(
+      'user:' + userMatch._id,
+      JSON.stringify(userMatch),
+    );
     return userMatch;
   }
   async getUserDataByEmail(email: string): Promise<UsersType> {
@@ -76,7 +86,6 @@ export class UsersService {
         }),
       );
 
-    if (userData.pass) userData.pass = await bcrypt.hash(userData.pass, 12);
     return await new this.UsersModel(userData).save();
   }
 
@@ -88,6 +97,10 @@ export class UsersService {
       { _id: userID },
       { name },
       { new: true },
+    ).select('-email -password');
+    await this.cacheManager.set(
+      'user:' + updatedName._id,
+      JSON.stringify(updatedName),
     );
     return {
       message: this.i18n.t('test.users.nameChanged', {
@@ -106,7 +119,11 @@ export class UsersService {
         { _id: userID },
         { description },
         { new: true },
-      );
+      ).select('-email -password');
+    await this.cacheManager.set(
+      'user:' + updatedDescription._id,
+      JSON.stringify(updatedDescription),
+    );
     return {
       message: this.i18n.t('test.users.descriptionChanged', {
         lang: I18nContext.current().lang,
@@ -133,9 +150,13 @@ export class UsersService {
       { _id: userId },
       { username },
       { new: true },
-    ).select('username');
-    // TODO: NOTIFICAR VIA EMAIL
+    ).select('-email -password username _id');
 
+    // TODO: NOTIFICAR VIA EMAIL
+    await this.cacheManager.set(
+      'user:' + updatedUsername._id,
+      JSON.stringify(updatedUsername),
+    );
     return {
       message: this.i18n.t('test.users.usernameChanged'),
       data: updatedUsername.username,
@@ -145,12 +166,16 @@ export class UsersService {
     userId: Types.ObjectId,
     password: string,
   ): Promise<ResponseWithMessage> {
-    await this.UsersModel.findOneAndUpdate(
+    const updatedPassword: UsersType = await this.UsersModel.findOneAndUpdate(
       { _id: userId },
       { pass: await bcrypt.hash(password, 12) },
-      { new: false },
-    );
+      { new: true },
+    ).select('-email -password');
     // TODO: NOTIFICAR VIA EMAIL
+    await this.cacheManager.set(
+      'user:' + updatedPassword._id,
+      JSON.stringify(updatedPassword),
+    );
     return {
       message: this.i18n.t('test.users.passwordChanged', {
         lang: I18nContext.current().lang,
@@ -165,14 +190,17 @@ export class UsersService {
     try {
       const { url } = await this.cloudinaryService.uploadFile(file);
 
-      await this.UsersModel.findOneAndUpdate(
+      const updatedImg: UsersType = await this.UsersModel.findOneAndUpdate(
         { _id: userId },
         {
           img: url,
         },
         { new: true },
+      ).select('-email -password');
+      await this.cacheManager.set(
+        'user:' + updatedImg._id,
+        JSON.stringify(updatedImg),
       );
-      console.log('he');
       return {
         message: this.i18n.t('test.users.imgChanged', {
           lang: I18nContext.current().lang,
