@@ -26,7 +26,8 @@
     "conflicWithUsername": "Este nombre de usuario ya está en uso",
     "conflicWithEmail": "Ya existe un usuario registrado con este correo electrónico",
     "registerMessage": "Usuario creado exitosamente",
-    "passwordEmpty": "Debes crear una contraseña para iniciar sesión"
+    "passwordEmpty": "Debes crear una contraseña para iniciar sesión",
+    "notMainUser": "Para poder manipular este contenido, debes ser el dueño"
   },
   "cloudinary": {
     "imgSuccess": "Imagen subida exitosamente",
@@ -52,6 +53,7 @@
     "notExists": "No se encontró la publicación",
     "created": "La publicación se ha creado correctamente",
     "deleted": "Se ha borrado la publicación",
-    "updated": "Se ha actualizado correctamente la publicación"
+    "updated": "Se ha actualizado correctamente la publicación",
+    "minLengthUpdate": "Para poder actualizar, ingresa al menos un valor"
   }
 }

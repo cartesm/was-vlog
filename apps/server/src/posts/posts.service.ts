@@ -2,7 +2,9 @@ import {
   ConflictException,
   Inject,
   Injectable,
+  NotAcceptableException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { PaginateModel, Types } from 'mongoose';
@@ -12,6 +14,9 @@ import { CreatePostDto } from './dto/createPost.dto';
 import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { UpdateInfoPostDto } from './dto/updateInfoPost.dto';
+import { threeHoursInMiliseconds } from 'src/configs';
+import { UpdateDataPostDto } from './dto/updateDataPost.dto';
 
 @Injectable()
 export class PostsService {
@@ -45,6 +50,7 @@ export class PostsService {
     await this.cacheManager.set(
       'post:' + name.replaceAll(' ', '-'),
       JSON.stringify(postMatch),
+      threeHoursInMiliseconds,
     );
     return postMatch;
   }
@@ -54,7 +60,6 @@ export class PostsService {
     page: number = 1,
     order: number = 1,
   ) {
-    console.log(order);
     // ? -1 mas nuevo primero
     // ? mas viejo primero
     return await this.postModel.paginate(
@@ -115,6 +120,77 @@ export class PostsService {
         select: '_id name',
       },
     });
+  }
+  async updateInfoPost(
+    name: string,
+    updatePostData: UpdateInfoPostDto,
+  ): Promise<ResponseWithMessage> {
+    if (Object.keys(updatePostData).length <= 0)
+      throw new NotAcceptableException(
+        this.i18n.t('test.posts.minLengthUpdate', {
+          lang: I18nContext.current().lang,
+        }),
+      );
+
+    if (
+      !!updatePostData.name &&
+      (await this.existsThisPost(updatePostData.name))
+    )
+      throw new ConflictException(
+        this.i18n.t('test.posts.alreadyExists', {
+          lang: I18nContext.current().lang,
+        }),
+      );
+
+    const updatedPost: PostsType = await this.postModel.findOneAndUpdate(
+      { name },
+      updatePostData,
+      { new: true },
+    );
+    await this.cacheManager.set(
+      'post:' + updatedPost.name.replaceAll(' ', '-'),
+      JSON.stringify(updatedPost),
+      threeHoursInMiliseconds,
+    );
+
+    return {
+      message: this.i18n.t('test.posts.updated', {
+        lang: I18nContext.current().lang,
+      }),
+    };
+  }
+  async updateDataPost(
+    name: string,
+    contentData: UpdateDataPostDto,
+  ): Promise<ResponseWithMessage> {
+    const updatedPost: PostsType = await this.postModel.findOneAndUpdate(
+      { name },
+      { content: contentData },
+      { new: true },
+    );
+    await this.cacheManager.set(
+      'post:' + updatedPost.name.replaceAll(' ', '-'),
+      JSON.stringify(updatedPost),
+      threeHoursInMiliseconds,
+    );
+
+    return {
+      message: this.i18n.t('test.posts.updated', {
+        lang: I18nContext.current().lang,
+      }),
+    };
+  }
+
+  async deletePost(
+    name: string,
+    user: Types.ObjectId,
+  ): Promise<ResponseWithMessage> {
+    await this.postModel.findOneAndDelete({ name });
+    return {
+      message: this.i18n.t('test.posts.deleted', {
+        lang: I18nContext.current().lang,
+      }),
+    };
   }
 
   async createPost(

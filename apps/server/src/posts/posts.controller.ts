@@ -1,12 +1,15 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -24,6 +27,10 @@ import { promises } from 'dns';
 import { ParseidPipe } from 'src/utils/pipes/parseid.pipe';
 import { query } from 'express';
 import { SearchPipe } from './pipes/search.pipe';
+import { UpdateInfoPostDto } from './dto/updateInfoPost.dto';
+import { ParamId } from 'src/utils/interfaces/paramId.interface';
+import { UpdateDataPostDto } from './dto/updateDataPost.dto';
+import { IsAuhtorGuard } from './guards/is-auhtor.guard';
 
 @UseGuards(JwtGuard)
 @Controller('posts')
@@ -84,6 +91,35 @@ export class PostsController {
   }
 
   // ? para tomar posts por tag se usa els easrch con solo el tag
+  @Put('info/:name')
+  @UseGuards(IsAuhtorGuard)
+  @HttpCode(HttpStatus.ACCEPTED)
+  async updateInfoPost(
+    @Param() param: { name: string },
+    @Body() body: UpdateInfoPostDto,
+  ): Promise<ResponseWithMessage> {
+    return await this.postsService.updateInfoPost(param.name, body);
+  }
+
+  @Put('data/:name')
+  @UseGuards(IsAuhtorGuard)
+  @HttpCode(HttpStatus.ACCEPTED)
+  async updateInfoData(
+    @Param() param: { name: string },
+    @Body() body: UpdateDataPostDto,
+  ): Promise<ResponseWithMessage> {
+    return await this.postsService.updateDataPost(param.name, body);
+  }
+
+  @Delete(':name')
+  @UseGuards(IsAuhtorGuard)
+  @HttpCode(HttpStatus.OK)
+  async deletePost(
+    @Param() param: { name: string },
+    @Req() req: UserRequest,
+  ): Promise<ResponseWithMessage> {
+    return await this.postsService.deletePost(param.name, req.user.id);
+  }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

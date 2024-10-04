@@ -26,7 +26,8 @@
     "conflicWithUsername": "This username is already taken",
     "conflicWithEmail": "A user is already registered with this email address",
     "registerMessage": "User created successfully",
-    "passwordEmpty": "You must create a password to log in"
+    "passwordEmpty": "You must create a password to log in",
+    "notMainUser": "Para poder manipular este contenido, debes ser el dueño"
   },
   "cloudinary": {
     "imgSuccess": "Image uploaded successfully",
@@ -52,6 +53,7 @@
     "created": "Your post has been created successfully",
     "deleted": "Your post has been deleted",
     "updated": "Your post has been updated successfully",
-    "notExists": "The post was not found"
+    "notExists": "The post was not found",
+    "minLengthUpdate": "To update, please enter at least one value"
   }
 }

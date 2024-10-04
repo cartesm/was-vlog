@@ -13,6 +13,7 @@ export const GoogleClientId: string = process.env.GOOGLE_CLIENT_ID;
 export const GoogleClientSecret: string = process.env.GOOGLE_CLIENT_SECRET;
 
 export const sixHoursInMiliseconds: number = 21600000;
+export const threeHoursInMiliseconds: number = 180000;
 
 export const frontUrl: string =
   process.env.FRONT_BASE_URL || 'http://localhost:4000';
