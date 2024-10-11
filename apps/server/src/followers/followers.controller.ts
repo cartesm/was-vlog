@@ -27,7 +27,7 @@ export class FollowersController {
   constructor(private readonly followersService: FollowersService) {}
 
   @Public()
-  @Get(':page/:user')
+  @Get('fu/:page/:user')
   @HttpCode(HttpStatus.OK)
   async getFollowers(@Param() param: { page: number; user: Types.ObjectId }) {
     return await this.followersService.getFollowers(param.page, param.user);
@@ -58,6 +58,20 @@ export class FollowersController {
     @Req() req: UserRequest,
   ): Promise<ResponseWithMessage> {
     return await this.followersService.deleteFollower(req.user.id, param.id);
+  }
+
+  @Public()
+  @Get('isFollow/:id')
+  @HttpCode(HttpStatus.ACCEPTED)
+  async getIsFollow(
+    @Param(ParseidPipe) param: ParamId,
+    @Req() req: UserRequest,
+  ) {
+    console.log('pene');
+    return await this.followersService.isFollow(
+      param.id,
+      req.user ? req.user.id : undefined,
+    );
   }
 
   @Delete('unfollow/:id')

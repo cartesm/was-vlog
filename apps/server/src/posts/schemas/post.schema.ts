@@ -8,55 +8,6 @@ import { LanguajeEnum } from 'src/utils/enums/languaje.enums';
 
 export type PostsType = HydratedDocument<Posts>;
 
-class ContentSubItemConfigs {
-  @Prop({
-    type: Number,
-    required: false,
-    unique: false,
-    min: 0,
-    max: 10000,
-    default: 250,
-  })
-  width?: number;
-
-  @Prop({
-    type: Number,
-    required: false,
-    unique: false,
-    min: 0,
-    max: 10000,
-    default: 250,
-  })
-  height?: number;
-
-  @Prop({ type: String, unique: false, required: false })
-  url?: string;
-}
-
-class ContentSubItem {
-  @Prop({ type: String, required: true, enum: PostSubItemEnum, unique: true })
-  type: string;
-
-  @Prop({ type: String, unique: false, required: true })
-  value: string;
-
-  @Prop({ type: ContentSubItemConfigs, required: false, unique: false })
-  configs?: ContentSubItemConfigs;
-}
-
-class ContentItem {
-  @Prop({
-    enum: PostItemEnum,
-    type: String,
-    required: true,
-    default: 'PARAGRAPH',
-  })
-  type: string;
-
-  @Prop({ type: [ContentSubItem], unique: false, required: true })
-  content: ContentSubItem[];
-}
-
 @Schema({ timestamps: true })
 export class Posts {
   @Prop({
@@ -93,8 +44,8 @@ export class Posts {
   })
   tags: Types.ObjectId[];
 
-  @Prop({ required: true, type: [ContentItem], unique: false })
-  content: ContentItem[];
+  @Prop({ required: true, minlength: 200, type: String, unique: false })
+  content: string;
 
   @Prop({ enum: LanguajeEnum, type: String, required: true, unique: false })
   languaje: string;

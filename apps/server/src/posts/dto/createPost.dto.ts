@@ -22,65 +22,6 @@ import { Type } from 'class-transformer';
 import { isValidObjectId, Types } from 'mongoose';
 import { LanguajeEnum } from 'src/utils/enums/languaje.enums';
 
-class ContentSubItemConfigs {
-  @IsOptional()
-  @IsNumber({}, { message: i18nValidationMessage('validaiton.INVALID_NUMBER') })
-  @Min(0)
-  @Max(10000)
-  width?: number;
-
-  @IsOptional()
-  @IsNumber({}, { message: i18nValidationMessage('validaiton.INVALID_NUMBER') })
-  @Min(0)
-  @Max(10000)
-  height?: number;
-
-  @IsOptional()
-  @IsString({ message: i18nValidationMessage('validation.INVALID_STRING') })
-  @IsUrl({}, { message: i18nValidationMessage('validation.INVALID_URL') })
-  url?: string;
-}
-
-class ContentSubItem {
-  @IsNotEmpty({ message: i18nValidationMessage('validation.REQUIRED') })
-  @IsString({ message: i18nValidationMessage('validation.INVALID_STRING') })
-  @IsEnum(PostSubItemEnum, {
-    message: i18nValidationMessage('validation.NOT_IN_LIST'),
-  })
-  type: string;
-
-  @IsNotEmpty({ message: i18nValidationMessage('validation.REQUIRED') })
-  @IsString({ message: i18nValidationMessage('validation.INVALID_STRING') })
-  value: string;
-
-  @IsOptional()
-  @ValidateNested({
-    message: i18nValidationMessage('validation.INVALID_NESTED'),
-  })
-  @Type(() => ContentSubItemConfigs)
-  configs?: ContentSubItemConfigs;
-}
-
-class ContentItem {
-  @IsNotEmpty({ message: i18nValidationMessage('validation.REQUIRED') })
-  @IsString({ message: i18nValidationMessage('validation.INVALID_STRING') })
-  @IsEnum(PostItemEnum, {
-    message: i18nValidationMessage('validation.NOT_IN_LIST'),
-  })
-  type: string;
-
-  @IsNotEmpty()
-  @IsArray({ message: i18nValidationMessage('validation.INVALID_ARRAY') })
-  @ArrayMaxSize(1, {
-    message: i18nValidationMessage('validation.ARRAY_MIN_LENGTH'),
-  })
-  @ValidateNested({
-    message: i18nValidationMessage('validation.INVALID_NESTED'),
-  })
-  @Type(() => ContentSubItem)
-  content: ContentSubItem[];
-}
-
 export class CreatePostDto {
   @IsNotEmpty({ message: i18nValidationMessage('validation.REQUIRED') })
   @IsString({ message: i18nValidationMessage('validation.INVALID_STRING') })
@@ -92,7 +33,7 @@ export class CreatePostDto {
   @IsString({ message: i18nValidationMessage('validation.INVALID_STRING') })
   @MinLength(10, { message: i18nValidationMessage('validation.MIN_LNEGTH') })
   @MaxLength(200, { message: i18nValidationMessage('validation.MAX_LENGTH') })
-  description: string;
+  description?: string;
 
   @IsOptional()
   @IsMongoId({
@@ -104,7 +45,7 @@ export class CreatePostDto {
     message: i18nValidationMessage('validation.ARRAY_MIN_LEGHT'),
   })
   @Type(() => Types.ObjectId)
-  tags: [Types.ObjectId];
+  tags?: [Types.ObjectId];
 
   @IsNotEmpty({ message: i18nValidationMessage('validation.REQUIRED') })
   @IsString({ message: i18nValidationMessage('validation.INVALID_STRING') })
@@ -114,13 +55,7 @@ export class CreatePostDto {
   languaje: String;
 
   @IsNotEmpty({ message: i18nValidationMessage('validation.REQUIRED') })
-  @IsArray({ message: i18nValidationMessage('validation.INVALID_ARRAY') })
-  @ArrayMinSize(1, {
-    message: i18nValidationMessage('validation.ARRAY_MIN_LENGTH'),
-  })
-  @ValidateNested({
-    message: i18nValidationMessage('validation.INVALID_NESTED'),
-  })
-  @Type(() => ContentItem)
-  content: [ContentItem];
+  @IsString({ message: i18nValidationMessage('validation.INVALID_STRING') })
+  @MinLength(200, { message: i18nValidationMessage('validation.MIN_LENGTH') })
+  content: string;
 }

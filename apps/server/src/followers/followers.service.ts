@@ -1,9 +1,11 @@
 import { ConflictException, HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { PaginateModel, Types } from 'mongoose';
+import { Model, PaginateModel, Types } from 'mongoose';
 import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { Followers, FollowersType } from './schemas/follower.schema';
 import { I18nContext, I18nService } from 'nestjs-i18n';
+import { Users, UsersType } from 'src/users/schemas/users.schema';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class FollowersService {
@@ -11,6 +13,7 @@ export class FollowersService {
     @InjectModel(Followers.name)
     private followersModel: PaginateModel<FollowersType>,
     private i18n: I18nService,
+    private userService: UsersService,
   ) {}
   async followUser(
     user: Types.ObjectId,
@@ -34,6 +37,16 @@ export class FollowersService {
         lang: I18nContext.current().lang,
       }),
     };
+  }
+
+  async isFollow(follower: Types.ObjectId, you?: Types.ObjectId) {
+    const followMatch: FollowersType = await this.followersModel.findOne({
+      user: follower,
+      follower: you,
+    });
+    const user = await this.userService.getPublicUserData(follower);
+    if (!followMatch) return { user, isFollow: false };
+    return { user, isFollow: true };
   }
 
   async unfollowUser(
