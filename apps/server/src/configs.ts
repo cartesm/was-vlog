@@ -12,6 +12,7 @@ export const ExpiresInJwt: string = '6h'; // ?6 horas en segundos
 export const GoogleClientId: string = process.env.GOOGLE_CLIENT_ID;
 export const GoogleClientSecret: string = process.env.GOOGLE_CLIENT_SECRET;
 
+export const sevenMinutesInMilisecons: number = 420000;
 export const sixHoursInMiliseconds: number = 21600000;
 export const threeHoursInMiliseconds: number = 180000;
 

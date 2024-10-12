@@ -14,8 +14,12 @@ import * as bcrypt from 'bcrypt';
 import { CreateUser } from 'src/users/interfaces/createUser.interface';
 import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
-import { AuthService } from 'src/auth/auth.service';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
+import { sevenMinutesInMilisecons } from 'src/configs';
+import {
+  Followers,
+  FollowersType,
+} from 'src/followers/schemas/follower.schema';
 @Injectable()
 export class UsersService {
   constructor(
@@ -26,11 +30,14 @@ export class UsersService {
   ) {}
 
   async getPublicUserData(userId: Types.ObjectId): Promise<UsersType> {
+    //await this.cacheManager.reset();
     const cacheMatch: string = await this.cacheManager.get('user:' + userId);
     if (cacheMatch) return JSON.parse(cacheMatch);
+    console.log('not cache');
+    const userMatch: UsersType = await this.UsersModel.findById(userId).select(
+      '-email -pass -__v -updatedAt',
+    );
 
-    const userMatch: UsersType =
-      await this.UsersModel.findById(userId).select('-email -password');
     if (!userMatch)
       throw new NotFoundException(
         this.i18n.t('test.users.notFound', {
@@ -40,6 +47,7 @@ export class UsersService {
     await this.cacheManager.set(
       'user:' + userMatch._id,
       JSON.stringify(userMatch),
+      sevenMinutesInMilisecons,
     );
     return userMatch;
   }
@@ -60,8 +68,6 @@ export class UsersService {
     const userMatch: UsersType = await this.UsersModel.findOne({
       $or: [{ email, username }],
     });
-    console.error('existe:');
-    console.log(userMatch);
     if (!userMatch) return null;
     return userMatch;
   }
@@ -123,6 +129,7 @@ export class UsersService {
     await this.cacheManager.set(
       'user:' + updatedDescription._id,
       JSON.stringify(updatedDescription),
+      sevenMinutesInMilisecons,
     );
     return {
       message: this.i18n.t('test.users.descriptionChanged', {
@@ -156,6 +163,7 @@ export class UsersService {
     await this.cacheManager.set(
       'user:' + updatedUsername._id,
       JSON.stringify(updatedUsername),
+      sevenMinutesInMilisecons,
     );
     return {
       message: this.i18n.t('test.users.usernameChanged'),
@@ -175,6 +183,7 @@ export class UsersService {
     await this.cacheManager.set(
       'user:' + updatedPassword._id,
       JSON.stringify(updatedPassword),
+      sevenMinutesInMilisecons,
     );
     return {
       message: this.i18n.t('test.users.passwordChanged', {
@@ -200,6 +209,7 @@ export class UsersService {
       await this.cacheManager.set(
         'user:' + updatedImg._id,
         JSON.stringify(updatedImg),
+        sevenMinutesInMilisecons,
       );
       return {
         message: this.i18n.t('test.users.imgChanged', {
