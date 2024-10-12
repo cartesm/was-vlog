@@ -10,6 +10,7 @@ import { TagsModule } from './tags/tags.module';
 import { FollowersModule } from './followers/followers.module';
 import { PostsModule } from './posts/posts.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import { LikesModule } from './likes/likes.module';
 @Module({
   imports: [
     MongooseModule.forRoot(MongoDBUri),
@@ -34,6 +35,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     TagsModule,
     FollowersModule,
     PostsModule,
+    LikesModule,
   ],
   controllers: [],
 })

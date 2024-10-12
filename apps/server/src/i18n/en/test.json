@@ -55,5 +55,8 @@
     "updated": "Your post has been updated successfully",
     "notExists": "The post was not found",
     "minLengthUpdate": "To update, please enter at least one value"
+  },
+  "likes": {
+    "alreadyExists": "You have already liked this post"
   }
 }

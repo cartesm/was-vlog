@@ -55,5 +55,8 @@
     "deleted": "Se ha borrado la publicación",
     "updated": "Se ha actualizado correctamente la publicación",
     "minLengthUpdate": "Para poder actualizar, ingresa al menos un valor"
+  },
+  "likes": {
+    "alreadyExists": "Ya le has dado me gusta a este post"
   }
 }
