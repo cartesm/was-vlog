@@ -58,5 +58,8 @@
   },
   "likes": {
     "alreadyExists": "You have already liked this post"
+  },
+  "comment": {
+    "alreadyExists": "Seriously, are you going to comment the same thing twice?"
   }
 }

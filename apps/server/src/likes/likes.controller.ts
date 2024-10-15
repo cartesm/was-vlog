@@ -15,7 +15,6 @@ import { Types } from 'mongoose';
 import { UserRequest } from 'src/auth/interfaces/userRequest.interface';
 import { JwtGuard } from 'src/auth/guards/jwt-guard.guard';
 import { CreateLikeDto } from './dto/createlike.dto';
-import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { PageAndUserPipe } from 'src/followers/pipes/page-and-user.pipe';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { ParseidPipe } from 'src/utils/pipes/parseid.pipe';
