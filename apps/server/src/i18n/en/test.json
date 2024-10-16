@@ -60,6 +60,10 @@
     "alreadyExists": "You have already liked this post"
   },
   "comment": {
-    "alreadyExists": "Seriously, are you going to comment the same thing twice?"
+    "alreadyExists": "Seriously, are you going to comment the same thing twice?",
+    "notFound": "The comment you're trying to manipulate does not exist",
+    "deleted": "Comment deleted successfully",
+    "created": "Comment created successfully",
+    "updated": "Comment updated successfully"
   }
 }

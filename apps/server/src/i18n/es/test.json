@@ -60,6 +60,10 @@
     "alreadyExists": "Ya le has dado me gusta a este post"
   },
   "comment": {
-    "alreadyExists": "En serio, ¿vas a comentar lo mismo 2 veces?"
+    "alreadyExists": "En serio, ¿vas a comentar lo mismo 2 veces?",
+    "notFound": "El comentario que intentas manipular no existe",
+    "deleted": "Comentario borrado exitosamente",
+    "created": "Comentario creado exitosamente",
+    "updated": "Comentario actualizado exitosamente"
   }
 }

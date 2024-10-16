@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -21,6 +22,10 @@ import { PageAndUserPipe } from 'src/followers/pipes/page-and-user.pipe';
 import { Types } from 'mongoose';
 import { OrderQueryPipe } from './pipes/order-query.pipe';
 import { CreateCommentDto } from './dto/create.comment.dto';
+import { ParseidPipe } from 'src/utils/pipes/parseid.pipe';
+import { ParamId } from 'src/utils/interfaces/paramId.interface';
+import { ValidateUserGuard } from './guards/validate-user.guard';
+import { UpdateCommentDto } from './dto/update.comment.dto';
 
 @UseGuards(JwtGuard)
 @Controller('comments')
@@ -53,8 +58,41 @@ export class CommentsController {
   }
 
   @Delete(':id')
-  async deleteComment(): Promise<any> {}
+  @UseGuards(ValidateUserGuard)
+  @HttpCode(HttpStatus.ACCEPTED)
+  async deleteComment(
+    @Param(ParseidPipe) param: ParamId,
+    @Req() req: UserRequest,
+  ): Promise<any> {
+    return await this.commentsService.deleteComment(param.id, req.user.id);
+  }
+
+  @Get(':page')
+  @HttpCode(HttpStatus.OK)
+  async getCommentsOfAnUser(
+    @Param('page', ParseIntPipe) param: { page: number },
+    @Query(OrderQueryPipe) query: { order: number },
+    @Req() req: UserRequest,
+  ) {
+    return await this.commentsService.getAllCommentOfAnUser(
+      req.user.id,
+      param.page,
+      query.order,
+    );
+  }
 
   @Put(':id')
-  async updateComment(): Promise<any> {}
+  @UseGuards(ValidateUserGuard)
+  @HttpCode(HttpStatus.ACCEPTED)
+  async updateComment(
+    @Body() body: UpdateCommentDto,
+    @Param(ParseidPipe) param: ParamId,
+    @Req() req: UserRequest,
+  ): Promise<any> {
+    return await this.commentsService.updatedComment(
+      param.id,
+      req.user.id,
+      body,
+    );
+  }
 }
