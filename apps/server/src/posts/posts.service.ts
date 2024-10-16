@@ -218,4 +218,11 @@ export class PostsService {
       }),
     };
   }
+
+  async modifyLikeCount(postId: Types.ObjectId, value: number): Promise<void> {
+    await this.postModel
+      .findByIdAndUpdate(postId, { $inc: { likeCount: value } })
+      .exec();
+    return;
+  }
 }

@@ -57,7 +57,8 @@
     "minLengthUpdate": "Para poder actualizar, ingresa al menos un valor"
   },
   "likes": {
-    "alreadyExists": "Ya le has dado me gusta a este post"
+    "alreadyExists": "Ya le has dado me gusta a este post",
+    "alreadyExistsComment": "Ya le has dado me gusta a este comentario"
   },
   "comment": {
     "alreadyExists": "En serio, ¿vas a comentar lo mismo 2 veces?",

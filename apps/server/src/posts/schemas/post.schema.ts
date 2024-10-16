@@ -51,7 +51,10 @@ export class Posts {
   languaje: string;
 
   @Prop({ required: true, unique: false, type: Number, default: 0 })
-  likeCount: Number;
+  likeCount: number;
+
+  @Prop()
+  numero: number;
 }
 
 const schema = SchemaFactory.createForClass(Posts);

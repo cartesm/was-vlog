@@ -60,4 +60,13 @@ export class LikesController {
   }
 
   // * seccion de likes de comentarios
+
+  @Post('c')
+  @HttpCode(HttpStatus.CREATED)
+  async likeAComment(
+    @Req() req: UserRequest,
+    @Body() body: CreateLikeDto,
+  ): Promise<void> {
+    return await this.likesService.likeComment(req.user.id, body.id);
+  }
 }

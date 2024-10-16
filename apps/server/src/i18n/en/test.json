@@ -57,7 +57,8 @@
     "minLengthUpdate": "To update, please enter at least one value"
   },
   "likes": {
-    "alreadyExists": "You have already liked this post"
+    "alreadyExists": "You have already liked this post",
+    "alreadyExistsComment": "You have already liked this comment"
   },
   "comment": {
     "alreadyExists": "Seriously, are you going to comment the same thing twice?",

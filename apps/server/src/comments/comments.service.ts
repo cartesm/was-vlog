@@ -134,4 +134,15 @@ export class CommentsService {
       ),
     };
   }
+
+  async modifyLikeCount(
+    commentId: Types.ObjectId,
+    value: number,
+  ): Promise<void> {
+    await this.commentModel.findOneAndUpdate(
+      { _id: commentId },
+      { $inc: { likeCount: value } },
+    );
+    return;
+  }
 }
