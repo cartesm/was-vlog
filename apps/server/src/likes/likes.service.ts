@@ -85,6 +85,7 @@ export class LikesService {
   async likeComment(
     userId: Types.ObjectId,
     commentId: Types.ObjectId,
+    postId: Types.ObjectId,
   ): Promise<void> {
     const likeMatch: CommentLikeType = await this.commentLikeModel.findOne({
       comment: commentId,
@@ -100,9 +101,44 @@ export class LikesService {
     await new this.commentLikeModel({
       comment: commentId,
       userId,
+      post: postId,
     }).save();
 
     await this.commentService.modifyLikeCount(commentId, 1);
+
+    return;
+  }
+
+  async getAllLikesInAPost(
+    user: Types.ObjectId,
+    post: Types.ObjectId,
+  ): Promise<Array<{ _id: Types.ObjectId }>> {
+    return await this.commentLikeModel
+      .find({ userId: user, post })
+      .select('_id');
+  }
+
+  async getAllCommentLikes(user: Types.ObjectId, page: number): Promise<any> {
+    return await this.commentLikeModel.paginate(
+      { userId: user },
+      {
+        limit: 50,
+        page,
+        populate: {
+          path: 'userId post',
+          select: 'username img name',
+        },
+        select: 'userId createAt post',
+      },
+    );
+  }
+
+  async dislikeComment(
+    user: Types.ObjectId,
+    comment: Types.ObjectId,
+  ): Promise<void> {
+    await this.commentLikeModel.findOneAndDelete({ userId: user, comment });
+    await this.commentService.modifyLikeCount(comment, -1);
 
     return;
   }

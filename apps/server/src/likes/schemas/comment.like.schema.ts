@@ -3,6 +3,7 @@ import { HydratedDocument, Types } from 'mongoose';
 import { Users } from 'src/users/schemas/users.schema';
 import * as paginate from 'mongoose-paginate-v2';
 import { Comments } from 'src/comments/schemas/comments.schema';
+import { Posts } from 'src/posts/schemas/post.schema';
 export type CommentLikeType = HydratedDocument<CommentLike>;
 
 @Schema({ timestamps: true })
@@ -14,6 +15,14 @@ export class CommentLike {
     ref: Comments.name,
   })
   comment: Types.ObjectId;
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: Posts.name,
+    required: true,
+    unique: false,
+  })
+  post: Types.ObjectId;
 
   @Prop({
     types: Types.ObjectId,

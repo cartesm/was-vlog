@@ -18,6 +18,10 @@ import { CreateLikeDto } from './dto/createlike.dto';
 import { PageAndUserPipe } from 'src/followers/pipes/page-and-user.pipe';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { ParseidPipe } from 'src/utils/pipes/parseid.pipe';
+import { UserAndPostPipe } from './pipes/user-and-post.pipe';
+import { ParamId } from 'src/utils/interfaces/paramId.interface';
+import { CreateCommentLikeDto } from './dto/createCommentLike.to';
+import { resourceUsage } from 'process';
 
 @UseGuards(JwtGuard)
 @Controller('likes')
@@ -65,8 +69,39 @@ export class LikesController {
   @HttpCode(HttpStatus.CREATED)
   async likeAComment(
     @Req() req: UserRequest,
-    @Body() body: CreateLikeDto,
+    @Body() body: CreateCommentLikeDto,
   ): Promise<void> {
-    return await this.likesService.likeComment(req.user.id, body.id);
+    return await this.likesService.likeComment(
+      req.user.id,
+      body.commentId,
+      body.postId,
+    );
+  }
+
+  @Get('c/:id')
+  @HttpCode(HttpStatus.OK)
+  async getAllLikesOnAPost(
+    @Param(ParseidPipe)
+    param: ParamId,
+    @Req() req: UserRequest,
+  ): Promise<Array<{ _id: Types.ObjectId }>> {
+    return await this.likesService.getAllLikesInAPost(req.user.id, param.id);
+  }
+
+  @Get('c/:user/:page')
+  @HttpCode(HttpStatus.OK)
+  async getCommentLikesOfAUser(
+    @Param(PageAndUserPipe) param: { page: number; user: Types.ObjectId },
+  ): Promise<any> {
+    return await this.likesService.getAllCommentLikes(param.user, param.page);
+  }
+
+  @Delete('c/:id')
+  @HttpCode(HttpStatus.ACCEPTED)
+  async unlikePost(
+    @Param(ParseidPipe) param: ParamId,
+    @Req() req: UserRequest,
+  ): Promise<void> {
+    return await this.likesService.dislikeComment(req.user.id, param.id);
   }
 }
