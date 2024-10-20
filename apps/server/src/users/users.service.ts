@@ -20,6 +20,7 @@ import {
   Followers,
   FollowersType,
 } from 'src/followers/schemas/follower.schema';
+import { HistoryService } from 'src/history/history.service';
 @Injectable()
 export class UsersService {
   constructor(
@@ -27,6 +28,7 @@ export class UsersService {
     private readonly i18n: I18nService,
     private cloudinaryService: CloudinaryService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private historyService: HistoryService,
   ) {}
 
   async getPublicUserData(userId: Types.ObjectId): Promise<UsersType> {
@@ -92,7 +94,9 @@ export class UsersService {
         }),
       );
 
-    return await new this.UsersModel(userData).save();
+    const newUser: UsersType = await new this.UsersModel(userData).save();
+    await this.historyService.createHistory(newUser.id);
+    return newUser;
   }
 
   async editName(

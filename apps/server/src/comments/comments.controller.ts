@@ -32,6 +32,7 @@ import { UpdateCommentDto } from './dto/update.comment.dto';
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
+  // se usa esta ruta para los comentarios nomales y sus respuestas
   @Public()
   @Get(':user/:page')
   @HttpCode(HttpStatus.OK)

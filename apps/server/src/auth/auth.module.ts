@@ -12,6 +12,8 @@ import { ExpiresInJwt, JwtSecret } from 'src/configs';
 import { JwtStrategy } from './strategies/jwt';
 import { GoogleStrategy } from './strategies/google';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { HistoryService } from 'src/history/history.service';
+import { History, HistorySchema } from 'src/history/schemas/history.schema';
 
 @Module({
   controllers: [AuthController],
@@ -22,12 +24,17 @@ import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
     JwtStrategy,
     GoogleStrategy,
     CloudinaryService,
+    HistoryService,
   ],
   imports: [
     MongooseModule.forFeature([
       {
         name: Users.name,
         schema: UsersSchema,
+      },
+      {
+        name: History.name,
+        schema: HistorySchema,
       },
     ]),
     PassportModule,

@@ -12,6 +12,7 @@ import { PostsModule } from './posts/posts.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { LikesModule } from './likes/likes.module';
 import { CommentsModule } from './comments/comments.module';
+import { HistoryModule } from './history/history.module';
 @Module({
   imports: [
     MongooseModule.forRoot(MongoDBUri),
@@ -38,6 +39,7 @@ import { CommentsModule } from './comments/comments.module';
     PostsModule,
     LikesModule,
     CommentsModule,
+    HistoryModule,
   ],
   controllers: [],
 })

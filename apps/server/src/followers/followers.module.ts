@@ -6,11 +6,20 @@ import { Followers, FollowersSchema } from './schemas/follower.schema';
 import { UsersService } from 'src/users/users.service';
 import { Users, UsersSchema } from 'src/users/schemas/users.schema';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { HistoryService } from 'src/history/history.service';
+import { HistoryModule } from 'src/history/history.module';
+import { History, HistorySchema } from 'src/history/schemas/history.schema';
 
 @Module({
   controllers: [FollowersController],
-  providers: [FollowersService, UsersService, CloudinaryService],
+  providers: [
+    FollowersService,
+    UsersService,
+    CloudinaryService,
+    HistoryService,
+  ],
   imports: [
+    HistoryModule,
     MongooseModule.forFeature([
       {
         name: Followers.name,
@@ -19,6 +28,10 @@ import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
       {
         name: Users.name,
         schema: UsersSchema,
+      },
+      {
+        name: History.name,
+        schema: HistorySchema,
       },
     ]),
   ],

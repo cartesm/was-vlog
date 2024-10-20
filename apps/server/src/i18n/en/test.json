@@ -66,5 +66,9 @@
     "deleted": "Comment deleted successfully",
     "created": "Comment created successfully",
     "updated": "Comment updated successfully"
+  },
+  "history": {
+    "delete": "Successfully removed from history",
+    "deleteALl": "History deleted successfully"
   }
 }

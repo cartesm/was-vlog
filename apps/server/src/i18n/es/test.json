@@ -66,5 +66,9 @@
     "deleted": "Comentario borrado exitosamente",
     "created": "Comentario creado exitosamente",
     "updated": "Comentario actualizado exitosamente"
+  },
+  "history": {
+    "delete": "Eliminado del historial correctamente",
+    "deleteAll": "Historial borrado correctamente"
   }
 }
