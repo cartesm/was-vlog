@@ -70,5 +70,10 @@
   "history": {
     "delete": "Successfully removed from history",
     "deleteALl": "History deleted successfully"
+  },
+  "saved": {
+    "conflic": "You have already saved this post",
+    "saved": "The post has been saved",
+    "delete": "The post has been deleted"
   }
 }

@@ -68,7 +68,12 @@
     "updated": "Comentario actualizado exitosamente"
   },
   "history": {
-    "delete": "Eliminado del historial correctamente",
-    "deleteAll": "Historial borrado correctamente"
+    "delete": "Eliminado del historial",
+    "deleteAll": "Historial borrado"
+  },
+  "saved": {
+    "conflic": "Ya has guardado este post",
+    "saved": "Se ha guardado el post",
+    "delete": "Se ha eliminado el post"
   }
 }

@@ -13,6 +13,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { LikesModule } from './likes/likes.module';
 import { CommentsModule } from './comments/comments.module';
 import { HistoryModule } from './history/history.module';
+import { SavedModule } from './saved/saved.module';
 @Module({
   imports: [
     MongooseModule.forRoot(MongoDBUri),
@@ -40,6 +41,7 @@ import { HistoryModule } from './history/history.module';
     LikesModule,
     CommentsModule,
     HistoryModule,
+    SavedModule,
   ],
   controllers: [],
 })
