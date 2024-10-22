@@ -15,13 +15,12 @@ import { Types } from 'mongoose';
 import { UserRequest } from 'src/auth/interfaces/userRequest.interface';
 import { JwtGuard } from 'src/auth/guards/jwt-guard.guard';
 import { CreateLikeDto } from './dto/createlike.dto';
-import { PageAndUserPipe } from 'src/followers/pipes/page-and-user.pipe';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { ParseidPipe } from 'src/utils/pipes/parseid.pipe';
-import { UserAndPostPipe } from './pipes/user-and-post.pipe';
 import { ParamId } from 'src/utils/interfaces/paramId.interface';
 import { CreateCommentLikeDto } from './dto/createCommentLike.to';
-import { resourceUsage } from 'process';
+import { PageAndIdPipe } from 'src/utils/pipes/page-and-id.pipe';
+import { IPageAndId } from 'src/utils/interfaces/pageAndId.interface';
 
 @UseGuards(JwtGuard)
 @Controller('likes')
@@ -40,12 +39,10 @@ export class LikesController {
 
   //TODO: cambiar el "Page and user pipe" para que sea un generico
   @Public()
-  @Get('p/p/:user/:page')
+  @Get('p/p/:id/:page')
   @HttpCode(HttpStatus.OK)
-  async getLikesByPost(
-    @Param(PageAndUserPipe) param: { user: Types.ObjectId; page: number },
-  ) {
-    return await this.likesService.getUsersThatLikePost(param.user, param.page);
+  async getLikesByPost(@Param(PageAndIdPipe) param: IPageAndId) {
+    return await this.likesService.getUsersThatLikePost(param.id, param.page);
   }
 
   @Delete('p/:id')
@@ -91,12 +88,12 @@ export class LikesController {
     return await this.likesService.getAllLikesInAPost(req.user.id, param.id);
   }
 
-  @Get('c/:user/:page')
+  @Get('c/:id/:page')
   @HttpCode(HttpStatus.OK)
   async getCommentLikesOfAUser(
-    @Param(PageAndUserPipe) param: { page: number; user: Types.ObjectId },
+    @Param(PageAndIdPipe) param: IPageAndId,
   ): Promise<any> {
-    return await this.likesService.getAllCommentLikes(param.user, param.page);
+    return await this.likesService.getAllCommentLikes(param.id, param.page);
   }
 
   @Delete('c/:id')

@@ -7,7 +7,6 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
   Put,
   Query,
@@ -21,12 +20,13 @@ import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { UserRequest } from 'src/auth/interfaces/userRequest.interface';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { PostsType } from './schemas/post.schema';
-import { PageAndUserPipe } from 'src/followers/pipes/page-and-user.pipe';
 import { Types } from 'mongoose';
 import { SearchPipe } from './pipes/search.pipe';
 import { UpdateInfoPostDto } from './dto/updateInfoPost.dto';
 import { UpdateDataPostDto } from './dto/updateDataPost.dto';
 import { IsAuhtorGuard } from './guards/is-auhtor.guard';
+import { PageAndIdPipe } from 'src/utils/pipes/page-and-id.pipe';
+import { IPageAndId } from 'src/utils/interfaces/pageAndId.interface';
 
 @UseGuards(JwtGuard)
 @Controller('posts')
@@ -42,13 +42,13 @@ export class PostsController {
 
   @Public()
   @HttpCode(HttpStatus.OK)
-  @Get('user/:user/:page')
+  @Get('user/:id/:page')
   async getUserPost(
     @Query('order', ParseIntPipe) querry: { order: number },
-    @Param(PageAndUserPipe) param: { page: number; user: Types.ObjectId },
+    @Param(PageAndIdPipe) param: IPageAndId,
   ): Promise<any> {
     return this.postsService.getPostOfAnUser(
-      param.user,
+      param.id,
       param.page,
       querry.order,
     );
@@ -57,10 +57,8 @@ export class PostsController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Get('best/:user/:page')
-  async getBestOfAnUser(
-    @Param(PageAndUserPipe) param: { page: number; user: Types.ObjectId },
-  ): Promise<any> {
-    return this.postsService.getBestOfAnUser(param.user, param.page);
+  async getBestOfAnUser(@Param(PageAndIdPipe) param: IPageAndId): Promise<any> {
+    return this.postsService.getBestOfAnUser(param.id, param.page);
   }
 
   @Public()

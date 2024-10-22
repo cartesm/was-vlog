@@ -18,6 +18,7 @@ import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { CreateTagDto } from './dto/createTag.dto';
 import { UpdateTagPipe } from './pipes/update.pipe';
 import { SearchTagPipe } from './pipes/search-tag.pipe';
+import { TagsType } from './schemas/tag.schema';
 
 @UseGuards(JwtGuard)
 @Controller('tags')
@@ -35,7 +36,7 @@ export class TagsController {
 
   @Get(':tagName')
   @HttpCode(HttpStatus.OK)
-  async getTag(@Param() param: { tagName: string }) {
+  async getTag(@Param() param: { tagName: string }): Promise<TagsType> {
     return await this.tagsService.getTag(param.tagName);
   }
 

@@ -16,9 +16,7 @@ import {
 import { CommentsService } from './comments.service';
 import { JwtGuard } from 'src/auth/guards/jwt-guard.guard';
 import { Public } from 'src/auth/decorators/public.decorator';
-import { retry } from 'rxjs';
 import { UserRequest } from 'src/auth/interfaces/userRequest.interface';
-import { PageAndUserPipe } from 'src/followers/pipes/page-and-user.pipe';
 import { Types } from 'mongoose';
 import { OrderQueryPipe } from './pipes/order-query.pipe';
 import { CreateCommentDto } from './dto/create.comment.dto';
@@ -26,6 +24,8 @@ import { ParseidPipe } from 'src/utils/pipes/parseid.pipe';
 import { ParamId } from 'src/utils/interfaces/paramId.interface';
 import { ValidateUserGuard } from './guards/validate-user.guard';
 import { UpdateCommentDto } from './dto/update.comment.dto';
+import { PageAndIdPipe } from 'src/utils/pipes/page-and-id.pipe';
+import { IPageAndId } from 'src/utils/interfaces/pageAndId.interface';
 
 @UseGuards(JwtGuard)
 @Controller('comments')
@@ -34,15 +34,15 @@ export class CommentsController {
 
   // se usa esta ruta para los comentarios nomales y sus respuestas
   @Public()
-  @Get(':user/:page')
+  @Get(':id/:page')
   @HttpCode(HttpStatus.OK)
   async getComments(
-    @Param(PageAndUserPipe)
-    param: { page: number; user: Types.ObjectId },
+    @Param(PageAndIdPipe)
+    param: IPageAndId,
     @Query(OrderQueryPipe) query: { order: number; respond: Types.ObjectId },
   ): Promise<any> {
     return await this.commentsService.getComments(
-      param.user,
+      param.id,
       param.page,
       query.order,
       query.respond,
