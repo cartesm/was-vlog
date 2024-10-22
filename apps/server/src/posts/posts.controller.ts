@@ -23,12 +23,8 @@ import { Public } from 'src/auth/decorators/public.decorator';
 import { PostsType } from './schemas/post.schema';
 import { PageAndUserPipe } from 'src/followers/pipes/page-and-user.pipe';
 import { Types } from 'mongoose';
-import { promises } from 'dns';
-import { ParseidPipe } from 'src/utils/pipes/parseid.pipe';
-import { query } from 'express';
 import { SearchPipe } from './pipes/search.pipe';
 import { UpdateInfoPostDto } from './dto/updateInfoPost.dto';
-import { ParamId } from 'src/utils/interfaces/paramId.interface';
 import { UpdateDataPostDto } from './dto/updateDataPost.dto';
 import { IsAuhtorGuard } from './guards/is-auhtor.guard';
 
@@ -90,10 +86,10 @@ export class PostsController {
     );
   }
 
-  // ? para tomar posts por tag se usa els easrch con solo el tag
+  // ? para tomar posts por tag se usa el search con solo el tag
   @Put('info/:name')
   @UseGuards(IsAuhtorGuard)
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.OK)
   async updateInfoPost(
     @Param() param: { name: string },
     @Body() body: UpdateInfoPostDto,
@@ -103,7 +99,7 @@ export class PostsController {
 
   @Put('data/:name')
   @UseGuards(IsAuhtorGuard)
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.OK)
   async updateInfoData(
     @Param() param: { name: string },
     @Body() body: UpdateDataPostDto,
@@ -113,7 +109,7 @@ export class PostsController {
 
   @Delete(':name')
   @UseGuards(IsAuhtorGuard)
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deletePost(
     @Param() param: { name: string },
     @Req() req: UserRequest,

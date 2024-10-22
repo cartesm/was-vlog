@@ -1,15 +1,17 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { Saved, SavedType } from './schemas/saved.schema';
 import { PaginateModel, Types } from 'mongoose';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Injectable()
 export class SavedService {
   constructor(
     @InjectModel(Saved.name) private savedModel: PaginateModel<SavedType>,
     private i18n: I18nService,
+    private exceptions: ExceptionsService,
   ) {}
 
   async savePost(
@@ -17,17 +19,13 @@ export class SavedService {
     post: Types.ObjectId,
   ): Promise<ResponseWithMessage> {
     if (await this.savedModel.findOne({ user, post }))
-      throw new ConflictException(
-        this.i18n.t('test.saved.conflict', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+      this.exceptions.throwConflict('test.saved.conflict');
+
     await new this.savedModel({ user, post }).save();
     return {
       message: this.i18n.t('test.saved.saved'),
     };
   }
-
   async getAllSaved(user: Types.ObjectId, page: number): Promise<any> {
     return await this.savedModel.paginate(
       { user },
@@ -42,7 +40,6 @@ export class SavedService {
       },
     );
   }
-
   async deleteSaved(
     user: Types.ObjectId,
     post: Types.ObjectId,

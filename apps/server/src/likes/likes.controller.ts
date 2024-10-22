@@ -41,6 +41,7 @@ export class LikesController {
   //TODO: cambiar el "Page and user pipe" para que sea un generico
   @Public()
   @Get('p/p/:user/:page')
+  @HttpCode(HttpStatus.OK)
   async getLikesByPost(
     @Param(PageAndUserPipe) param: { user: Types.ObjectId; page: number },
   ) {
@@ -48,6 +49,7 @@ export class LikesController {
   }
 
   @Delete('p/:id')
+  @HttpCode(HttpStatus.OK)
   async deleteLikePost(
     @Param(ParseidPipe) param: { id: Types.ObjectId },
     @Req() req: UserRequest,
@@ -56,6 +58,7 @@ export class LikesController {
   }
 
   @Get('p/liked/:id')
+  @HttpCode(HttpStatus.OK)
   async isLikedPost(
     @Param(ParseidPipe) param: { id: Types.ObjectId },
     @Req() req: UserRequest,
@@ -97,7 +100,7 @@ export class LikesController {
   }
 
   @Delete('c/:id')
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async unlikePost(
     @Param(ParseidPipe) param: ParamId,
     @Req() req: UserRequest,

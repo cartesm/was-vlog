@@ -9,6 +9,7 @@ import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { HistoryService } from 'src/history/history.service';
 import { HistoryModule } from 'src/history/history.module';
 import { History, HistorySchema } from 'src/history/schemas/history.schema';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Module({
   controllers: [FollowersController],
@@ -17,6 +18,7 @@ import { History, HistorySchema } from 'src/history/schemas/history.schema';
     UsersService,
     CloudinaryService,
     HistoryService,
+    ExceptionsService,
   ],
   imports: [
     HistoryModule,

@@ -36,7 +36,7 @@ export class UsersController {
 
   @Public()
   @Get(':id')
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.OK)
   async getOneUser(@Param(ParseidPipe) param: ParamId) {
     return await this.usersService.getPublicUserData(param.id);
   }
@@ -61,7 +61,7 @@ export class UsersController {
 
   @Patch('username')
   @UseGuards(ValidatePasswordGuard)
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.OK)
   async changeUsername(
     @Req() req: UserRequest,
     @Body() body: ChangeUserNameDto,
@@ -71,7 +71,7 @@ export class UsersController {
 
   @Patch('password')
   @UseGuards(ValidatePasswordGuard)
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.OK)
   async changePassword(
     @Req() req: UserRequest,
     @Body() body: ChangePasswordDto,

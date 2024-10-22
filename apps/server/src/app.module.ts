@@ -14,6 +14,7 @@ import { LikesModule } from './likes/likes.module';
 import { CommentsModule } from './comments/comments.module';
 import { HistoryModule } from './history/history.module';
 import { SavedModule } from './saved/saved.module';
+import { UtilsModule } from './utils/utils.module';
 @Module({
   imports: [
     MongooseModule.forRoot(MongoDBUri),
@@ -42,6 +43,7 @@ import { SavedModule } from './saved/saved.module';
     CommentsModule,
     HistoryModule,
     SavedModule,
+    UtilsModule,
   ],
   controllers: [],
 })

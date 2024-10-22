@@ -1,21 +1,10 @@
-import {
-  ArgumentMetadata,
-  Injectable,
-  NotAcceptableException,
-  PipeTransform,
-} from '@nestjs/common';
+import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 import { isValidObjectId } from 'mongoose';
-import { I18nContext, I18nService } from 'nestjs-i18n';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Injectable()
 export class SearchPipe implements PipeTransform {
-  constructor(private i18n: I18nService) {}
-
-  throwNotAceptable(error: string) {
-    throw new NotAcceptableException(
-      this.i18n.t(error, { lang: I18nContext.current().lang }),
-    );
-  }
+  constructor(private exceptions: ExceptionsService) {}
 
   transform(
     value: {
@@ -35,19 +24,19 @@ export class SearchPipe implements PipeTransform {
     const parsedCreated: number | typeof NaN = Number(created);
 
     if (isNaN(parsedAlphabetical) || isNaN(parsedCreated))
-      this.throwNotAceptable('test.orderPageNotNumber');
+      this.exceptions.throwUnauthorized('test.orderPageNotNumber');
     if (![-1, 1].includes(parsedAlphabetical))
-      this.throwNotAceptable('test.orderPageInvalid');
+      this.exceptions.throwNotAceptable('test.orderPageInvalid');
     if (![-1, 1].includes(parsedCreated))
-      this.throwNotAceptable('test.orderPageInvalid');
+      this.exceptions.throwNotAceptable('test.orderPageInvalid');
     if (tags)
       if (!Array.isArray(tags) || tags.length <= 0)
-        this.throwNotAceptable('test.pipes.notArrayTags');
+        this.exceptions.throwNotAceptable('test.pipes.notArrayTags');
       else
         tags.forEach(
           (tag) =>
             !isValidObjectId(tag) &&
-            this.throwNotAceptable('test.pipes.notMongoIdTag'),
+            this.exceptions.throwNotAceptable('test.pipes.notMongoIdTag'),
         );
 
     return {

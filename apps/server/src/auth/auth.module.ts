@@ -14,6 +14,7 @@ import { GoogleStrategy } from './strategies/google';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { HistoryService } from 'src/history/history.service';
 import { History, HistorySchema } from 'src/history/schemas/history.schema';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Module({
   controllers: [AuthController],
@@ -25,6 +26,7 @@ import { History, HistorySchema } from 'src/history/schemas/history.schema';
     GoogleStrategy,
     CloudinaryService,
     HistoryService,
+    ExceptionsService,
   ],
   imports: [
     MongooseModule.forFeature([

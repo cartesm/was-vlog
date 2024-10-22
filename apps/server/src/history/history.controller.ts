@@ -7,7 +7,6 @@ import {
   HttpStatus,
   Param,
   Patch,
-  Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -18,6 +17,7 @@ import { UserRequest } from 'src/auth/interfaces/userRequest.interface';
 import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { ParamId } from 'src/utils/interfaces/paramId.interface';
 import { ParseidPipe } from 'src/utils/pipes/parseid.pipe';
+import { Types } from 'mongoose';
 
 @UseGuards(JwtGuard)
 @Controller('history')
@@ -25,7 +25,7 @@ export class HistoryController {
   constructor(private readonly historyService: HistoryService) {}
 
   @Patch()
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.OK)
   async addItemToHistory(
     @Body() body: AddHistoryItemDto,
     @Req() req: UserRequest,
@@ -35,12 +35,14 @@ export class HistoryController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getHistory(@Req() req: UserRequest): Promise<any> {
+  async getHistory(
+    @Req() req: UserRequest,
+  ): Promise<{ history: Types.ObjectId[] }> {
     return await this.historyService.getHistory(req.user.id);
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteItemFromHistory(
     @Req() req: UserRequest,
     @Param(ParseidPipe) param: ParamId,
@@ -49,7 +51,7 @@ export class HistoryController {
   }
 
   @Delete()
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.OK)
   async deleteHistory(@Req() req: UserRequest): Promise<ResponseWithMessage> {
     return this.historyService.deleteAllHistory(req.user.id);
   }

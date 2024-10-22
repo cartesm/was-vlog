@@ -50,7 +50,7 @@ export class SavedController {
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteSaved(
     @Param(ParseidPipe) param: ParamId,
     @Req() req: UserRequest,

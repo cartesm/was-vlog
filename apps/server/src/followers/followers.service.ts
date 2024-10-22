@@ -1,10 +1,11 @@
-import { ConflictException, HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { PaginateModel, Types } from 'mongoose';
 import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { Followers, FollowersType } from './schemas/follower.schema';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { UsersService } from 'src/users/users.service';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Injectable()
 export class FollowersService {
@@ -13,6 +14,7 @@ export class FollowersService {
     private followersModel: PaginateModel<FollowersType>,
     private i18n: I18nService,
     private userService: UsersService,
+    private exceptions: ExceptionsService,
   ) {}
   async followUser(
     user: Types.ObjectId,
@@ -22,12 +24,7 @@ export class FollowersService {
       user,
       follower: you,
     });
-    if (follow)
-      throw new ConflictException(
-        this.i18n.t('test.followers.exists', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+    if (follow) this.exceptions.throwConflict('test.followers.exists');
 
     await new this.followersModel({ user, follower: you }).save();
 
@@ -37,11 +34,9 @@ export class FollowersService {
       }),
     };
   }
-
   async getFollowersCount(user: Types.ObjectId): Promise<number> {
     return await this.followersModel.countDocuments({ user });
   }
-
   async isFollow(follower: Types.ObjectId, you: Types.ObjectId) {
     const followMatch: FollowersType = await this.followersModel
       .findOne({
@@ -61,7 +56,6 @@ export class FollowersService {
       followersCount: await this.getFollowersCount(follower),
     };
   }
-
   async unfollowUser(
     you: Types.ObjectId,
     user: Types.ObjectId,
@@ -76,7 +70,6 @@ export class FollowersService {
       }),
     };
   }
-
   async deleteFollower(
     you: Types.ObjectId,
     user: Types.ObjectId,
@@ -90,7 +83,6 @@ export class FollowersService {
       message: this.i18n.t('test.followers.deleteFollower'),
     };
   }
-
   async getFollowers(page: number, user: Types.ObjectId) {
     return await this.followersModel.paginate(
       {

@@ -1,21 +1,12 @@
-import {
-  ArgumentMetadata,
-  Injectable,
-  NotAcceptableException,
-  PipeTransform,
-} from '@nestjs/common';
-import { I18nContext, I18nService } from 'nestjs-i18n';
+import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Injectable()
 export class DeletePipe implements PipeTransform {
-  constructor(private i18n: I18nService) {}
+  constructor(private exceptions: ExceptionsService) {}
   transform(value: { name: string }, metadata: ArgumentMetadata) {
     if (!value.name)
-      throw new NotAcceptableException(
-        this.i18n.t('test.cloudinary.nameNotFound', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+      this.exceptions.throwNotAceptable('test.cloudinary.nameNotFound');
     return value.name;
   }
 }

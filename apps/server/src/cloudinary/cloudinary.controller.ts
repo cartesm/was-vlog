@@ -23,7 +23,7 @@ export class CloudinaryController {
   ) {}
 
   @Post('img')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('img'))
   async uploadImage(
     @UploadedFile(ParseFilePipe) file: Express.Multer.File,
@@ -39,7 +39,7 @@ export class CloudinaryController {
   }
 
   @Delete(':name')
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteImage(
     @Param(DeletePipe) param: string,
   ): Promise<ResponseWithMessage> {

@@ -3,10 +3,11 @@ import { TagsService } from './tags.service';
 import { TagsController } from './tags.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Tags, TagsSchema } from './schemas/tag.schema';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Module({
   controllers: [TagsController],
-  providers: [TagsService],
+  providers: [TagsService, ExceptionsService],
   imports: [
     MongooseModule.forFeature([
       {

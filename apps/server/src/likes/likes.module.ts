@@ -8,10 +8,11 @@ import { CommentsService } from 'src/comments/comments.service';
 import { PostsService } from 'src/posts/posts.service';
 import { Posts, PostsSchema } from 'src/posts/schemas/post.schema';
 import { Comments, CommentSchema } from 'src/comments/schemas/comments.schema';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Module({
   controllers: [LikesController],
-  providers: [LikesService, PostsService, CommentsService],
+  providers: [LikesService, PostsService, CommentsService, ExceptionsService],
   imports: [
     MongooseModule.forFeature([
       {

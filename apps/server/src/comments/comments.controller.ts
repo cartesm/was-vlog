@@ -60,7 +60,7 @@ export class CommentsController {
 
   @Delete(':id')
   @UseGuards(ValidateUserGuard)
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteComment(
     @Param(ParseidPipe) param: ParamId,
     @Req() req: UserRequest,
@@ -84,7 +84,7 @@ export class CommentsController {
 
   @Put(':id')
   @UseGuards(ValidateUserGuard)
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.OK)
   async updateComment(
     @Body() body: UpdateCommentDto,
     @Param(ParseidPipe) param: ParamId,

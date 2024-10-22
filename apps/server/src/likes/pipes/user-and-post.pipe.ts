@@ -1,19 +1,14 @@
-import {
-  ArgumentMetadata,
-  Injectable,
-  NotAcceptableException,
-  PipeTransform,
-} from '@nestjs/common';
+import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 import { isValidObjectId } from 'mongoose';
-import { I18nService } from 'nestjs-i18n';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Injectable()
 export class UserAndPostPipe implements PipeTransform {
-  constructor(private i18n: I18nService) {}
+  constructor(private exception: ExceptionsService) {}
 
   transform(value: { user: string; post: string }, metadata: ArgumentMetadata) {
     if (!isValidObjectId(value.user) || !isValidObjectId(value.post))
-      throw new NotAcceptableException(this.i18n.t('test.idNotAcceptable'));
+      this.exception.throwNotAceptable('test.idNotAcceptable');
 
     return value;
   }

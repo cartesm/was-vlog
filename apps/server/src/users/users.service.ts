@@ -16,11 +16,8 @@ import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { sevenMinutesInMilisecons } from 'src/configs';
-import {
-  Followers,
-  FollowersType,
-} from 'src/followers/schemas/follower.schema';
 import { HistoryService } from 'src/history/history.service';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 @Injectable()
 export class UsersService {
   constructor(
@@ -29,23 +26,17 @@ export class UsersService {
     private cloudinaryService: CloudinaryService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private historyService: HistoryService,
+    private exceptions: ExceptionsService,
   ) {}
 
   async getPublicUserData(userId: Types.ObjectId): Promise<UsersType> {
-    //await this.cacheManager.reset();
     const cacheMatch: string = await this.cacheManager.get('user:' + userId);
     if (cacheMatch) return JSON.parse(cacheMatch);
-    console.log('not cache');
     const userMatch: UsersType = await this.UsersModel.findById(userId).select(
       '-email -pass -__v -updatedAt',
     );
 
-    if (!userMatch)
-      throw new NotFoundException(
-        this.i18n.t('test.users.notFound', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+    if (!userMatch) this.exceptions.throwNotFound('test.users.notFound');
     await this.cacheManager.set(
       'user:' + userMatch._id,
       JSON.stringify(userMatch),
@@ -55,12 +46,7 @@ export class UsersService {
   }
   async getUserDataByEmail(email: string): Promise<UsersType> {
     const userMatch: UsersType = await this.UsersModel.findOne({ email });
-    if (!userMatch)
-      throw new NotFoundException(
-        this.i18n.t('test.users.notFound', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+    if (!userMatch) this.exceptions.throwNotFound('test.users.notFound');
     return userMatch;
   }
   async userExists(
@@ -81,24 +67,17 @@ export class UsersService {
     });
 
     if (userMatch.email)
-      throw new ConflictException(
-        this.i18n.t('test.auth.conflicWithEmail', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+      this.exceptions.throwConflict('test.auth.conflicWithEmail');
 
     if (userMatch.username)
-      throw new ConflictException(
-        this.i18n.t('test.auth.conflicWithUsername', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+      this.exceptions.throwConflict('test.auth.conflicWithUsername');
 
     const newUser: UsersType = await new this.UsersModel(userData).save();
     await this.historyService.createHistory(newUser.id);
     return newUser;
   }
 
+  // edit secction
   async editName(
     userID: Types.ObjectId,
     name: string,
@@ -119,7 +98,6 @@ export class UsersService {
       data: updatedName.name,
     };
   }
-
   async editDescription(
     userID: Types.ObjectId,
     description: string,
@@ -144,18 +122,12 @@ export class UsersService {
   }
 
   //---
-
   async changeUsername(
     userId: Types.ObjectId,
     username: string,
   ): Promise<ResponseWithMessage> {
     const exists: UsersType = await this.userExists(null, username);
-    if (exists)
-      throw new ConflictException(
-        this.i18n.t('test.auth.conflicWithUsername', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+    if (exists) this.exceptions.throwConflict('test.auth.conflicWithUsername');
 
     const updatedUsername: UsersType = await this.UsersModel.findOneAndUpdate(
       { _id: userId },
@@ -178,12 +150,15 @@ export class UsersService {
     userId: Types.ObjectId,
     password: string,
   ): Promise<ResponseWithMessage> {
+    //TODO:validar si existe contraseña o no
     const updatedPassword: UsersType = await this.UsersModel.findOneAndUpdate(
       { _id: userId },
       { pass: await bcrypt.hash(password, 12) },
       { new: true },
     ).select('-email -password');
+
     // TODO: NOTIFICAR VIA EMAIL
+
     await this.cacheManager.set(
       'user:' + updatedPassword._id,
       JSON.stringify(updatedPassword),
@@ -195,7 +170,6 @@ export class UsersService {
       }),
     };
   }
-
   async changeUserProfileImage(
     file: Express.Multer.File,
     userId: Types.ObjectId,

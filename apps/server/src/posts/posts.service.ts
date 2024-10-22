@@ -17,6 +17,7 @@ import { Cache } from 'cache-manager';
 import { UpdateInfoPostDto } from './dto/updateInfoPost.dto';
 import { threeHoursInMiliseconds } from 'src/configs';
 import { UpdateDataPostDto } from './dto/updateDataPost.dto';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Injectable()
 export class PostsService {
@@ -24,13 +25,13 @@ export class PostsService {
     @InjectModel(Posts.name) private postModel: PaginateModel<PostsType>,
     private i18n: I18nService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private exceptions: ExceptionsService,
   ) {}
 
   async existsThisPost(name: string): Promise<Boolean> {
     const postMactch: PostsType = await this.postModel.findOne({ name });
     return !!postMactch;
   }
-
   async getOnePost(name: string): Promise<PostsType> {
     const cacheMatch: string = await this.cacheManager.get(
       'post:' + name.replaceAll(' ', '-'),
@@ -41,12 +42,7 @@ export class PostsService {
       .findOne({ name })
       .populate('user tags', 'username name _id img');
 
-    if (!postMatch)
-      throw new NotFoundException(
-        this.i18n.t('test.posts.notExists', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+    if (!postMatch) this.exceptions.throwNotFound('test.posts.notExists');
     await this.cacheManager.set(
       'post:' + name.replaceAll(' ', '-'),
       JSON.stringify(postMatch),
@@ -54,7 +50,6 @@ export class PostsService {
     );
     return postMatch;
   }
-
   async getPostOfAnUser(
     userID: Types.ObjectId,
     page: number = 1,
@@ -78,7 +73,6 @@ export class PostsService {
       },
     );
   }
-
   async getBestOfAnUser(user: Types.ObjectId, page: number = 1): Promise<any> {
     return await this.postModel.paginate(
       { user },
@@ -96,7 +90,6 @@ export class PostsService {
       },
     );
   }
-
   async search(
     name: string,
     page: number,
@@ -136,11 +129,7 @@ export class PostsService {
       !!updatePostData.name &&
       (await this.existsThisPost(updatePostData.name))
     )
-      throw new ConflictException(
-        this.i18n.t('test.posts.alreadyExists', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+      this.exceptions.throwConflict('test.posts.alreadyExists');
 
     const updatedPost: PostsType = await this.postModel.findOneAndUpdate(
       { name },
@@ -180,29 +169,28 @@ export class PostsService {
       }),
     };
   }
-
   async deletePost(
     name: string,
     user: Types.ObjectId,
   ): Promise<ResponseWithMessage> {
-    await this.postModel.findOneAndDelete({ name });
+    const deletedPost: PostsType = await this.postModel.findOneAndDelete({
+      name,
+    });
+    await this.cacheManager.del(
+      'post:' + deletedPost.name.replaceAll(' ', '-'),
+    );
     return {
       message: this.i18n.t('test.posts.deleted', {
         lang: I18nContext.current().lang,
       }),
     };
   }
-
   async createPost(
     postData: CreatePostDto,
     userID: Types.ObjectId,
   ): Promise<ResponseWithMessage> {
     if (await this.existsThisPost(postData.name))
-      throw new ConflictException(
-        this.i18n.t('test.posts.alreadyExists', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+      this.exceptions.throwConflict('test.posts.alreadyExists');
     const newPost: PostsType = await new this.postModel({
       ...postData,
       user: userID,
@@ -218,7 +206,6 @@ export class PostsService {
       }),
     };
   }
-
   async modifyLikeCount(postId: Types.ObjectId, value: number): Promise<void> {
     await this.postModel
       .findByIdAndUpdate(postId, { $inc: { likeCount: value } })

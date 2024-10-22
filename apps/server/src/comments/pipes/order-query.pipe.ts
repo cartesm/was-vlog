@@ -1,15 +1,10 @@
-import {
-  ArgumentMetadata,
-  Injectable,
-  NotAcceptableException,
-  PipeTransform,
-} from '@nestjs/common';
+import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 import { isValidObjectId, Types } from 'mongoose';
-import { I18nContext, I18nService } from 'nestjs-i18n';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Injectable()
 export class OrderQueryPipe implements PipeTransform {
-  constructor(private i18n: I18nService) {}
+  constructor(private exceptions: ExceptionsService) {}
 
   transform(
     value: { order: number; respond: Types.ObjectId },
@@ -18,24 +13,13 @@ export class OrderQueryPipe implements PipeTransform {
     const parsedOrder: number | typeof NaN = Number(value.order);
 
     if (isNaN(parsedOrder))
-      throw new NotAcceptableException(
-        this.i18n.t('test.orderPageNotNumber', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+      this.exceptions.throwNotAceptable('test.orderPageNotNumber');
+
     if (![1, -1].includes(parsedOrder))
-      throw new NotAcceptableException(
-        this.i18n.t('test.orderPageInvalid', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+      this.exceptions.throwNotAceptable('test.orderPageInvalid');
 
     if (value.respond && isValidObjectId(value.respond))
-      throw new NotAcceptableException(
-        this.i18n.t('test.idNotAcceptable', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+      this.exceptions.throwNotAceptable('test.idNotAcceptable');
 
     return { order: parsedOrder, response: value.respond };
   }

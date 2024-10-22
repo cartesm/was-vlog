@@ -17,12 +17,7 @@ import { RegisterDto } from './dto/register.dto';
 import { GoogleGuard } from './guards/google.guard';
 import { Request, Response } from 'express';
 import { frontUrl, sixHoursInMiliseconds } from 'src/configs';
-import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
-import {
-  I18nContext,
-  I18nService,
-  I18nValidationExceptionFilter,
-} from 'nestjs-i18n';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Controller('auth')
 export class AuthController {

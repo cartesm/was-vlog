@@ -41,11 +41,11 @@ export class HistoryService {
     );
     return;
   }
-
-  async getHistory(user: Types.ObjectId): Promise<any> {
+  async getHistory(
+    user: Types.ObjectId,
+  ): Promise<{ history: Types.ObjectId[] }> {
     return await this.historyModel.findOne({ user }).populate('history');
   }
-
   async deleteItemOfHistory(
     user: Types.ObjectId,
     item: Types.ObjectId,
@@ -66,7 +66,6 @@ export class HistoryService {
     await new this.historyModel({ user }).save();
     return;
   }
-
   async deleteAllHistory(user: Types.ObjectId): Promise<ResponseWithMessage> {
     await this.historyModel.findOneAndUpdate({ user }, { history: [] });
     return {

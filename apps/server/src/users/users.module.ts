@@ -7,10 +7,16 @@ import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { History, HistorySchema } from 'src/history/schemas/history.schema';
 import { HistoryModule } from 'src/history/history.module';
 import { HistoryService } from 'src/history/history.service';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Module({
   controllers: [UsersController],
-  providers: [UsersService, CloudinaryService, HistoryService],
+  providers: [
+    UsersService,
+    CloudinaryService,
+    HistoryService,
+    ExceptionsService,
+  ],
   imports: [
     HistoryModule,
     MongooseModule.forFeature([

@@ -34,7 +34,7 @@ export class FollowersController {
   }
 
   @Get(':page')
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.OK)
   async getUserFollings(
     @Req() req: UserRequest,
     @Param('page', ParseIntPipe) param: number,
@@ -61,7 +61,7 @@ export class FollowersController {
   }
 
   @Get('isFollow/:id')
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.OK)
   async getIsFollow(
     @Param(ParseidPipe) param: ParamId,
     @Req() req: UserRequest,

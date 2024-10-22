@@ -1,12 +1,11 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { PostLikes, PostLikeType } from './schemas/post.like.schema';
 import { PaginateModel, Types } from 'mongoose';
-import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
-import { I18nContext, I18nService } from 'nestjs-i18n';
 import { CommentLike, CommentLikeType } from './schemas/comment.like.schema';
 import { CommentsService } from 'src/comments/comments.service';
 import { PostsService } from 'src/posts/posts.service';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Injectable()
 export class LikesService {
@@ -15,9 +14,9 @@ export class LikesService {
     private postLikeModel: PaginateModel<PostLikeType>,
     @InjectModel(CommentLike.name)
     private commentLikeModel: PaginateModel<CommentLikeType>,
-    private i18n: I18nService,
     private postService: PostsService,
     private commentService: CommentsService,
+    private exceptions: ExceptionsService,
   ) {}
 
   async likePost(
@@ -28,12 +27,7 @@ export class LikesService {
       post: postId,
       userId,
     });
-    if (likeMatch)
-      throw new ConflictException(
-        this.i18n.t('test.likes.alreadyExists', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+    if (likeMatch) this.exceptions.throwConflict('test.likes.alreadyExists');
     await new this.postLikeModel({
       post: postId,
       userId,
@@ -41,7 +35,6 @@ export class LikesService {
     await this.postService.modifyLikeCount(postId, 1);
     return;
   }
-
   async getUsersThatLikePost(post: Types.ObjectId, page: number) {
     return await this.postLikeModel.paginate(
       { post },
@@ -67,7 +60,6 @@ export class LikesService {
     await this.postService.modifyLikeCount(post, -1);
     return;
   }
-
   async isLikedPost(
     post: Types.ObjectId,
     user: Types.ObjectId,
@@ -93,11 +85,7 @@ export class LikesService {
     });
 
     if (likeMatch)
-      throw new ConflictException(
-        this.i18n.t('test.likes.alreadyExistsComment', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+      this.exceptions.throwConflict('test.likes.alreadyExistsComment');
     await new this.commentLikeModel({
       comment: commentId,
       userId,
@@ -108,7 +96,6 @@ export class LikesService {
 
     return;
   }
-
   async getAllLikesInAPost(
     user: Types.ObjectId,
     post: Types.ObjectId,
@@ -117,7 +104,6 @@ export class LikesService {
       .find({ userId: user, post })
       .select('_id');
   }
-
   async getAllCommentLikes(user: Types.ObjectId, page: number): Promise<any> {
     return await this.commentLikeModel.paginate(
       { userId: user },
@@ -132,7 +118,6 @@ export class LikesService {
       },
     );
   }
-
   async dislikeComment(
     user: Types.ObjectId,
     comment: Types.ObjectId,

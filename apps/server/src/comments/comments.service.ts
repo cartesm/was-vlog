@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotAcceptableException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { Comments, CommentType } from './schemas/comments.schema';
@@ -10,6 +6,7 @@ import { PaginateModel, Types } from 'mongoose';
 import { CreateCommentDto } from './dto/create.comment.dto';
 import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { UpdateCommentDto } from './dto/update.comment.dto';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Injectable()
 export class CommentsService {
@@ -17,6 +14,7 @@ export class CommentsService {
     @InjectModel(Comments.name)
     private commentModel: PaginateModel<CommentType>,
     private i18n: I18nService,
+    private exceptions: ExceptionsService,
   ) {}
 
   async getComments(
@@ -58,11 +56,7 @@ export class CommentsService {
       user: userId,
     });
     if (commentMatch)
-      throw new NotAcceptableException(
-        this.i18n.t('test.comment.alreadyExists', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+      this.exceptions.throwNotAceptable('test.comment.alreadyExists');
 
     let dataComment: any = {
       user: userId,

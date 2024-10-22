@@ -3,8 +3,6 @@ import { HistoryService } from './history.service';
 import { HistoryController } from './history.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { History, HistorySchema } from './schemas/history.schema';
-import { UsersModule } from 'src/users/users.module';
-import { FollowersModule } from 'src/followers/followers.module';
 
 @Module({
   controllers: [HistoryController],

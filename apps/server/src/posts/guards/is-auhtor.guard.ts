@@ -1,20 +1,14 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  ImATeapotException,
-  Injectable,
-} from '@nestjs/common';
-import { I18nContext, I18nService } from 'nestjs-i18n';
-import { Observable } from 'rxjs';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { UserRequest } from 'src/auth/interfaces/userRequest.interface';
 import { PostsService } from '../posts.service';
 import { PostsType } from '../schemas/post.schema';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Injectable()
 export class IsAuhtorGuard implements CanActivate {
   constructor(
-    private i18n: I18nService,
     private postService: PostsService,
+    private exceptions: ExceptionsService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -23,11 +17,7 @@ export class IsAuhtorGuard implements CanActivate {
 
     const postToUse: PostsType = await this.postService.getOnePost(params.name);
     if (postToUse.user != user.id)
-      throw new ImATeapotException(
-        this.i18n.t('test.auth.notMainUser', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+      this.exceptions.throwITeapot('test.auth.notMainUser');
 
     return true;
   }

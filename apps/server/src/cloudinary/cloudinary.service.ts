@@ -3,7 +3,6 @@ import { CloudinaryResponse } from './types/cloudinaryResponde.type';
 import { v2 as cloudinary } from 'cloudinary';
 import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { I18nContext, I18nService } from 'nestjs-i18n';
-import { CloudinaryApiKEY } from 'src/configs';
 const streamifier = require('streamifier');
 @Injectable()
 export class CloudinaryService {
@@ -24,7 +23,7 @@ export class CloudinaryService {
 
   async deleteImage(image: string): Promise<ResponseWithMessage> {
     try {
-      const deleteResponse: any = await cloudinary.uploader.destroy(image);
+      await cloudinary.uploader.destroy(image);
 
       return {
         message: this.i18n.t('test.cloudinary.deleteSuccess', {

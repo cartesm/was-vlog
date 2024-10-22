@@ -10,13 +10,13 @@ import * as bcrypt from 'bcrypt';
 import { UserRequest } from 'src/auth/interfaces/userRequest.interface';
 import { UsersType } from '../schemas/users.schema';
 import { UsersService } from '../users.service';
-import { I18nContext, I18nService } from 'nestjs-i18n';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Injectable()
 export class ValidatePasswordGuard implements CanActivate {
   constructor(
     private userService: UsersService,
-    private i18n: I18nService,
+    private exceptions: ExceptionsService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<any | Boolean> {
     const { user, body }: UserRequest = context.switchToHttp().getRequest();
@@ -24,21 +24,15 @@ export class ValidatePasswordGuard implements CanActivate {
       user.id,
     );
     if (!userMatch.pass)
-      throw new UnauthorizedException(
-        this.i18n.t('test.users.notPass', { lang: I18nContext.current().lang }),
-      );
+      this.exceptions.throwNotAceptable('test.users.notPass');
     if (!body.validationPassword)
-      throw new NotAcceptableException(
-        this.i18n.t('test.users.errorPass', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+      this.exceptions.throwNotAceptable('test.users.errorPass');
     const passwordMatch: boolean = await bcrypt.compare(
       body.validationPassword,
       userMatch.pass,
     );
     if (!passwordMatch)
-      throw new UnauthorizedException(this.i18n.t('test.auth.incorrectPass'));
+      this.exceptions.throwNotAceptable('test.auth.incorrectPass');
     return true;
   }
 }

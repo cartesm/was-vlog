@@ -1,22 +1,15 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  ImATeapotException,
-  Injectable,
-  NotAcceptableException,
-} from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { UserRequest } from 'src/auth/interfaces/userRequest.interface';
 import { CommentsService } from '../comments.service';
 import { CommentType } from '../schemas/comments.schema';
-import { isValidObjectId, Types } from 'mongoose';
-import { I18nContext, I18nService } from 'nestjs-i18n';
+import { isValidObjectId } from 'mongoose';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Injectable()
 export class ValidateUserGuard implements CanActivate {
   constructor(
     private commentService: CommentsService,
-    private i18n: I18nService,
+    private exceptions: ExceptionsService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: UserRequest = context.switchToHttp().getRequest();
@@ -24,19 +17,14 @@ export class ValidateUserGuard implements CanActivate {
     const { id: userId } = req.user;
     const { id } = req.params;
 
-    //TODO: cambiar esto despues
-    if (!isValidObjectId(id)) throw new NotAcceptableException('id mala');
+    if (!isValidObjectId(id))
+      this.exceptions.throwNotAceptable('test.idNotAcceptable');
 
     const commentMatch: CommentType = await this.commentService.findOneComment(
       id,
       userId,
     );
-    if (!commentMatch)
-      throw new ImATeapotException(
-        this.i18n.t('test.auth.notMainUser', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+    if (!commentMatch) this.exceptions.throwITeapot('test.auth.notMainUser');
 
     return true;
   }
