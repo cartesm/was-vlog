@@ -15,7 +15,7 @@ async function Header({ locale }: { locale: string }) {
         <Link href={{ pathname: "/" }} locale="en">
           en
         </Link>
-        {/*   <SelectLang /> */}
+        <SelectLang />
         <ThemeSelector />
         <nav className="flex gap-4">
           {!user ? (

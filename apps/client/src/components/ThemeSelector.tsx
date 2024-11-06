@@ -13,7 +13,7 @@ function ThemeSelector() {
       onClick={handleCheck}
       className="hover:cursor-pointer hover:bg-white rounded-md p-2 hover:bg-opacity-30"
     >
-      {theme != "dark" ? <MoonIcon /> : <SunIcon />}
+      {theme === "light" ? <MoonIcon /> : <SunIcon />}
     </div>
   );
 }
