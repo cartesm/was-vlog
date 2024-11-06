@@ -1,0 +1,11 @@
+{
+  "header": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up"
+  },
+  "locales": {
+    "es": "English",
+    "en": "Spanish"
+  },
+  "test": "dick"
+}

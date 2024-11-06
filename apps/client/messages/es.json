@@ -2,5 +2,10 @@
   "header": {
     "signIn": "Iniciar Sesion",
     "signUp": "Registrate"
-  }
+  },
+  "locales": {
+    "es": "Ingles",
+    "en": "Español"
+  },
+  "test": "pene"
 }

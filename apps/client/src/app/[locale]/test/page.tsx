@@ -1,5 +1,8 @@
-function page() {
-  return <section>test page</section>;
+import React from "react";
+import { useTranslations } from "next-intl";
+function Page() {
+  const t = useTranslations();
+  return <section>{t("test")}</section>;
 }
 
-export default page;
+export default Page;

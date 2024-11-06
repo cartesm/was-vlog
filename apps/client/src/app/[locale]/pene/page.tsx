@@ -1,7 +1,8 @@
 import React from "react";
-
-function page() {
-  return <section>penepoen</section>;
+import { useTranslations } from "next-intl";
+function Page() {
+  const t = useTranslations();
+  return <section>{t("test")}</section>;
 }
 
-export default page;
+export default Page;

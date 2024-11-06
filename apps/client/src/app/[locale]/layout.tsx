@@ -1,12 +1,10 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { routing } from "../.../../i18n/routing";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "main",
-};
+import { routing } from "@/i18n/routing";
+import Header from "@/components/Header";
+import { ThemeProvider } from "@/components/theme-provider";
+import "@/app/globals.css";
 
 export default async function LocaleLayout({
   children,
@@ -24,10 +22,18 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <body>
         <NextIntlClientProvider messages={messages}>
-          {children}
+          <ThemeProvider
+            defaultTheme="light"
+            attribute="class"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Header locale={locale} />
+            {children}
+          </ThemeProvider>
         </NextIntlClientProvider>
       </body>
     </html>
