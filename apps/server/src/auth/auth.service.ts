@@ -27,7 +27,7 @@ export class AuthService {
     const verifyPass: Boolean = bcrypt.compareSync(pass, user.pass);
     if (!verifyPass)
       throw new UnauthorizedException(
-        this.i18n.t('test.auth.icorrectPass', {
+        this.i18n.t('test.auth.incorrectPass', {
           lang: I18nContext.current().lang,
         }),
       );

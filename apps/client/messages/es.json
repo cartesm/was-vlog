@@ -3,6 +3,29 @@
     "signIn": "Iniciar Sesion",
     "signUp": "Registrate"
   },
+  "auth": {
+    "continueWith": "O continúa con",
+    "pass": "Contraseña",
+    "username": "Nombre de usuario",
+    "name": "Nombre ",
+    "placeholder": {
+      "pass": "contraseña123",
+      "email": "email@ejemplo.com",
+      "username": "pedro69",
+      "name": "Pedro Perez Pereira"
+    },
+    "auth": {
+      "emailEmpty": "El email no puede estar vacío",
+      "passEmpty": "La contraseña no puede estar vacía",
+      "emailWrong": "El email no es válido "
+    }
+  },
+  "signIn": {
+    "page": "Iniciar sesión",
+    "label": "Ingresa tus datos para acceder a tu cuenta",
+    "signUp": "Regístrate",
+    "notAccount": "¿No tienes una cuenta?"
+  },
   "locales": {
     "en": "Ingles",
     "es": "Español"

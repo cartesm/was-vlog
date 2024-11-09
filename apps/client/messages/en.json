@@ -3,6 +3,30 @@
     "signIn": "Sign In",
     "signUp": "Sign Up"
   },
+
+  "auth": {
+    "continueWith": "Or continue with",
+    "pass": "Password",
+    "username": "Username",
+    "name": "Name ",
+    "placeholder": {
+      "pass": "password123",
+      "email": "email@example.com",
+      "username": "John69",
+      "name": "John Doe"
+    },
+    "auth": {
+      "emailEmpty": "The email cannot be empty",
+      "passEmpty": "The password cannot be empty",
+      "emailWrong": "The email is not valid"
+    }
+  },
+  "signIn": {
+    "page": "Log in",
+    "label": "Enter your details to access your account",
+    "signUp": "Sign up",
+    "notAccount": "Don't have an account?"
+  },
   "locales": {
     "en": "English",
     "es": "Spanish"

@@ -10,16 +10,16 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Spinner } from "@/components/ui/spiner";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import Image from "next/image";
-import EnSvg from "../assets/en.svg";
-import EsSvg from "../assets/es.svg";
+import EnSvg from "../../assets/en.svg";
+import EsSvg from "../../assets/es.svg";
 import { useParams } from "next/navigation";
+import cookies from "js-cookie";
 export default function ComboboxDemo() {
   const t = useTranslations();
   const [isPending, startTransition] = React.useTransition();
@@ -44,10 +44,15 @@ export default function ComboboxDemo() {
       replace({ pathname, params }, { locale: newLocale });
     });
     setOpen(false);
+    cookies.set("was_locale", newLocale);
   };
 
+  React.useEffect(() => {
+    cookies.set("was_locale", lang);
+  }, [lang]);
+
   return (
-    <div className="min-w-[80px] w-auto flex items-center  gap-5">
+    <div className="w-auto flex items-center  gap-5">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -65,7 +70,6 @@ export default function ComboboxDemo() {
                 <Image src={EnSvg} width={20} alt={locales[1].label} />
               </div>
             )}
-            {isPending && <Spinner size={"medium"} />}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[130px] p-0">

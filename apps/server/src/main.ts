@@ -12,7 +12,7 @@ async function bootstrap() {
   app.use(helmet());
   app.enableCors({
     credentials: true,
-    origin: [frontUrl],
+    origin: frontUrl,
   });
   app.useGlobalPipes(new I18nValidationPipe());
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));

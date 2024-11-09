@@ -11,7 +11,7 @@ const authMiddleware = (req: NextRequest) => {
   if (!isLoged) {
     return intlMiddleware(req);
   }
-  return NextResponse.redirect(new URL(`/es/test`, req.url));
+  return NextResponse.redirect(new URL(`/es/sign-in`, req.url));
 };
 
 export default function middleware(req: NextRequest) {
