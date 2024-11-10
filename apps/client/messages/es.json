@@ -15,16 +15,31 @@
       "name": "Pedro Perez Pereira"
     },
     "auth": {
+      "usernameEmpty": "El nombre de usuario es obligatorio",
+      "usernameMin": "El nombre de usuario debe tener al menos 5 caracteres",
+      "usernameMax": "El nombre de usuario no puede tener más de 27 caracteres",
+      "nameEmpty": "El nombre es obligatorio",
+      "nameMin": "El nombre debe tener al menos 6 caracteres",
+      "nameMax": "El nombre no puede tener más de 60 caracteres",
       "emailEmpty": "El email no puede estar vacío",
+      "emailWrong": "El email no es válido",
       "passEmpty": "La contraseña no puede estar vacía",
-      "emailWrong": "El email no es válido "
-    }
+      "passMin": "La contraseña debe tener al menos 8 caracteres",
+      "passValidation": "La contraseña debe incluir un carácter especial, un número y una mayúscula"
+    },
+    "signOut": "La sesión ha sido cerrada"
   },
   "signIn": {
     "page": "Iniciar sesión",
     "label": "Ingresa tus datos para acceder a tu cuenta",
     "signUp": "Regístrate",
     "notAccount": "¿No tienes una cuenta?"
+  },
+  "signUp": {
+    "page": "Registro",
+    "label": "Ingresa tus datos para registrarte",
+    "signIn": "Inicia sesión",
+    "haveAccount": "¿Ya tienes una cuenta?"
   },
   "locales": {
     "en": "Ingles",

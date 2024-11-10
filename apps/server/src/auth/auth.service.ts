@@ -5,7 +5,6 @@ import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { Payload } from './interfaces/payload.interface';
 import { RegisterDto } from './dto/register.dto';
-import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { JwtService } from '@nestjs/jwt';
 import { nanoid } from 'nanoid';
 import { GoogleDataProfile } from './interfaces/googleData.interface';
@@ -17,6 +16,8 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
   async validateUser(email: string, pass: string): Promise<Payload> {
+    console.log(email);
+    console.log(pass);
     const user: UsersType = await this.usersService.getUserDataByEmail(email);
     if (!user.pass)
       throw new UnauthorizedException(

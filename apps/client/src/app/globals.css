@@ -64,3 +64,10 @@
     @apply bg-background text-foreground;
   }
 }
+html {
+  overflow-y: scroll;
+}
+
+.error-message {
+  @apply font-semibold text-[#D95959];
+}

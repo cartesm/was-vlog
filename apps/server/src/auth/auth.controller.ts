@@ -37,7 +37,6 @@ export class AuthController {
     resp.cookie('was_auth_token', token, {
       maxAge: sixHoursInMiliseconds,
     });
-    console.log('login');
     return resp.send({
       message: this.i18n.t('test.auth.loginMessage', {
         lang: I18nContext.current().lang,

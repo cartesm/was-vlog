@@ -1,10 +1,7 @@
 import {
-  ConflictException,
   Inject,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Users, UsersType } from './schemas/users.schema';
@@ -61,18 +58,19 @@ export class UsersService {
   }
 
   async createUser(userData: CreateUser): Promise<UsersType> {
-    console.log(userData.username);
     const userMatch: UsersType = await this.UsersModel.findOne({
       $or: [{ username: userData.username }, { email: userData.email }],
     });
-
-    if (userMatch.email)
+    if (userMatch && userMatch.email == userData.email)
       this.exceptions.throwConflict('test.auth.conflicWithEmail');
 
-    if (userMatch.username)
+    if (userMatch && userMatch.username == userData.username)
       this.exceptions.throwConflict('test.auth.conflicWithUsername');
 
-    const newUser: UsersType = await new this.UsersModel(userData).save();
+    const newUser: UsersType = await new this.UsersModel({
+      ...userData,
+      pass: await bcrypt.hash(userData.pass, 12),
+    }).save();
     await this.historyService.createHistory(newUser.id);
     return newUser;
   }

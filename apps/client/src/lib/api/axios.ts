@@ -18,7 +18,6 @@ AxiosInstance.interceptors.request.use(
     }
     const isValidLocale: boolean = locales.some((lang) => lang === locale);
     config.headers["Accept-Language"] = isValidLocale ? locale || "es" : "es";
-    console.log(config);
     return config;
   },
   (error: unknown) => {

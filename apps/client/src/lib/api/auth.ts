@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import axios from "./axios";
-interface IReturnResponse {
-  message: string;
+export interface IReturnResponse {
+  message: string | string[];
   error?: boolean;
 }
 
@@ -15,5 +15,27 @@ export const signInRequest = async (loginData: {
   } catch (e: unknown) {
     const message: string = (e as any).response.data.message;
     return { message: message, error: true };
+  }
+};
+
+export const signUpRequest = async (registerData: {
+  username: string;
+  name: string;
+  pass: string;
+  email: string;
+}): Promise<IReturnResponse> => {
+  try {
+    const resp: AxiosResponse = await axios.post(
+      "/auth/register",
+      registerData
+    );
+    return { message: resp.data.message };
+  } catch (e: unknown) {
+    const message: string = (e as any).response.data.message;
+    console.error(e);
+    return {
+      message,
+      error: true,
+    };
   }
 };

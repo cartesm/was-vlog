@@ -16,16 +16,31 @@
       "name": "John Doe"
     },
     "auth": {
+      "usernameEmpty": "Username is required",
+      "usernameMin": "Username must be at least 5 characters long",
+      "usernameMax": "Username cannot be longer than 27 characters",
+      "nameEmpty": "Name is required",
+      "nameMin": "Name must be at least 6 characters long",
+      "nameMax": "Name cannot be longer than 60 characters",
       "emailEmpty": "The email cannot be empty",
       "passEmpty": "The password cannot be empty",
+      "passMin": "Password must be at least 6 characters long",
+      "passValidation": "The password must include a special character, a number, and an uppercase letter",
       "emailWrong": "The email is not valid"
-    }
+    },
+    "signOut": "The session has been closed"
   },
   "signIn": {
     "page": "Log in",
     "label": "Enter your details to access your account",
     "signUp": "Sign up",
     "notAccount": "Don't have an account?"
+  },
+  "signUp": {
+    "page": "Sign Up",
+    "label": "Enter your details to sign up",
+    "signIn": "Log in",
+    "haveAccount": "Already have an account?"
   },
   "locales": {
     "en": "English",

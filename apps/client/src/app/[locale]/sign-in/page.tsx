@@ -20,6 +20,7 @@ import { useErrors, IErrorHook } from "@/hooks/useErrors";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { baseUrl } from "@/lib/configs";
+import { emailPattern } from "@/lib/utils/regex";
 interface IInputs {
   email: string;
   password: string;
@@ -36,8 +37,6 @@ export default function Component() {
     handleSubmit,
     formState: { errors },
   } = useForm<IInputs>();
-  const validateEmail: RegExp =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   const onSubmit: SubmitHandler<IInputs> = async (data: IInputs) => {
     setCharging(true);
@@ -49,9 +48,11 @@ export default function Component() {
         deleteError();
         return clearTimeout(setTimeError);
       }, 3000);
+      toast({ title: t("signIn.page"), description: resultLogin.message });
 
       return;
     }
+    // !cartesxero@gmail.com
 
     toast({ title: t("signIn.page"), description: resultLogin.message });
     router.replace("/");
@@ -64,8 +65,8 @@ export default function Component() {
   };
 
   return (
-    <div className="flex items-center justify-center">
-      <section className="flex-grow flex items-center justify-center p-4">
+    <div className="flex items-center mx-auto max-w-full min-w-[500px] justify-center">
+      <section className="flex-grow flex items-center   justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center py-3">
@@ -92,16 +93,16 @@ export default function Component() {
                   placeholder={t("auth.placeholder.email")}
                   {...register("email", {
                     required: true,
-                    pattern: validateEmail,
+                    pattern: emailPattern,
                   })}
                 />
                 {errors.email?.type == "required" && (
-                  <span className="py-7 font-semibold text-[#D95959] space-y-1">
+                  <span className="error-message space-y-1">
                     {t("auth.auth.emailEmpty")}
                   </span>
                 )}
                 {errors.email?.type == "pattern" && (
-                  <span className="py-7 font-semibold text-[#D95959] space-y-1">
+                  <span className="error-message space-y-1">
                     {t("auth.auth.emailWrong")}
                   </span>
                 )}
@@ -118,16 +119,14 @@ export default function Component() {
                   })}
                 />
                 {errors.password?.type == "required" && (
-                  <span className="py-7 font-semibold text-[#D95959] space-y-1">
+                  <span className="error-message space-y-1">
                     {t("auth.auth.passEmpty")}
                   </span>
                 )}
               </div>
 
               {error && (
-                <span className="py-7 font-semibold text-[#D95959] space-y-1">
-                  {error.value}
-                </span>
+                <span className="error-message space-y-1">{error.value}</span>
               )}
               {charging && (
                 <div className="w-full flex items-center justify-center">
