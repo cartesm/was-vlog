@@ -43,11 +43,11 @@ export default function Component() {
     const resultLogin = await signInRequest({ ...data, pass: data.password });
     setCharging(false);
     if (resultLogin.error) {
-      setError(resultLogin.message);
+      setError(Array.isArray(resultLogin.message) ? "" : resultLogin.message);
       const setTimeError = setTimeout(() => {
         deleteError();
         return clearTimeout(setTimeError);
-      }, 3000);
+      }, 10000);
       toast({ title: t("signIn.page"), description: resultLogin.message });
 
       return;
