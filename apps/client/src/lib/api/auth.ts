@@ -3,6 +3,13 @@ import axios from "./axios";
 export interface IReturnResponse {
   message: string | string[];
   error?: boolean;
+  data?: {
+    username: string;
+    name: string;
+    pass: string;
+    email: string;
+    id: string;
+  };
 }
 
 export const signInRequest = async (loginData: {
@@ -29,7 +36,7 @@ export const signUpRequest = async (registerData: {
       "/auth/register",
       registerData
     );
-    return { message: resp.data.message };
+    return { message: resp.data.message, data: resp.data };
   } catch (e: unknown) {
     const message: string = (e as any).response.data.message;
     console.error(e);

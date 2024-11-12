@@ -18,7 +18,7 @@ import {
 import Image from "next/image";
 import EnSvg from "../../assets/en.svg";
 import EsSvg from "../../assets/es.svg";
-import { useParams } from "next/navigation";
+//import { useParams } from "next/navigation";
 import cookies from "js-cookie";
 export default function ComboboxDemo() {
   const t = useTranslations();
@@ -26,7 +26,7 @@ export default function ComboboxDemo() {
   const lang: string = useLocale();
   const { replace } = useRouter();
   const pathname = usePathname();
-  const params = useParams();
+  //const params = useParams();
   const locales: { value: string; label: string }[] = [
     {
       value: "es",
@@ -41,7 +41,8 @@ export default function ComboboxDemo() {
   const [open, setOpen] = React.useState(false);
   const onChangeLocale = async (newLocale: string) => {
     startTransition(() => {
-      replace({ pathname, params }, { locale: newLocale });
+      // params despues de pathname segun docs
+      replace({ pathname }, { locale: newLocale });
     });
     setOpen(false);
     cookies.set("was_locale", newLocale);

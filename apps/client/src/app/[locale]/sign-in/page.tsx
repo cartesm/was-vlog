@@ -60,6 +60,8 @@ export default function Component() {
   };
 
   const signInWithGoogle = (): void => {
+    // TODO: añadir cookie de la pagina que se tenia intenciones de visitar entes del login
+    //    const cookies = await (await import("js-cookie")).default;
     router.replace(baseUrl + "/auth/google");
     router.refresh();
   };

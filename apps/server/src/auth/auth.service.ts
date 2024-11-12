@@ -16,8 +16,6 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
   async validateUser(email: string, pass: string): Promise<Payload> {
-    console.log(email);
-    console.log(pass);
     const user: UsersType = await this.usersService.getUserDataByEmail(email);
     if (!user.pass)
       throw new UnauthorizedException(

@@ -1,6 +1,4 @@
 import { Link } from "@/i18n/routing";
-import { Avatar } from "../ui/avatar";
-import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { IAuthData } from "@/interfaces/authData.interface";
 import { getAuthData } from "@/lib/getAuthData";
 import SelectLang from "@/components/Header/selectLanguaje";
@@ -8,7 +6,7 @@ import ThemeSelector from "@/components/Header/themeSelector";
 import { getTranslations } from "next-intl/server";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import SignOut from "./signOut";
+import UserAvatar from "./userAvatart";
 async function Header() {
   const user: IAuthData | null = await getAuthData();
   const t = await getTranslations("header");
@@ -37,12 +35,12 @@ async function Header() {
                 </Button>
               </>
             ) : (
-              <div className="flex items-center gap-1">
-                <Avatar>
-                  <AvatarImage alt={user.username} src={user?.img} />
-                  <AvatarFallback>{user.username}</AvatarFallback>
-                </Avatar>
-                <SignOut />
+              <div>
+                <UserAvatar
+                  username={user.username}
+                  img={user.img}
+                  id={user.id}
+                />
               </div>
             )}
           </nav>

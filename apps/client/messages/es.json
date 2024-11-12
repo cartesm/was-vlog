@@ -25,7 +25,7 @@
       "emailWrong": "El email no es válido",
       "passEmpty": "La contraseña no puede estar vacía",
       "passMin": "La contraseña debe tener al menos 8 caracteres",
-      "passValidation": "La contraseña debe incluir un carácter especial, un número y una mayúscula"
+      "passValidation": "La contraseña debe incluir un número y una mayúscula"
     },
     "signOut": "La sesión ha sido cerrada"
   },

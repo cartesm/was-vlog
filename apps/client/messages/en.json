@@ -25,7 +25,7 @@
       "emailEmpty": "The email cannot be empty",
       "passEmpty": "The password cannot be empty",
       "passMin": "Password must be at least 6 characters long",
-      "passValidation": "The password must include a special character, a number, and an uppercase letter",
+      "passValidation": "The password must include a number, and an uppercase letter",
       "emailWrong": "The email is not valid"
     },
     "signOut": "The session has been closed"
