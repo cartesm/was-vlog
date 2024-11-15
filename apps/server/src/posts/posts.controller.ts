@@ -44,14 +44,10 @@ export class PostsController {
   @HttpCode(HttpStatus.OK)
   @Get('user/:id/:page')
   async getUserPost(
-    @Query('order', ParseIntPipe) querry: { order: number },
+    @Query('order', ParseIntPipe) querry: number,
     @Param(PageAndIdPipe) param: IPageAndId,
   ): Promise<any> {
-    return this.postsService.getPostOfAnUser(
-      param.id,
-      param.page,
-      querry.order,
-    );
+    return this.postsService.getPostOfAnUser(param.id, param.page, querry);
   }
 
   @Public()

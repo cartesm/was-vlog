@@ -46,5 +46,14 @@
     "en": "English",
     "es": "Spanish"
   },
-  "test": "dick"
+  "test": "dick",
+  "user": {
+    "posts": {
+      "contentOf": "Posts",
+      "old": "Oldest",
+      "new": "Newest",
+      "endOfContent": "Oops, no more content available",
+      "orderBy": "Sort by"
+    }
+  }
 }

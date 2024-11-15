@@ -1,14 +1,16 @@
 import { AxiosResponse } from "axios";
 import axios from "./axios";
+import { IAuthData } from "@/interfaces/authData.interface";
+import { getAuthData } from "../getAuthData";
 export interface IReturnResponse {
   message: string | string[];
   error?: boolean;
   data?: {
-    username: string;
-    name: string;
-    pass: string;
-    email: string;
-    id: string;
+    username?: string;
+    name?: string;
+    pass?: string;
+    email?: string;
+    id?: string;
   };
 }
 
@@ -36,7 +38,7 @@ export const signUpRequest = async (registerData: {
       "/auth/register",
       registerData
     );
-    return { message: resp.data.message, data: resp.data };
+    return { message: resp.data.message, data: { id: "" } };
   } catch (e: unknown) {
     const message: string = (e as any).response.data.message;
     console.error(e);

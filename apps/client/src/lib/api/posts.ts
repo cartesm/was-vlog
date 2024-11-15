@@ -16,12 +16,13 @@ export interface IPostPagination {
 
 export interface IRespPagination {
   data?: IPostPagination;
-  errors?: string | string[];
+  errors?: string;
 }
 export interface IPostContent {
   createdAt: Date;
   languaje: string;
   likeCount: number;
+  description: string;
   name: string;
   tags: [
     {
@@ -43,7 +44,6 @@ export const getUserPosts = async (
     );
     return { data: resp.data as IPostPagination };
   } catch (e: any) {
-    console.log(e);
-    return { errors: e.message };
+    return { errors: e.response.data.message };
   }
 };

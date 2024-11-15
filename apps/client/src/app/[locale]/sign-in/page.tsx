@@ -47,7 +47,7 @@ export default function Component() {
       const setTimeError = setTimeout(() => {
         deleteError();
         return clearTimeout(setTimeError);
-      }, 10000);
+      }, 4000);
       toast({ title: t("signIn.page"), description: resultLogin.message });
 
       return;

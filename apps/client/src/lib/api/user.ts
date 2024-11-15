@@ -23,8 +23,7 @@ export const getLogedUser = async (id: string): Promise<IUserResp> => {
     const resp: AxiosResponse = await axios.get(`/users/${id}`);
     return { user: <IUser>resp.data };
   } catch (e: unknown) {
-    const message: string | string[] = (e as any).message;
-    console.log(e);
+    const message: string | string[] = (e as any).response.data.message;
     return { errors: { message } };
   }
 };

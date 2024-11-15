@@ -19,7 +19,7 @@ export default async function UserProfile({
           <UserCard id={id} locale={locale} />
         </div>
         <div className="col-span-1 md:col-span-2 ">
-          <UserContent userId={id} page={1} />
+          <UserContent userId={id} />
         </div>
       </div>
     </section>

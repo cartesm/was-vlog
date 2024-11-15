@@ -42,11 +42,7 @@ export default function Component() {
     data: IRegisterData
   ): Promise<void> => {
     setLoading(true);
-    const {
-      error,
-      message,
-      data: respData,
-    }: IReturnResponse = await signUpRequest({
+    const { error, message }: IReturnResponse = await signUpRequest({
       ...data,
       pass: data.password,
     });
@@ -59,9 +55,9 @@ export default function Component() {
       }, 10000);
       return;
     }
-    router.replace(`/profile/${respData?.id}`);
-    router.refresh();
     toast({ title: t("signUp.page"), description: message });
+    router.replace(`/`);
+    router.refresh();
   };
 
   return (

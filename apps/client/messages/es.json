@@ -45,5 +45,14 @@
     "en": "Ingles",
     "es": "Español"
   },
-  "test": "pene"
+  "test": "pene",
+  "user": {
+    "posts": {
+      "contentOf": "Publicaciones",
+      "old": "Más antiguo",
+      "new": "Más reciente",
+      "endOfContent": "Vaya, no hay más contenido disponible",
+      "orderBy": "Ordenar según"
+    }
+  }
 }

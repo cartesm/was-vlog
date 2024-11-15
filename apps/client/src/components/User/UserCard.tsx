@@ -12,16 +12,29 @@ import {
   CardDescription,
   CardHeader,
 } from "@/components/ui/card";
+import { toast } from "@/hooks/use-toast";
+import { Button } from "../ui/button";
 
 function UserCard({ id, locale }: { id: string; locale: string }) {
   const [user, setUser] = useState<IUser | null>(null);
+  const [errors, setErrors] = useState<string | string[] | null>(null);
+  const [attemps, setAttemps] = useState<number>(0);
+  const refrashComponent = () => setAttemps(attemps + 1);
   useEffect(() => {
-    getLogedUser(id)
-      .then((data: IUserResp) => {
-        setUser(data.user ? data.user : null);
-      })
-      .catch((e: IErrorResp) => console.log(e));
-  }, [id]);
+    getLogedUser(id).then((data: IUserResp) => {
+      if (data.errors) {
+        setErrors(data.errors.message);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: data.errors.message,
+        });
+        return;
+      }
+      setErrors(null);
+      setUser(data.user ? data.user : null);
+    });
+  }, [id, attemps]);
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -61,6 +74,15 @@ function UserCard({ id, locale }: { id: string; locale: string }) {
             </>
           )}
         </div>
+        {errors && (
+          <Button
+            onClick={refrashComponent}
+            className="mt-5"
+            variant={"destructive"}
+          >
+            Try gain
+          </Button>
+        )}
       </CardContent>
     </Card>
   );
