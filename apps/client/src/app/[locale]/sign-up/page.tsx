@@ -56,7 +56,10 @@ export default function Component() {
       return;
     }
     toast({ title: t("signUp.page"), description: message });
-    router.replace(`/`);
+    const cookies = (await import("js-cookie")).default;
+    const redirectTo: string | undefined = cookies.get("was_redirect_to");
+    router.replace(redirectTo ? redirectTo : "/");
+    cookies.remove("was_redirect_to");
     router.refresh();
   };
 

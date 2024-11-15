@@ -11,7 +11,7 @@ const AxiosInstance: Axios = axios.create({
 AxiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const authToken: string | undefined = cookies.get("was_auth_token");
-    const locale: string | undefined = cookies.get("was_locale");
+    const locale: string | undefined = cookies.get("NEXT_LOCALE");
 
     if (authToken && config.headers) {
       config.headers.Authorization = `Bearer ${authToken}`;

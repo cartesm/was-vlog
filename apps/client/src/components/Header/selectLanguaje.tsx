@@ -19,7 +19,6 @@ import Image from "next/image";
 import EnSvg from "../../assets/en.svg";
 import EsSvg from "../../assets/es.svg";
 //import { useParams } from "next/navigation";
-import cookies from "js-cookie";
 export default function ComboboxDemo() {
   const t = useTranslations();
   const [isPending, startTransition] = React.useTransition();
@@ -45,12 +44,7 @@ export default function ComboboxDemo() {
       replace({ pathname }, { locale: newLocale });
     });
     setOpen(false);
-    cookies.set("was_locale", newLocale);
   };
-
-  React.useEffect(() => {
-    cookies.set("was_locale", lang);
-  }, [lang]);
 
   return (
     <div className="w-auto flex items-center  gap-5">

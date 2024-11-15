@@ -3,6 +3,8 @@ import createIntlMiddleware from "next-intl/middleware";
 import { locales, publicRoutes, routing } from "@/i18n/routing";
 import { getAuthData as isAuth } from "@/lib/getAuthData";
 import { IAuthData } from "./interfaces/authData.interface";
+import { cookies } from "next/headers";
+import { getLocale } from "next-intl/server";
 
 const intlMiddleware = createIntlMiddleware(routing);
 const onlyWithoutSession: string[] = ["/sign-in", "/sign-up"];
@@ -17,6 +19,7 @@ export default async function middleware(req: NextRequest) {
   if (!isValidLocale) {
     return NextResponse.redirect(new URL("/es", req.url));
   }
+  const locale: string = await getLocale();
 
   const matchRegex = (routes: string[], toTest: string): boolean => {
     return RegExp(
@@ -27,15 +30,26 @@ export default async function middleware(req: NextRequest) {
     ).test(toTest);
   };
 
+  //auth
   if (matchRegex(publicRoutes, pathname)) {
+    // rutas publicas
     if (isLoged && matchRegex(onlyWithoutSession, pathname))
       return NextResponse.redirect(new URL("/", req.url));
+
     return intlMiddleware(req);
   } else {
+    // rutas protegidas
     if (isLoged) {
+      (await cookies()).delete("was_redirect_to");
       return intlMiddleware(req);
     }
-    return NextResponse.redirect(new URL(`/es/sign-in`, req.url));
+    const fiveMinutes: number = 300;
+    (await cookies()).set(
+      "was_redirect_to",
+      pathname.replace(`/${locale}`, ""),
+      { maxAge: fiveMinutes }
+    );
+    return NextResponse.redirect(new URL(`/${locale}/sign-in`, req.url));
   }
 }
 

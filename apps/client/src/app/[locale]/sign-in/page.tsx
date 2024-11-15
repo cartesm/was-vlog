@@ -52,16 +52,16 @@ export default function Component() {
 
       return;
     }
-    // !cartesxero@gmail.com
 
     toast({ title: t("signIn.page"), description: resultLogin.message });
-    router.replace("/");
+    const cookies = (await import("js-cookie")).default;
+    const redirectTo: string | undefined = cookies.get("was_redirect_to");
+    router.replace(redirectTo ? redirectTo : "/");
+    cookies.remove("was_redirect_to");
     router.refresh();
   };
 
-  const signInWithGoogle = (): void => {
-    // TODO: añadir cookie de la pagina que se tenia intenciones de visitar entes del login
-    //    const cookies = await (await import("js-cookie")).default;
+  const signInWithGoogle = async (): Promise<void> => {
     router.replace(baseUrl + "/auth/google");
     router.refresh();
   };
