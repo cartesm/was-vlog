@@ -51,7 +51,8 @@ function Write({
 
     setCurrentText(newChange);
   };
-
+  //!!!!!! NOTA: no tengo la minima idea de como empezo a funcionar el historial
+  //!!!!!! lo estaba haciendo y pos nomas, asi que mejor no lo toco
   return (
     <section className="p-2">
       <ControlPanel handleEdit={handleEdit} setIndex={setIndex} />
