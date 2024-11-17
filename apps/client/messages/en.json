@@ -1,7 +1,8 @@
 {
   "header": {
     "signIn": "Sign In",
-    "signUp": "Sign Up"
+    "signUp": "Sign Up",
+    "write": "Write"
   },
 
   "auth": {

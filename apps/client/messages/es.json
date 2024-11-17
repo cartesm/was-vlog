@@ -1,7 +1,8 @@
 {
   "header": {
     "signIn": "Iniciar Sesion",
-    "signUp": "Registrate"
+    "signUp": "Registrate",
+    "write": "Escribe"
   },
   "auth": {
     "continueWith": "O continúa con",

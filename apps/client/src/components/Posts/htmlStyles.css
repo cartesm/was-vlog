@@ -1,0 +1,44 @@
+.container-html {
+  span,
+  p,
+  strong,
+  em,
+  li,
+  h3,
+  a {
+    @apply text-lg;
+  }
+
+  h2 {
+    @apply text-3xl font-semibold mb-4;
+  }
+  h3 {
+    @apply text-2xl font-semibold mb-4;
+  }
+
+  p {
+    @apply text-lg mb-6;
+  }
+
+  ul {
+    @apply list-disc list-inside mb-6;
+  }
+
+  ol {
+    @apply list-decimal list-inside mb-6;
+  }
+
+  a {
+    @apply text-blue-600 hover:underline;
+  }
+
+  pre {
+    @apply rounded-md bg-secondary p-2;
+  }
+
+  blockquote {
+    @apply border-l-4 border-gray-300 pl-4 italic mb-6;
+  }
+  img[alt="Image"] {
+  }
+}

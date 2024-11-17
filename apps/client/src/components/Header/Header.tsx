@@ -24,7 +24,13 @@ async function Header() {
             <SelectLang />
           </div>
           <Separator orientation="vertical" />
-          <nav className="flex gap-2 my-1">
+          <Link className=" my-auto" href={"/write"}>
+            <Button variant={"default"} className="max-h-9">
+              {t("write")}
+            </Button>
+          </Link>
+          <Separator orientation="vertical" />
+          <nav className="flex gap-3 my-1">
             {!user ? (
               <>
                 <Button className="bg-[#F2CB57] hover:bg-[#D9A441]">
@@ -35,13 +41,11 @@ async function Header() {
                 </Button>
               </>
             ) : (
-              <div>
-                <UserAvatar
-                  username={user.username}
-                  img={user.img}
-                  id={user.id}
-                />
-              </div>
+              <UserAvatar
+                username={user.username}
+                img={user.img}
+                id={user.id}
+              />
             )}
           </nav>
         </div>
