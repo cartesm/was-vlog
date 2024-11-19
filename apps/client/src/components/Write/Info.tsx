@@ -1,6 +1,8 @@
 import { Info as InfoIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-function Info({ currentText }: { currentText: string }) {
+import { useWrite } from "@/hooks/useWrite";
+function Info() {
+  const { index, text } = useWrite();
   return (
     <div className="w-full lg:w-1/3 rounded-md p-2 bg-secondary">
       <Card>
@@ -32,8 +34,8 @@ function Info({ currentText }: { currentText: string }) {
           <CardTitle>Estadísticas</CardTitle>
         </CardHeader>
         <CardContent>
-          <p>Palabras: {currentText.split(/\s+/).filter(Boolean).length}</p>
-          <p>Caracteres: {currentText.length}</p>
+          <p>Palabras: {text[index].split(/\s+/).filter(Boolean).length}</p>
+          <p>Caracteres: {text[index].length}</p>
         </CardContent>
       </Card>
     </div>

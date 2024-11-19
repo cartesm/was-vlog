@@ -11,6 +11,8 @@ import {
   ImageIcon,
   LinkIcon,
   MessageSquareQuote,
+  Redo,
+  Undo,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Tooltip, TooltipContent, TooltipProvider } from "../ui/tooltip";
@@ -25,17 +27,13 @@ import {
 import { Label } from "../ui/label";
 import { IRespondImage, uploadImage } from "@/lib/api/images";
 import { Spinner } from "../ui/spiner";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
+import { useWrite } from "@/hooks/useWrite";
 
-function ControlPanel({
-  handleEdit,
-  setIndex,
-}: {
-  handleEdit: (value: string) => void;
-  setIndex: SetStateAction<any>;
-}) {
+function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
   const [modalState, setModalState] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { traveling } = useWrite();
   const openModal = () => setModalState(!modalState);
 
   const handleChange = (e) => {
@@ -289,6 +287,39 @@ function ControlPanel({
           </TooltipTrigger>
           <TooltipContent>
             <p>Enlace</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      {/* ----CONTROL---- */}
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button
+              onClick={() => traveling(-1)}
+              size="sm"
+              variant={"secondary"}
+            >
+              <Undo />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Atras</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button
+              onClick={() => traveling(1)}
+              size="sm"
+              variant={"secondary"}
+            >
+              <Redo />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Adelante</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

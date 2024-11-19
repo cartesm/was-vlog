@@ -16,7 +16,6 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { Link, useRouter } from "@/i18n/routing";
 import { useToast } from "@/hooks/use-toast";
 import { signInRequest } from "@/lib/api/auth";
-import { useErrors, IErrorHook } from "@/hooks/useErrors";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { baseUrl } from "@/lib/configs";
@@ -30,7 +29,7 @@ export default function Component() {
   const t = useTranslations();
   const { toast } = useToast();
   const router = useRouter();
-  const { error, set: setError, delete: deleteError }: IErrorHook = useErrors();
+  const [error, setError] = useState<string | null>(null);
   const [charging, setCharging] = useState(false);
   const {
     register,
@@ -45,7 +44,7 @@ export default function Component() {
     if (resultLogin.error) {
       setError(Array.isArray(resultLogin.message) ? "" : resultLogin.message);
       const setTimeError = setTimeout(() => {
-        deleteError();
+        setError(null);
         return clearTimeout(setTimeError);
       }, 4000);
       toast({ title: t("signIn.page"), description: resultLogin.message });
@@ -128,7 +127,7 @@ export default function Component() {
               </div>
 
               {error && (
-                <span className="error-message space-y-1">{error.value}</span>
+                <span className="error-message space-y-1">{error}</span>
               )}
               {charging && (
                 <div className="w-full flex items-center justify-center">

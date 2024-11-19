@@ -1,13 +1,10 @@
 "use client";
-import { useState } from "react";
 import Write from "@/components/Write/Write";
 import Viewer from "@/components/Posts/Viewer";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TabsContent } from "@radix-ui/react-tabs";
 
 export default function EditorPage() {
-  const [history, setHistory] = useState<string[]>([""]);
-  const [timeMachine, setTimeMachine] = useState<number>(0);
   return (
     <section className=" min-h-screen">
       <div>
@@ -20,15 +17,10 @@ export default function EditorPage() {
             <TabsTrigger value="password">Vista previa</TabsTrigger>
           </TabsList>
           <TabsContent value="account">
-            <Write
-              index={timeMachine}
-              currentText={history[timeMachine]}
-              setCurrentText={setHistory}
-              setIndex={setTimeMachine}
-            />
+            <Write />
           </TabsContent>
           <TabsContent value="password">
-            <Viewer txt={history[timeMachine]} />
+            <Viewer />
           </TabsContent>
         </Tabs>
       </div>
