@@ -4,6 +4,9 @@ import Info from "./Info";
 import { toast } from "@/hooks/use-toast";
 import ControlPanel from "./ControlPanel";
 import { useWrite } from "@/hooks/useWrite";
+import WriteSEO from "@/components/Write/WriteSeo";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+
 function Write() {
   const { text, index, add } = useWrite();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -53,7 +56,21 @@ function Write() {
             onChange={(e) => add(e.target.value)}
           />
         </div>
-        <Info />
+        <Tabs
+          defaultValue="seo"
+          className="w-full lg:w-1/3 rounded-md p-2 bg-secondary"
+        >
+          <TabsList>
+            <TabsTrigger value="seo">SEO</TabsTrigger>
+            <TabsTrigger value="info">DOCS</TabsTrigger>
+          </TabsList>
+          <TabsContent value="seo">
+            <WriteSEO />
+          </TabsContent>
+          <TabsContent value="info">
+            <Info />
+          </TabsContent>
+        </Tabs>
       </div>
     </section>
   );

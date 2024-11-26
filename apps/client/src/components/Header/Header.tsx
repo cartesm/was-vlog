@@ -13,7 +13,7 @@ async function Header() {
   return (
     <section>
       <header className="flex gap-5 justify-between w-full min-w-[500px] bg-[#F2F2F2] px-3 py-1 dark:bg-[#0D0D0D]  border-b border-border shadow-sm sticky top-0 z-10 backdrop-blur-sm bg-background/80">
-        <div className="flex items-center">
+        <div className="flex items-center min-w-[9ch]">
           <Link href={{ pathname: "/" }}>
             <h1 className="font-bold text-xl">Write Any Sh*t</h1>
           </Link>

@@ -8,7 +8,8 @@ export class SearchTagPipe implements PipeTransform {
     const parsePage: number | typeof NaN = Number(value.page);
     if (isNaN(parsePage))
       this.exceptions.throwNotAceptable('test.pageNotAceptable');
-
+    if (parsePage <= 0)
+      this.exceptions.throwNotAceptable('test.pageInvalidValue');
     return parsePage;
   }
 }

@@ -15,14 +15,18 @@ export class TagsService {
     private exceptions: ExceptionsService,
   ) {}
 
-  async searchTag(page: number, tagName: string): Promise<any> {
+  async searchTag(
+    page: number,
+    tagName: string,
+    orderBy: number,
+  ): Promise<any> {
     return await this.tagModel.paginate(
       {
         name: { $regex: tagName },
       },
       {
         sort: {
-          name: 1,
+          name: orderBy,
         },
         page,
         limit: 30,

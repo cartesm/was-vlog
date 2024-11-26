@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -19,6 +20,7 @@ import { CreateTagDto } from './dto/createTag.dto';
 import { UpdateTagPipe } from './pipes/update.pipe';
 import { SearchTagPipe } from './pipes/search-tag.pipe';
 import { TagsType } from './schemas/tag.schema';
+import { SearchQuerryPipePipe } from './pipes/search-querry-pipe.pipe';
 
 @UseGuards(JwtGuard)
 @Controller('tags')
@@ -29,9 +31,9 @@ export class TagsController {
   @HttpCode(HttpStatus.OK)
   async searchTags(
     @Param(SearchTagPipe) param: number,
-    @Body() body: { tagName?: string },
+    @Query(SearchQuerryPipePipe) query: { value: string; orderBy: number },
   ) {
-    return await this.tagsService.searchTag(param, body.tagName);
+    return await this.tagsService.searchTag(param, query.value, query.orderBy);
   }
 
   @Get(':tagName')

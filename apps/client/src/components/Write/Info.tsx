@@ -4,7 +4,7 @@ import { useWrite } from "@/hooks/useWrite";
 function Info() {
   const { index, text } = useWrite();
   return (
-    <div className="w-full lg:w-1/3 rounded-md p-2 bg-secondary">
+    <div className="">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">

@@ -18,10 +18,6 @@ function Viewer() {
     })();
   }, [text, index]);
 
-  // TODO: terminar esta wea
-  // TODO: añadir las funcionalidades al menu
-  //TODO: crear el historial
-
   if (!htmlToRender) return <section>dsalidhuya</section>;
 
   return (
