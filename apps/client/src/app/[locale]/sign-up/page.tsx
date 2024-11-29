@@ -64,7 +64,7 @@ export default function Component() {
   };
 
   return (
-    <div className="flex items-center justify-center mx-auto min-w-[500px] w-full">
+    <div className="flex items-center justify-center mx-auto w-full">
       <section className="flex-grow flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">

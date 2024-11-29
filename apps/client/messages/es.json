@@ -55,5 +55,9 @@
       "endOfContent": "Vaya, no hay más contenido disponible",
       "orderBy": "Ordenar según"
     }
+  },
+  "tags": {
+    "title": "Búsqueda de etiquetas",
+    "placeholder": "Escribe el nombre de una etiqueta"
   }
 }

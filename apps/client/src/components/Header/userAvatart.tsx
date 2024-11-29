@@ -19,7 +19,7 @@ function UserAvatart({
   };
   return (
     <div
-      className="flex items-center gap-2 cursor-pointer "
+      className="flex items-center gap-4 md:flex-row flex-col  "
       onClick={handleClick}
     >
       <Avatar>

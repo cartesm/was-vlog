@@ -103,7 +103,7 @@ function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
   };
 
   return (
-    <div className="flex flex-wrap gap-2 overflow-x-auto">
+    <div className="flex flex-wrap gap-2 pt-3 overflow-x-auto">
       {/* BOLD */}
       <TooltipProvider>
         <Tooltip>

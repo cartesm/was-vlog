@@ -12,7 +12,7 @@ export default function EditorPage() {
           <h1 className="text-3xl font-bold py-4">Editor de Texto</h1>
         </div>
         <Tabs defaultValue="account" className="w-full px-3">
-          <TabsList className="grid w-full items-start grid-cols-2 gap-">
+          <TabsList className="grid w-full items-start grid-cols-2 ">
             <TabsTrigger value="account">Escribir</TabsTrigger>
             <TabsTrigger value="password">Vista previa</TabsTrigger>
           </TabsList>

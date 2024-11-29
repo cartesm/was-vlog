@@ -22,8 +22,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Badge } from "../ui/badge";
-import { toast } from "@/hooks/use-toast";
-
+import { debounce } from "lodash";
 export default function SearchTags({ isOpen, changeOpen, setTags }) {
   const [query, setQuery] = useState<string>("");
   const t = useTranslations();
@@ -49,10 +48,13 @@ export default function SearchTags({ isOpen, changeOpen, setTags }) {
     setPage(goto);
   };
 
+  const debounceSerch = debounce(handleSearch, 1000);
+
   useEffect(() => {
     setPage(1);
     handleSearch();
   }, [isOpen, order]);
+
   useEffect(() => {
     handleSearch();
   }, [page]);
@@ -61,20 +63,18 @@ export default function SearchTags({ isOpen, changeOpen, setTags }) {
     <Dialog open={isOpen} onOpenChange={changeOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Penepne</DialogTitle>
+          <DialogTitle>{t("tags.title")}</DialogTitle>
           <DialogContent>
-            <div className="p-4">
+            <div className="p-4 min-w-2xl  w-full">
               <form onSubmit={(e) => e.preventDefault()}>
-                <div className="grid grid-cols-5 items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <Input
+                    onKeyUp={() => debounceSerch()}
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     className="col-span-4 "
-                    placeholder="busca una eiqueta"
+                    placeholder={t("tags.placeholder")}
                   />
-                  <Button onClick={handleSearch}>
-                    <Search />
-                  </Button>
                   <Select
                     defaultValue={order.toString()}
                     onValueChange={(nValue: string) =>
@@ -101,7 +101,7 @@ export default function SearchTags({ isOpen, changeOpen, setTags }) {
                   </Select>
                 </div>
               </form>
-              <div className="flex flex-wrap gap-2 py-4 flex-row max-h-[300px] overflow-y-auto">
+              <div className="flex flex-wrap gap-2 py-4 flex-row ">
                 {errors && <span className="error-message">{errors}</span>}
                 {!errors && resultTags && (
                   <>

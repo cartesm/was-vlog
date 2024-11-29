@@ -56,5 +56,9 @@
       "endOfContent": "Oops, no more content available",
       "orderBy": "Sort by"
     }
+  },
+  "tags": {
+    "title": "Tag Search",
+    "placeholder": "Type the name of a tag"
   }
 }

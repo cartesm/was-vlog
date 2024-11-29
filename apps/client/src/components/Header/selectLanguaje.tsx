@@ -58,11 +58,21 @@ export default function ComboboxDemo() {
           >
             {lang == "es" ? (
               <div className="flex gap-3 ">
-                <Image src={EsSvg} width={20} alt={locales[0].label} />
+                <Image
+                  src={EsSvg}
+                  width={20}
+                  className="min-w-[20px]"
+                  alt={locales[0].label}
+                />
               </div>
             ) : (
               <div className="flex gap-3 ">
-                <Image src={EnSvg} width={20} alt={locales[1].label} />
+                <Image
+                  src={EnSvg}
+                  className="min-w-[20px]"
+                  width={20}
+                  alt={locales[1].label}
+                />
               </div>
             )}
           </Button>

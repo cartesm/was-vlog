@@ -44,14 +44,14 @@ function Write() {
   };
 
   return (
-    <section className="p-2">
+    <section className="p-2mx-auto flex flex-col justify-between w-full ">
       <ControlPanel handleEdit={handleEdit} />
-      <div className="flex flex-col lg:flex-row overflow-hidden">
-        <div className="flex-1 pt-4 pr-4 min-h-0">
+      <div className="flex flex-col lg:flex-row overflow-hidden gap-4">
+        <div className="flex-1 pt-4 min-h-0">
           <Textarea
             ref={textAreaRef}
             placeholder="Escribe tu texto aquí..."
-            className="py-6 text-area-data w-full h-full min-h-[500px] ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0"
+            className="py-6 text-area-data w-full  h-full min-h-[500px] ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0"
             value={text[index]}
             onChange={(e) => add(e.target.value)}
           />
