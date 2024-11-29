@@ -29,12 +29,12 @@ export class TagsService {
           name: orderBy,
         },
         page,
-        limit: 30,
+        limit: 20,
         populate: {
           path: 'createdBy',
           select: 'username',
         },
-        select: 'name createdBy createdAt -_id',
+        select: 'name createdBy createdAt _id',
       },
     );
   }

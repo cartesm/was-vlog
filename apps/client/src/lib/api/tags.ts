@@ -17,6 +17,7 @@ export interface ITagsPagination {
 export interface ITags {
   name: string;
   createdAt: Date;
+  _id: string;
   createdBy: {
     username: string;
     _id: string;
@@ -35,10 +36,8 @@ export const searchTags = async (
     const { data }: { data: ITagsPagination } = await axios.get(
       `/tags/s/${page}?orderBy=${order}&value=${value}`
     );
-    console.log(data);
     return { data };
   } catch (e: any) {
-    console.log(e.response.data.message);
     return { errors: e.response.data.message };
   }
 };
