@@ -46,7 +46,7 @@ function Write() {
   return (
     <section className="p-2mx-auto flex flex-col justify-between w-full ">
       <ControlPanel handleEdit={handleEdit} />
-      <div className="flex flex-col lg:flex-row overflow-hidden gap-4">
+      <div className="flex flex-col-reverse lg:flex-row  overflow-hidden gap-4 py-5">
         <div className="flex-1 pt-4 min-h-0">
           <Textarea
             ref={textAreaRef}
@@ -64,11 +64,11 @@ function Write() {
             <TabsTrigger value="seo">SEO</TabsTrigger>
             <TabsTrigger value="info">DOCS</TabsTrigger>
           </TabsList>
-          <TabsContent value="seo">
-            <WriteSEO />
-          </TabsContent>
           <TabsContent value="info">
             <Info />
+          </TabsContent>
+          <TabsContent value="seo">
+            <WriteSEO />
           </TabsContent>
         </Tabs>
       </div>

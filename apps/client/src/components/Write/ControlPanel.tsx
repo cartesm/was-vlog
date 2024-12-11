@@ -323,19 +323,6 @@ function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      {/* SAVE */}
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            <Button variant="default" size="sm">
-              <Save />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Guardar</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
     </div>
   );
 }

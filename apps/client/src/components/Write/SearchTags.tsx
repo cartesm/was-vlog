@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight, Plus, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import {
   Select,
   SelectTrigger,
@@ -23,7 +23,7 @@ import {
 } from "../ui/select";
 import { Badge } from "../ui/badge";
 import { debounce } from "lodash";
-export default function SearchTags({ isOpen, changeOpen, setTags }) {
+export default function SearchTags({ isOpen, changeOpen, setTags, tags }) {
   const [query, setQuery] = useState<string>("");
   const t = useTranslations();
   const [order, setOrder] = useState<number>(1);
