@@ -1,5 +1,6 @@
 import { AxiosResponse } from "axios";
 import axios from "./axios";
+import { TrainFrontTunnel } from "lucide-react";
 
 export interface IPostPagination {
   docs: IPostContent[];
@@ -45,5 +46,76 @@ export const getUserPosts = async (
     return { data: resp.data as IPostPagination };
   } catch (e: any) {
     return { errors: e.response.data.message };
+  }
+};
+
+export interface ICreatePost {
+  content: string;
+  tags?: { _id: string }[];
+  name: string;
+  description: string;
+  languaje: string;
+}
+export interface IResponseCreate {
+  message: string[];
+  error: boolean;
+}
+
+export const createPost = async (
+  data: ICreatePost
+): Promise<IResponseCreate> => {
+  try {
+    const resp: AxiosResponse = await axios.post("/posts", data);
+    console.log(resp.data);
+
+    return {
+      error: false,
+      message: resp.data.message,
+    };
+  } catch (e: any) {
+    let message = e.response.data.message;
+    message = Array.isArray(message) ? message : [message];
+    return {
+      error: true,
+      message,
+    };
+  }
+};
+
+export const updatePost = async (
+  data: ICreatePost,
+  name: string
+): Promise<IResponseCreate> => {
+  try {
+    const resp: AxiosResponse = await axios.put(`/posts/${name}`, data);
+    return {
+      error: false,
+      message: resp.data.message,
+    };
+  } catch (e: any) {
+    let message = e.response.data.message;
+    message = Array.isArray(message) ? message : [message];
+    return {
+      error: true,
+      message,
+    };
+  }
+};
+
+export interface IGetPost {
+  data?: any;
+  errors?: string[] | string;
+}
+
+export const getOnePost = async (name: string): Promise<IGetPost> => {
+  try {
+    const resp: AxiosResponse = await axios.get(`/posts/${name}`);
+    console.log(resp);
+    return { data: "pene" };
+  } catch (e: any) {
+    console.log(e);
+    return {
+      errors: "",
+    };
   }
 };

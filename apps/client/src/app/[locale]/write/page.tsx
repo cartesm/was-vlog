@@ -1,10 +1,18 @@
 "use client";
 import Write from "@/components/Write/Write";
-import Viewer from "@/components/Posts/Viewer";
+import Viewer from "@/components/Posts/LocalViewer";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TabsContent } from "@radix-ui/react-tabs";
+import { FormProvider, useForm } from "react-hook-form";
 
+interface IData {
+  name: string;
+  description: string;
+  content: string;
+}
 export default function EditorPage() {
+  const methods = useForm<IData>();
+
   return (
     <section className=" min-h-screen">
       <div>
@@ -17,7 +25,9 @@ export default function EditorPage() {
             <TabsTrigger value="password">Vista previa</TabsTrigger>
           </TabsList>
           <TabsContent value="account">
-            <Write />
+            <FormProvider {...methods}>
+              <Write />
+            </FormProvider>
           </TabsContent>
           <TabsContent value="password">
             <Viewer />

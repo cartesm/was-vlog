@@ -13,27 +13,63 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useFormContext } from "react-hook-form";
 import { useWrite } from "@/hooks/useWrite";
+import {
+  createPost,
+  ICreatePost,
+  IResponseCreate,
+  updatePost,
+} from "@/lib/api/posts";
+import { useLocale } from "next-intl";
+import { toast } from "@/hooks/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 interface IData {
-  title: string;
+  name: string;
   description: string;
+  content: string;
 }
 
 export default function CompactSection() {
-  const [title, setTitle] = useState("");
   const [tags, setTags] = useState<{ _id: string; name: string }[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { text, index } = useWrite();
+  const [errorsTocreate, setErrorsTocreate] = useState<string[]>([""]);
+  const lang: string = useLocale();
   const changeOpen = () => setIsOpen(!isOpen);
+  const [alreadyCreated, setAlreadyCreated] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IData>();
-  const onSubmit: SubmitHandler<IData> = (data) => {
-    console.log(data);
+  } = useFormContext<IData>();
+  const onSubmit: SubmitHandler<IData> = async (data: IData) => {
+    const createData: ICreatePost = {
+      ...data,
+      content: text[index],
+      languaje: lang,
+    };
+    if (tags.length >= 1) {
+      const parsedTags: { _id: string }[] = tags.map((actual) => ({
+        _id: actual._id,
+      }));
+      createData.tags = parsedTags;
+    }
+    const resp: IResponseCreate = !alreadyCreated
+      ? await createPost(createData)
+      : await updatePost(createData, alreadyCreated);
+    if (!resp.error) {
+      toast({ title: "Exito", description: resp.message });
+      setAlreadyCreated(createData.name);
+      return;
+    }
+    setErrorsTocreate(resp.message);
+
+    const timer = setTimeout(() => {
+      setErrorsTocreate([""]);
+      return clearTimeout(timer);
+    }, 3000);
   };
 
   return (
@@ -44,19 +80,21 @@ export default function CompactSection() {
         setTags={setTags}
         tags={tags}
       />
-      <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        id="formWrite"
+        className="space-y-4"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <div className="flex items-center justify-between">
           <Input
-            value={title}
             placeholder="TITULO"
             autoFocus
-            {...register("title", {
+            {...register("name", {
               required: true,
               minLength: 10,
               maxLength: 150,
             })}
             className="text-xl  px-3 py-2 font-bold outline-none ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0"
-            onChange={(e) => setTitle(e.target.value)}
           />
           <TooltipProvider>
             <Tooltip>
@@ -108,46 +146,60 @@ export default function CompactSection() {
           className="h-full  outline-none ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0"
         />
         <div className=" grid grid-cols-1 gap-3 items-center justify-start">
-          {errors.title?.type == "required" && (
+          {errors.name?.type == "required" && (
             <span className="error-message">El titulo es requerido</span>
           )}
-          {errors.title?.type == "minLength" && (
+          {errors.name?.type == "minLength" && (
             <span className="error-message">
-              El titulo es de minimo 10 caracteres{" "}
+              El titulo es de minimo 10 caracteres
             </span>
           )}
-          {errors.title?.type == "maxLength" && (
+          {errors.name?.type == "maxLength" && (
             <span className="error-message">
               El titulo es de maximo 150 caracteres
             </span>
           )}
-          {errors.description?.type == "required" && (
+          {errors.description?.type == "maxLength" && (
             <span className="error-message">
               La descripcion es de maximo 150 caracteres
             </span>
           )}
           {errors.description?.type == "minLength" && (
             <span className="error-message">
-              La descripcion es de minimo 10 caracteres{" "}
+              La descripcion es de minimo 10 caracteres
             </span>
           )}
-          {errors.description?.type == "maxLength" && (
+          {errors.description?.type == "required" && (
+            <span className="error-message">La descripcion no es opcional</span>
+          )}
+          {errors.content?.type == "required" && (
             <span className="error-message">
-              La descripcion es de maximo 200 caracteres
+              El contenido no puede quedar vacio
             </span>
           )}
-          {!text[index] && (
+          {errors.content?.type == "minLength" && (
             <span className="error-message">
-              El contenido del post no puede estar vacio
-            </span>
-          )}
-          {text[index].length < 200 && (
-            <span className="error-message">
-              El contenido del post debe ser de minimo 200 caracteres
+              El contenido debe tener un minimo de 200 caracteres
             </span>
           )}
         </div>
+        <div className=" grid grid-cols-1 gap-3 items-center justify-start">
+          {errorsTocreate.map((error, index) => (
+            <span className="error-message" key={index}>
+              {error}
+            </span>
+          ))}
+        </div>
       </form>
+      <Card className="mt-4">
+        <CardHeader>
+          <CardTitle>Estadísticas</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>Palabras: {text[index].split(/\s+/).filter(Boolean).length}</p>
+          <p>Caracteres: {text[index].length}</p>
+        </CardContent>
+      </Card>
     </div>
   );
 }

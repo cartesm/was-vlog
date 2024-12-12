@@ -41,12 +41,3 @@ export const searchTags = async (
     return { errors: e.response.data.message };
   }
 };
-
-interface ICreatePost {
-  content: string;
-  tags: { _id: string; nombre: string }[];
-  title: string;
-  description: string;
-}
-
-export const createPost = async (data: ICreatePost) => {};
