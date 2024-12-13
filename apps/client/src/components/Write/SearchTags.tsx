@@ -23,13 +23,15 @@ import {
 } from "../ui/select";
 import { Badge } from "../ui/badge";
 import { debounce } from "lodash";
-export default function SearchTags({ isOpen, changeOpen, setTags, tags }) {
+import { useTotalWrite } from "@/hooks/useTotalWrite";
+export default function SearchTags({ isOpen, changeOpen }) {
   const [query, setQuery] = useState<string>("");
   const t = useTranslations();
   const [order, setOrder] = useState<number>(1);
   const [errors, setErrors] = useState<string>("");
   const [resultTags, setResultTags] = useState<ITagsPagination | null>(null);
   const [page, setPage] = useState<number>(1);
+  const { addTag } = useTotalWrite();
 
   const handleSearch = async () => {
     const { data, errors } = await searchTags(page, order, query);
@@ -110,24 +112,7 @@ export default function SearchTags({ isOpen, changeOpen, setTags, tags }) {
                         {tags.name}
                         <Button
                           onClick={() => {
-                            setTags(
-                              (actual: [{ _id: string; name: string }]) => {
-                                const newTag: { _id: string; name: string } = {
-                                  _id: tags._id,
-                                  name: tags.name,
-                                };
-
-                                if (
-                                  actual.some(
-                                    (tag: { _id: string; name: string }) =>
-                                      tag._id == newTag._id
-                                  )
-                                )
-                                  return actual;
-
-                                return [...actual, newTag];
-                              }
-                            );
+                            addTag(tags);
                           }}
                           className="rounded-full max-w-3 max-h-6 ml-2"
                           variant={"default"}

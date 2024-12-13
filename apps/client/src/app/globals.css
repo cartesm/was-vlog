@@ -69,5 +69,5 @@ body {
   overflow-y: scroll;
 }
 .error-message {
-  @apply font-normal text-sm text-[#D95959];
+  @apply font-normal text-sm text-rose-600 rounded-md px-3 py-1 bg-rose-200 dark:bg-rose-950 dark:text-rose-100;
 }
