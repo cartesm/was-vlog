@@ -22,8 +22,7 @@ import { Public } from 'src/auth/decorators/public.decorator';
 import { PostsType } from './schemas/post.schema';
 import { Types } from 'mongoose';
 import { SearchPipe } from './pipes/search.pipe';
-import { UpdateInfoPostDto } from './dto/updateInfoPost.dto';
-import { UpdateDataPostDto } from './dto/updateDataPost.dto';
+import { UpdateInfoPostDto } from './dto/updatePost.dto';
 import { IsAuhtorGuard } from './guards/is-auhtor.guard';
 import { PageAndIdPipe } from 'src/utils/pipes/page-and-id.pipe';
 import { IPageAndId } from 'src/utils/interfaces/pageAndId.interface';
@@ -81,7 +80,7 @@ export class PostsController {
   }
 
   // ? para tomar posts por tag se usa el search con solo el tag
-  @Put('info/:name')
+  @Put(':name')
   @UseGuards(IsAuhtorGuard)
   @HttpCode(HttpStatus.OK)
   async updateInfoPost(
@@ -89,16 +88,6 @@ export class PostsController {
     @Body() body: UpdateInfoPostDto,
   ): Promise<ResponseWithMessage> {
     return await this.postsService.updateInfoPost(param.name, body);
-  }
-
-  @Put('data/:name')
-  @UseGuards(IsAuhtorGuard)
-  @HttpCode(HttpStatus.OK)
-  async updateInfoData(
-    @Param() param: { name: string },
-    @Body() body: UpdateDataPostDto,
-  ): Promise<ResponseWithMessage> {
-    return await this.postsService.updateDataPost(param.name, body);
   }
 
   @Delete(':name')

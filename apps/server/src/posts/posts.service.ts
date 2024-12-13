@@ -1,11 +1,4 @@
-import {
-  ConflictException,
-  Inject,
-  Injectable,
-  NotAcceptableException,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Inject, Injectable, NotAcceptableException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { PaginateModel, Types } from 'mongoose';
 import { Posts, PostsType } from './schemas/post.schema';
@@ -14,9 +7,8 @@ import { CreatePostDto } from './dto/createPost.dto';
 import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { UpdateInfoPostDto } from './dto/updateInfoPost.dto';
+import { UpdateInfoPostDto } from './dto/updatePost.dto';
 import { threeHoursInMiliseconds } from 'src/configs';
-import { UpdateDataPostDto } from './dto/updateDataPost.dto';
 import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Injectable()
@@ -134,27 +126,6 @@ export class PostsService {
     const updatedPost: PostsType = await this.postModel.findOneAndUpdate(
       { name },
       updatePostData,
-      { new: true },
-    );
-    await this.cacheManager.set(
-      'post:' + updatedPost.name.replaceAll(' ', '-'),
-      JSON.stringify(updatedPost),
-      threeHoursInMiliseconds,
-    );
-
-    return {
-      message: this.i18n.t('test.posts.updated', {
-        lang: I18nContext.current().lang,
-      }),
-    };
-  }
-  async updateDataPost(
-    name: string,
-    contentData: UpdateDataPostDto,
-  ): Promise<ResponseWithMessage> {
-    const updatedPost: PostsType = await this.postModel.findOneAndUpdate(
-      { name },
-      { content: contentData },
       { new: true },
     );
     await this.cacheManager.set(

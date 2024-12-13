@@ -44,6 +44,7 @@ export default function CompactSection() {
     handleSubmit,
     formState: { errors },
   } = useFormContext<IData>();
+
   const onSubmit: SubmitHandler<IData> = async (data: IData) => {
     const createData: ICreatePost = {
       ...data,

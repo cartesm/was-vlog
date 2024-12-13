@@ -44,4 +44,9 @@ export class UpdateInfoPostDto {
     message: i18nValidationMessage('validation.NOT_IN_LIST'),
   })
   languaje?: String;
+
+  @IsOptional({ message: i18nValidationMessage('validation.REQUIRED') })
+  @IsString({ message: i18nValidationMessage('validation.INVALID_STRING') })
+  @MinLength(200, { message: i18nValidationMessage('validation.MIN_LENGTH') })
+  content: string;
 }
