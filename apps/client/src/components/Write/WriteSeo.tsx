@@ -37,12 +37,12 @@ export default function CompactSection() {
     tags,
     deleteTag,
     submitErrors,
+    id: nameId,
   } = useTotalWrite();
 
   return (
     <div className="bg-background p-4 my-4 rounded-lg ">
       <SearchTags isOpen={isOpen} changeOpen={changeOpen} />
-
       <div className="flex items-center justify-between">
         <Input
           placeholder="TITULO"
@@ -53,8 +53,9 @@ export default function CompactSection() {
             minLength: 10,
             maxLength: 150,
           })}
+          readOnly={!!nameId}
           onChange={(e) => setName(e.target.value)}
-          className="text-xl  px-3 py-2 font-bold outline-none ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0"
+          className={`text-xl px-3 py-2 font-bold mr-2 ${!!nameId && "rounded-md bg-secondary "}  outline-none ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0`}
         />
         <TooltipProvider>
           <Tooltip>

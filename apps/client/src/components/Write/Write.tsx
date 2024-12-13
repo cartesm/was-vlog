@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useRef } from "react";
+import React, { useRef } from "react";
 import { Textarea } from "../ui/textarea";
 import Info from "./Info";
 import { toast } from "@/hooks/use-toast";
@@ -20,7 +20,8 @@ export interface IData {
   description: string;
   content: string;
 }
-function Write() {
+function Write({ param }: { param: string }) {
+  console.log(param);
   const lang: string = useLocale();
   const { text, index, add } = useWrite();
   const textAreaRef: React.MutableRefObject<HTMLTextAreaElement | null> =
@@ -73,13 +74,13 @@ function Write() {
       : await updatePost(createData, nameId);
     if (!resp.error) {
       toast({ title: "Exito", description: resp.message });
-      setNameId(createData.name);
+      if (!nameId) setNameId(createData.name);
       return;
     }
     setErrors(resp.message);
 
     const timer = setTimeout(() => {
-      setErrors([""]);
+      setErrors([]);
       return clearTimeout(timer);
     }, 3000);
   };
@@ -97,6 +98,7 @@ function Write() {
                   required: true,
                   minLength: 200,
                 })}
+                spellCheck={false}
                 ref={(instance) => {
                   methods.register("content").ref(instance);
                   if (instance && textAreaRef.current === null) {

@@ -6,7 +6,7 @@ export interface IWriteData {
   name: string;
   description: string;
   languaje: string | null;
-  submitErrors: string[];
+  submitErrors?: string[];
 }
 interface IActions {
   addTag: (tag: { _id: string; name?: string }) => void;

@@ -82,11 +82,19 @@ export const createPost = async (
   }
 };
 
+export interface IUpdatePost {
+  content: string;
+  tags?: { _id: string }[];
+  description: string;
+  languaje: string;
+}
+
 export const updatePost = async (
-  data: ICreatePost,
+  data: IUpdatePost,
   name: string
 ): Promise<IResponseCreate> => {
   try {
+    delete data["name"];
     const resp: AxiosResponse = await axios.put(`/posts/${name}`, data);
     return {
       error: false,
@@ -102,20 +110,44 @@ export const updatePost = async (
   }
 };
 
-export interface IGetPost {
-  data?: any;
-  errors?: string[] | string;
+export interface IGetResp {
+  error?: string[];
+  data?: IPost;
 }
 
-export const getOnePost = async (name: string): Promise<IGetPost> => {
+interface IPostUser {
+  img: string;
+  name: string;
+  username: string;
+  _id: string;
+}
+
+export interface IPost {
+  content: string;
+  createdAt: string;
+  description: string;
+  languaje: string;
+  likeCount: number;
+  name: string;
+  tags: { name: string; _id: string }[];
+  length: number;
+  updatedAt: string;
+  user: IPostUser;
+  _id: string;
+  __v: number;
+}
+
+export const getOnePost = async (name: string): Promise<IGetResp> => {
   try {
     const resp: AxiosResponse = await axios.get(`/posts/${name}`);
-    console.log(resp);
-    return { data: "pene" };
+    console.log(resp.data);
+    return { data: resp.data as IPost };
   } catch (e: any) {
     console.log(e);
+    let message = e.response.data.message;
+    message = Array.isArray(message) ? message : [message];
     return {
-      errors: "",
+      error: message,
     };
   }
 };
