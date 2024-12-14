@@ -53,7 +53,7 @@ const DesktopHeader = ({
         <SelectLang />
       </div>
       <Separator orientation="vertical" />
-      <Link className=" my-auto" href={"/write"}>
+      <Link className=" my-auto" href={"/write/new"}>
         <Button variant={"default"} className="max-h-9">
           {t("write")}
         </Button>

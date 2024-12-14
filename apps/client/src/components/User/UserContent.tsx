@@ -21,6 +21,9 @@ import { Badge } from "../ui/badge";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Spinner } from "../ui/spiner";
 import { useTranslations } from "next-intl";
+import { Button } from "../ui/button";
+import { Edit } from "lucide-react";
+import { Link } from "@/i18n/routing";
 function UserContent({ userId }: { userId: string }): React.ReactElement {
   const t = useTranslations();
   const [posts, setPosts] = useState<IPostContent[]>([]);
@@ -126,13 +129,20 @@ const PostItem = ({ post }: { post: IPostContent }): React.ReactElement => {
       <CardContent>
         <div>
           {post.description && <div className="mb-3">{post.description}</div>}
-          <div className="flex items-center justify-start gap-2">
+          <div className="flex items-center justify-between gap-2">
             <Badge variant="secondary">{post.likeCount} likes</Badge>
             {post.tags.map((tag: { name: string; _id: string }) => (
               <Badge key={tag._id} variant={"outline"}>
                 {tag.name}
               </Badge>
             ))}
+            <Link
+              href={`/write/${post.name}`}
+              target="_blank"
+              className="border-2 border-gray-200 p-2 rounded-md"
+            >
+              <Edit />
+            </Link>
           </div>
         </div>
       </CardContent>

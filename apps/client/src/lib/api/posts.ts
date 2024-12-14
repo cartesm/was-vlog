@@ -83,10 +83,11 @@ export const createPost = async (
 };
 
 export interface IUpdatePost {
-  content: string;
+  content?: string;
   tags?: { _id: string }[];
-  description: string;
-  languaje: string;
+  description?: string;
+  languaje?: string;
+  name?: string;
 }
 
 export const updatePost = async (
@@ -94,7 +95,6 @@ export const updatePost = async (
   name: string
 ): Promise<IResponseCreate> => {
   try {
-    delete data["name"];
     const resp: AxiosResponse = await axios.put(`/posts/${name}`, data);
     return {
       error: false,

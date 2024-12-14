@@ -10,6 +10,7 @@ export interface IWriteData {
 }
 interface IActions {
   addTag: (tag: { _id: string; name?: string }) => void;
+  setTags: (tags: { _id: string; name?: string }[]) => void;
   deleteTag: (id: string) => void;
   setId: (name: string | null) => void;
   setName: (name: string) => void;
@@ -40,4 +41,5 @@ export const useTotalWrite = create<IWriteData & IActions>((set) => ({
   setDescription: (desc) => set(() => ({ description: desc })),
   setLang: (lang) => set(() => ({ languaje: lang })),
   setErrors: (errors) => set({ submitErrors: errors }),
+  setTags: (tags) => set(() => ({ tags: tags })),
 }));

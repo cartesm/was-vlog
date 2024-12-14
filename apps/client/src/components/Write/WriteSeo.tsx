@@ -19,11 +19,15 @@ import { useWrite } from "@/hooks/useWrite";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useTotalWrite } from "@/hooks/useTotalWrite";
 import { IData } from "./Write";
+import UpdateName from "../Posts/UpdateName";
 
 export default function CompactSection() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isUpdateOpen, setIsupdateOpen] = useState<boolean>(false);
+
   const { text, index } = useWrite();
   const changeOpen = () => setIsOpen(!isOpen);
+  const changeUpdateOpen = () => setIsupdateOpen(!isUpdateOpen);
   const {
     register,
     formState: { errors },
@@ -44,23 +48,35 @@ export default function CompactSection() {
     <div className="bg-background p-4 my-4 rounded-lg ">
       <SearchTags isOpen={isOpen} changeOpen={changeOpen} />
       <div className="flex items-center justify-between">
-        <Input
-          placeholder="TITULO"
-          autoFocus
-          value={name}
-          {...register("name", {
-            required: true,
-            minLength: 10,
-            maxLength: 150,
-          })}
-          readOnly={!!nameId}
-          onChange={(e) => setName(e.target.value)}
-          className={`text-xl px-3 py-2 font-bold mr-2 ${!!nameId && "rounded-md bg-secondary "}  outline-none ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0`}
-        />
+        <div
+          className={` mr-2 mb-2 flex   ${!!nameId && "rounded-md bg-secondary "} `}
+        >
+          <Input
+            form="write-form"
+            placeholder="TITULO"
+            autoFocus
+            value={name}
+            {...register("name", {
+              required: true,
+              minLength: 10,
+              maxLength: 150,
+            })}
+            readOnly={!!nameId}
+            onChange={(e) => setName(e.target.value)}
+            className={`text-xl px-3 py-2 font-bold   ${!!nameId && "rounded-md bg-secondary "}  outline-none ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0`}
+          />
+          <UpdateName open={isUpdateOpen} changeOpen={changeUpdateOpen} />
+        </div>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
-              <Button variant="secondary" size="sm" className="w-[100px]">
+              <Button
+                form="write-form"
+                type="submit"
+                variant="secondary"
+                size="sm"
+                className="w-[100px]"
+              >
                 <Save />
               </Button>
             </TooltipTrigger>
@@ -99,6 +115,7 @@ export default function CompactSection() {
           minLength: 10,
           maxLength: 200,
         })}
+        form="write-form"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         placeholder="Descripción breve..."
@@ -143,11 +160,12 @@ export default function CompactSection() {
         )}
       </div>
       <div className=" grid grid-cols-1 gap-3 items-center justify-start">
-        {submitErrors.map((error, index) => (
-          <span className="error-message" key={index}>
-            {error}
-          </span>
-        ))}
+        {submitErrors &&
+          submitErrors.map((error, index) => (
+            <span className="error-message" key={index}>
+              {error}
+            </span>
+          ))}
       </div>
       <Card className="mt-4">
         <CardHeader>

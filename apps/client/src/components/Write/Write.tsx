@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Textarea } from "../ui/textarea";
 import Info from "./Info";
 import { toast } from "@/hooks/use-toast";
@@ -20,12 +20,12 @@ export interface IData {
   description: string;
   content: string;
 }
-function Write({ param }: { param: string }) {
-  console.log(param);
+function Write() {
   const lang: string = useLocale();
   const { text, index, add } = useWrite();
   const textAreaRef: React.MutableRefObject<HTMLTextAreaElement | null> =
     useRef(null);
+  const methods = useForm<IData>();
   const { setErrors, id: nameId, setId: setNameId, tags } = useTotalWrite();
   const handleEdit = (value: string) => {
     const selection: string | undefined = window.getSelection()?.toString();
@@ -55,11 +55,11 @@ function Write({ param }: { param: string }) {
     add(newChange);
     return;
   };
-  const methods = useForm<IData>();
 
   const onSubmit: SubmitHandler<IData> = async (data: IData) => {
     const createData: ICreatePost = {
       ...data,
+      name: data.name.trimEnd(),
       content: text[index],
       languaje: lang,
     };
@@ -69,9 +69,14 @@ function Write({ param }: { param: string }) {
       }));
       createData.tags = parsedTags;
     }
-    const resp: IResponseCreate = !nameId
-      ? await createPost(createData)
-      : await updatePost(createData, nameId);
+    let resp: IResponseCreate;
+
+    if (!nameId) resp = await createPost(createData);
+    else {
+      delete (createData as any).name;
+      resp = await updatePost(createData, nameId);
+    }
+
     if (!resp.error) {
       toast({ title: "Exito", description: resp.message });
       if (!nameId) setNameId(createData.name);
@@ -89,44 +94,44 @@ function Write({ param }: { param: string }) {
     <section className="p-2mx-auto flex flex-col justify-between w-full ">
       <ControlPanel handleEdit={handleEdit} />
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <div className="flex flex-col-reverse lg:flex-row  overflow-hidden gap-4 py-5">
-            <div className="flex-1 pt-4 min-h-0">
-              <Textarea
-                value={text[index]}
-                {...methods.register("content", {
-                  required: true,
-                  minLength: 200,
-                })}
-                spellCheck={false}
-                ref={(instance) => {
-                  methods.register("content").ref(instance);
-                  if (instance && textAreaRef.current === null) {
-                    textAreaRef.current = instance;
-                  }
-                }}
-                placeholder="Escribe tu texto aquí..."
-                className="py-6 text-area-data w-full  h-full min-h-[500px] ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0"
-                onChange={(e) => add(e.target.value)}
-              />
-            </div>
-            <Tabs
-              defaultValue="seo"
-              className="w-full lg:w-1/3 rounded-md p-2 bg-secondary"
-            >
-              <TabsList>
-                <TabsTrigger value="seo">SEO</TabsTrigger>
-                <TabsTrigger value="info">DOCS</TabsTrigger>
-              </TabsList>
-              <TabsContent value="info">
-                <Info />
-              </TabsContent>
-              <TabsContent value="seo">
-                <WriteSEO />
-              </TabsContent>
-            </Tabs>
+        <form onSubmit={methods.handleSubmit(onSubmit)} id="write-form"></form>
+        <div className="flex flex-col-reverse lg:flex-row  overflow-hidden gap-4 py-5">
+          <div className="flex-1 pt-4 min-h-0">
+            <Textarea
+              value={text[index]}
+              {...methods.register("content", {
+                required: true,
+                minLength: 200,
+              })}
+              form="write-form"
+              spellCheck={false}
+              ref={(instance) => {
+                methods.register("content").ref(instance);
+                if (instance && textAreaRef.current === null) {
+                  textAreaRef.current = instance;
+                }
+              }}
+              placeholder="Escribe tu texto aquí..."
+              className="py-6 text-area-data w-full  h-full min-h-[500px] ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0"
+              onChange={(e) => add(e.target.value)}
+            />
           </div>
-        </form>
+          <Tabs
+            defaultValue="seo"
+            className="w-full lg:w-1/3 rounded-md p-2 bg-secondary"
+          >
+            <TabsList>
+              <TabsTrigger value="seo">SEO</TabsTrigger>
+              <TabsTrigger value="info">DOCS</TabsTrigger>
+            </TabsList>
+            <TabsContent value="info">
+              <Info />
+            </TabsContent>
+            <TabsContent value="seo">
+              <WriteSEO />
+            </TabsContent>
+          </Tabs>
+        </div>
       </FormProvider>
     </section>
   );

@@ -10,6 +10,7 @@ import { Cache } from 'cache-manager';
 import { UpdateInfoPostDto } from './dto/updatePost.dto';
 import { threeHoursInMiliseconds } from 'src/configs';
 import { ExceptionsService } from 'src/utils/exceptions.service';
+import { SourceTextModule } from 'vm';
 
 @Injectable()
 export class PostsService {
@@ -25,21 +26,24 @@ export class PostsService {
     return !!postMactch;
   }
   async getOnePost(name: string): Promise<PostsType> {
-    const cacheMatch: string = await this.cacheManager.get(
+    /*  const cacheMatch: string = await this.cacheManager.get(
       'post:' + name.replaceAll(' ', '-'),
     );
-    if (cacheMatch) return JSON.parse(cacheMatch);
 
+    if (cacheMatch) {
+      return JSON.parse(cacheMatch);
+    } */
     const postMatch: PostsType = await this.postModel
       .findOne({ name })
       .populate('user tags', 'username name _id img');
 
     if (!postMatch) this.exceptions.throwNotFound('test.posts.notExists');
-    await this.cacheManager.set(
-      'post:' + name.replaceAll(' ', '-'),
+    /*  await this.cacheManager.set(
+      'post:' + postMatch.name.replaceAll(' ', '-'),
       JSON.stringify(postMatch),
       threeHoursInMiliseconds,
-    );
+    ); */
+
     return postMatch;
   }
   async getPostOfAnUser(
@@ -127,11 +131,6 @@ export class PostsService {
       { name },
       updatePostData,
       { new: true },
-    );
-    await this.cacheManager.set(
-      'post:' + updatedPost.name.replaceAll(' ', '-'),
-      JSON.stringify(updatedPost),
-      threeHoursInMiliseconds,
     );
 
     return {

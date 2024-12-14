@@ -13,12 +13,10 @@ export class IsAuhtorGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: UserRequest = context.switchToHttp().getRequest();
-    const { user, params } = req;
-
+    const { user, params } = req; //
     const postToUse: PostsType = await this.postService.getOnePost(params.name);
-    if (postToUse.user != user.id)
+    if (postToUse.user._id != user.id)
       this.exceptions.throwITeapot('test.auth.notMainUser');
-
     return true;
   }
 }

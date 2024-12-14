@@ -27,13 +27,13 @@ export class UpdateInfoPostDto {
   description?: string;
 
   @IsOptional()
-  @IsMongoId({
+  /*   @IsMongoId({
     each: true,
     message: i18nValidationMessage('validation.INVALID_MONGO_ID'),
-  })
+  }) */
   @IsArray({ message: i18nValidationMessage('validation.INVALID_ARRAY') })
   @ArrayMinSize(1, {
-    message: i18nValidationMessage('validation.ARRAY_MIN_LEGHT'),
+    message: i18nValidationMessage('validation.ARRAY_MIN_LENGHT'),
   })
   @Type(() => Types.ObjectId)
   tags?: [Types.ObjectId];
@@ -48,5 +48,5 @@ export class UpdateInfoPostDto {
   @IsOptional({ message: i18nValidationMessage('validation.REQUIRED') })
   @IsString({ message: i18nValidationMessage('validation.INVALID_STRING') })
   @MinLength(200, { message: i18nValidationMessage('validation.MIN_LENGTH') })
-  content: string;
+  content?: string;
 }
