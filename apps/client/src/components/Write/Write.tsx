@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useRef } from "react";
+import { DebouncedFuncLeading, throttle } from "lodash";
 import { Textarea } from "../ui/textarea";
 import Info from "./Info";
 import { toast } from "@/hooks/use-toast";
@@ -55,27 +56,18 @@ function Write() {
     add(newChange);
     return;
   };
-
   const onSubmit: SubmitHandler<IData> = async (data: IData) => {
     const createData: ICreatePost = {
       ...data,
       name: data.name.trimEnd(),
       content: text[index],
       languaje: lang,
+      tags: tags.length ? tags.map(({ _id }) => ({ _id })) : undefined, // Procesar tags en línea si existen.
     };
-    if (tags.length >= 1) {
-      const parsedTags: { _id: string }[] = tags.map((actual) => ({
-        _id: actual._id,
-      }));
-      createData.tags = parsedTags;
-    }
-    let resp: IResponseCreate;
 
-    if (!nameId) resp = await createPost(createData);
-    else {
-      delete (createData as any).name;
-      resp = await updatePost(createData, nameId);
-    }
+    const resp: IResponseCreate = !nameId
+      ? await createPost(createData)
+      : await updatePost({ ...createData, name: undefined }, nameId);
 
     if (!resp.error) {
       toast({ title: "Exito", description: resp.message });
@@ -89,12 +81,39 @@ function Write() {
       return clearTimeout(timer);
     }, 3000);
   };
+  const throttledEdit: DebouncedFuncLeading<(data: string) => void> =
+    useCallback(
+      throttle(
+        (data: string) => {
+          handleEdit(data);
+        },
+        1000,
+        { trailing: false }
+      ),
+      []
+    );
+  const throttledSubmit: DebouncedFuncLeading<(data: IData) => void> =
+    useCallback(
+      throttle(
+        (data: IData) => {
+          onSubmit(data);
+        },
+        3000,
+        { trailing: false }
+      ),
+      []
+    );
 
   return (
     <section className="p-2mx-auto flex flex-col justify-between w-full ">
-      <ControlPanel handleEdit={handleEdit} />
+      <ControlPanel handleEdit={throttledEdit} />
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)} id="write-form"></form>
+        <form
+          onSubmit={methods.handleSubmit((data) => {
+            throttledSubmit(data);
+          })}
+          id="write-form"
+        ></form>
         <div className="flex flex-col-reverse lg:flex-row  overflow-hidden gap-4 py-5">
           <div className="flex-1 pt-4 min-h-0">
             <Textarea

@@ -20,7 +20,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useTotalWrite } from "@/hooks/useTotalWrite";
 import { IData } from "./Write";
 import UpdateName from "../Posts/UpdateName";
-
 export default function CompactSection() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isUpdateOpen, setIsupdateOpen] = useState<boolean>(false);

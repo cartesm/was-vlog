@@ -47,7 +47,6 @@ function UpdateName({
     formState: { errors },
   } = useForm<Inputs>();
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
   const [loading, setLoading] = useState<boolean>(false);
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setLoading(true);
@@ -78,12 +77,10 @@ function UpdateName({
       return;
     }
 
-    startTransition(() => {
-      setId(data.name);
-      setName(data.name);
-      router.replace(`/write/${data.name}`);
-      changeOpen();
-    });
+    setId(data.name);
+    setName(data.name);
+    router.replace(`/write/${data.name}`);
+    changeOpen();
   };
 
   return (
