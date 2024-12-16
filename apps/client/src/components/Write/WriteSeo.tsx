@@ -14,8 +14,9 @@ import {
 } from "../ui/tooltip";
 import { useFormContext } from "react-hook-form";
 import { useTotalWrite } from "@/hooks/useTotalWrite";
-import { IData } from "./Write";
+
 import dynamic from "next/dynamic";
+import { IData } from "@/interfaces/IWriteData.interface";
 const UpdateName = dynamic(() => import("@/components/Posts/UpdateName"), {
   ssr: false,
 });
@@ -36,7 +37,6 @@ export default function CompactSection() {
 
   return (
     <div className="bg-background p-4 my-4 rounded-lg ">
-      {isOpen && <UpdateName changeOpen={changeOpen} open={isOpen} />}
       <div className="flex items-center justify-between">
         <div
           className={` mr-2 mb-2 flex ${!!nameId && "rounded-md bg-secondary "} `}
@@ -52,6 +52,11 @@ export default function CompactSection() {
             })}
             readOnly={!!nameId}
             className={`text-xl px-3 py-2 font-bold   ${!!nameId && "rounded-md bg-secondary "}  outline-none ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0`}
+          />
+          <UpdateName
+            id={nameId as string}
+            changeOpen={changeOpen}
+            open={isOpen}
           />
         </div>
         <TooltipProvider>
@@ -92,9 +97,7 @@ export default function CompactSection() {
             </Button>
           </Badge>
         ))}
-        {tagsVisible && (
-          <SearchTags changeOpen={changeTagsOpen} isOpen={tagsVisible} />
-        )}
+        <SearchTags changeOpen={changeTagsOpen} isOpen={tagsVisible} />
         <Button
           onClick={() => setTagsVisible(true)}
           variant="outline"

@@ -11,11 +11,12 @@ import {
 import { Button } from "../ui/button";
 import { useTotalWrite } from "@/hooks/useTotalWrite";
 import { Input } from "../ui/input";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, useFormContext } from "react-hook-form";
 import { IResponseCreate, updatePost } from "@/lib/api/posts";
 import { useRouter } from "@/i18n/routing";
 import { useState } from "react";
 import { Spinner } from "../ui/spiner";
+import { IData } from "@/interfaces/IWriteData.interface";
 interface Inputs {
   name: string;
 }
@@ -23,24 +24,21 @@ interface Inputs {
 function UpdateName({
   open,
   changeOpen,
+  id,
 }: {
   open: boolean;
   changeOpen: () => void;
+  id: string;
 }) {
-  const {
-    id: nameId,
-    name,
-    setErrors,
-    submitErrors,
-    setId,
-    setName,
-  } = useTotalWrite();
+  const { setErrors, submitErrors } = useTotalWrite();
 
+  const { reset } = useFormContext<IData>();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
+
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -48,7 +46,7 @@ function UpdateName({
     setLoading(true);
     const { error, message }: IResponseCreate = await updatePost(
       { name: data.name.trimEnd() },
-      nameId as string
+      id
     );
     setLoading(false);
     if (error) {
@@ -59,9 +57,8 @@ function UpdateName({
       }, 3000);
       return;
     }
-    setId(data.name);
-    setName(data.name);
     router.replace(`/write/${data.name}`);
+    reset({ name: data.name });
     changeOpen();
   };
 
@@ -70,7 +67,7 @@ function UpdateName({
       <DialogTrigger>
         <Button
           type="button"
-          className={`${!!nameId ? "block" : "hidden"} `}
+          className={`${!!id ? "block" : "hidden"} `}
           variant={"secondary"}
           size={"icon"}
         >
@@ -94,7 +91,7 @@ function UpdateName({
                   minLength: 10,
                   maxLength: 150,
                 })}
-                defaultValue={name}
+                defaultValue={id}
                 type="text"
                 autoComplete="off"
               />

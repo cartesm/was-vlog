@@ -5,14 +5,17 @@ import { remark } from "remark";
 import remarkHtml from "remark-html";
 import remarkParse from "remark-parse";
 import { FileX2 } from "lucide-react";
-function Viewer({ text }: { text: string }) {
+import { IData } from "@/interfaces/IWriteData.interface";
+import { useFormContext } from "react-hook-form";
+function Viewer() {
   const [htmlToRender, setHtmlToRender] = useState<string>("");
+  const { watch } = useFormContext<IData>();
   useEffect(() => {
     (async () => {
       const file = await remark()
         .use(remarkParse)
         .use(remarkHtml)
-        .process(text);
+        .process(watch("content"));
       setHtmlToRender(String(file));
     })();
   }, []);
@@ -27,7 +30,7 @@ function Viewer({ text }: { text: string }) {
 
   return (
     <section
-      className="container-html max-w-3xl mx-auto w-full py-12 mt-3 rounded-md px-6 bg-secondary"
+      className="container-html max-w-3xl mx-auto w-full mt-3 rounded-md max-h-[500px] overflow-y-auto px-6 bg-secondary"
       dangerouslySetInnerHTML={{ __html: htmlToRender }}
     ></section>
   );

@@ -1,4 +1,9 @@
 .container-html {
+  * {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+  }
   span,
   p,
   strong,
@@ -20,9 +25,6 @@
     font-size: 1.125rem;
     line-height: 1.75rem;
     margin-bottom: 1.5rem;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
   }
 
   ul {
