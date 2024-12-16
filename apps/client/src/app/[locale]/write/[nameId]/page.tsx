@@ -1,55 +1,25 @@
 "use client";
-import Write from "@/components/Write/Write";
-import Viewer from "@/components/Posts/LocalViewer";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TabsContent } from "@radix-ui/react-tabs";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useTotalWrite } from "@/hooks/useTotalWrite";
-import { useWrite } from "@/hooks/useWrite";
-import { getOnePost, IGetResp } from "@/lib/api/posts";
-
+import dynamic from "next/dynamic";
+import { Loader } from "lucide-react";
+import { useParams } from "next/navigation";
+import LoaderSkeleton from "@/components/Write/LoaderSkeleton";
+const Writer = dynamic(() => import("@/components/Write/Write"), {
+  ssr: false,
+  loading: () => <LoaderSkeleton />,
+});
+const Viewer = dynamic(() => import("@/components/Posts/LocalViewer"), {
+  ssr: false,
+  loading: () => (
+    <section className="container-html max-w-3xl mx-auto w-full py-12 mt-3 rounded-md px-6 bg-secondary flex flex-col items-center justify-center">
+      <Loader />
+      <span>Cargando...</span>
+    </section>
+  ),
+});
 export default function EditorPage() {
-  const { nameId } = useParams();
-  const router = useRouter();
-  const { set } = useTotalWrite();
-  const [loading, setLoading] = useState<boolean>(true);
-  const { add } = useWrite();
-  useEffect(() => {
-    if (!nameId) {
-      router.replace("/");
-      router.refresh();
-      return;
-    }
-    if (nameId != "new") {
-      getPost();
-    }
-    setLoading(false);
-  }, []);
-
-  const getPost = async () => {
-    const { data, error }: IGetResp = await getOnePost(nameId as string);
-
-    if (error) {
-      router.replace("/");
-      router.refresh();
-      return;
-    }
-
-    if (!data) return;
-    add(data.content);
-    set({
-      description: data.description,
-      name: data.name,
-      languaje: data.languaje,
-      tags: data.tags,
-      id: data.name,
-    });
-    setLoading(false);
-  };
-
-  if (loading) return <span>ctm</span>;
-
+  const { nameId }: { nameId: string } = useParams();
   return (
     <section className=" min-h-screen">
       <div>
@@ -62,10 +32,10 @@ export default function EditorPage() {
             <TabsTrigger value="password">Vista previa</TabsTrigger>
           </TabsList>
           <TabsContent value="account">
-            <Write />
+            <Writer param={nameId} />
           </TabsContent>
           <TabsContent value="password">
-            <Viewer />
+            <Viewer text="pene" />
           </TabsContent>
         </Tabs>
       </div>

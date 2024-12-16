@@ -28,12 +28,10 @@ import { Label } from "../ui/label";
 import { IRespondImage, uploadImage } from "@/lib/api/images";
 import { Spinner } from "../ui/spiner";
 import { useState } from "react";
-import { useWrite } from "@/hooks/useWrite";
 
 function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
   const [modalState, setModalState] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { traveling } = useWrite();
   const openModal = () => setModalState(!modalState);
 
   const handleChange = (e) => {
@@ -287,39 +285,6 @@ function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
           </TooltipTrigger>
           <TooltipContent>
             <p>Enlace</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      {/* ----CONTROL---- */}
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            <Button
-              onClick={() => traveling(-1)}
-              size="sm"
-              variant={"secondary"}
-            >
-              <Undo />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Atras</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            <Button
-              onClick={() => traveling(1)}
-              size="sm"
-              variant={"secondary"}
-            >
-              <Redo />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Adelante</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

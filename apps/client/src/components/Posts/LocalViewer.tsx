@@ -1,23 +1,21 @@
 "use client";
-import { useWrite } from "@/hooks/useWrite";
 import "./htmlStyles.css";
 import { useEffect, useState } from "react";
 import { remark } from "remark";
 import remarkHtml from "remark-html";
 import remarkParse from "remark-parse";
 import { FileX2 } from "lucide-react";
-function Viewer() {
+function Viewer({ text }: { text: string }) {
   const [htmlToRender, setHtmlToRender] = useState<string>("");
-  const { text, index } = useWrite();
   useEffect(() => {
     (async () => {
       const file = await remark()
         .use(remarkParse)
         .use(remarkHtml)
-        .process(text[index]);
+        .process(text);
       setHtmlToRender(String(file));
     })();
-  }, [text, index]);
+  }, []);
 
   if (!htmlToRender)
     return (

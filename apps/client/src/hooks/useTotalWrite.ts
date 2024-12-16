@@ -1,12 +1,13 @@
 import { create } from "zustand";
 
 export interface IWriteData {
-  id: string | null;
+  id?: string | null;
   tags: { _id: string; name?: string }[];
   name: string;
   description: string;
-  languaje: string | null;
+  languaje?: string | null;
   submitErrors?: string[];
+  content: string;
 }
 interface IActions {
   addTag: (tag: { _id: string; name?: string }) => void;
@@ -24,6 +25,7 @@ export const useTotalWrite = create<IWriteData & IActions>((set) => ({
   tags: [],
   name: "",
   description: "",
+  content: "",
   languaje: null,
   submitErrors: [],
   addTag: (tagToAdd) =>

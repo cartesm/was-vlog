@@ -12,12 +12,10 @@ import { Button } from "../ui/button";
 import { useTotalWrite } from "@/hooks/useTotalWrite";
 import { Input } from "../ui/input";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ICreatePost, IResponseCreate, updatePost } from "@/lib/api/posts";
+import { IResponseCreate, updatePost } from "@/lib/api/posts";
 import { useRouter } from "@/i18n/routing";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { Spinner } from "../ui/spiner";
-import { useWrite } from "@/hooks/useWrite";
-import { useLocale } from "next-intl";
 interface Inputs {
   name: string;
 }
@@ -36,11 +34,8 @@ function UpdateName({
     submitErrors,
     setId,
     setName,
-    description,
-    tags,
   } = useTotalWrite();
-  const { index, text } = useWrite();
-  const lang = useLocale();
+
   const {
     register,
     handleSubmit,
@@ -48,23 +43,11 @@ function UpdateName({
   } = useForm<Inputs>();
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
+
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setLoading(true);
-    const createData: ICreatePost = {
-      name: data.name.trimEnd(),
-      description,
-      content: text[index],
-      languaje: lang,
-    };
-    if (tags.length >= 1) {
-      const parsedTags: { _id: string }[] = tags.map((actual) => ({
-        _id: actual._id,
-      }));
-      createData.tags = parsedTags;
-    }
-
     const { error, message }: IResponseCreate = await updatePost(
-      createData,
+      { name: data.name.trimEnd() },
       nameId as string
     );
     setLoading(false);
@@ -76,7 +59,6 @@ function UpdateName({
       }, 3000);
       return;
     }
-
     setId(data.name);
     setName(data.name);
     router.replace(`/write/${data.name}`);

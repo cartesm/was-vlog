@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "../ui/input";
 import { Plus, Save, Trash } from "lucide-react";
-import SearchTags from "./SearchTags";
 import {
   Tooltip,
   TooltipContent,
@@ -14,57 +13,46 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { useFormContext } from "react-hook-form";
-import { useWrite } from "@/hooks/useWrite";
-
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useTotalWrite } from "@/hooks/useTotalWrite";
 import { IData } from "./Write";
-import UpdateName from "../Posts/UpdateName";
+import dynamic from "next/dynamic";
+const UpdateName = dynamic(() => import("@/components/Posts/UpdateName"), {
+  ssr: false,
+});
+const SearchTags = dynamic(() => import("@/components/Write/SearchTags"), {
+  ssr: false,
+});
 export default function CompactSection() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [isUpdateOpen, setIsupdateOpen] = useState<boolean>(false);
-
-  const { text, index } = useWrite();
-  const changeOpen = () => setIsOpen(!isOpen);
-  const changeUpdateOpen = () => setIsupdateOpen(!isUpdateOpen);
+  const [tagsVisible, setTagsVisible] = useState<boolean>(false);
+  const changeTagsOpen = () => setTagsVisible((actual) => !actual);
+  const changeOpen = () => setIsOpen((actual) => !actual);
   const {
     register,
     formState: { errors },
   } = useFormContext<IData>();
 
-  const {
-    name,
-    setName,
-    description,
-    setDescription,
-    tags,
-    deleteTag,
-    submitErrors,
-    id: nameId,
-  } = useTotalWrite();
+  const { tags, deleteTag, submitErrors, id: nameId } = useTotalWrite();
 
   return (
     <div className="bg-background p-4 my-4 rounded-lg ">
-      <SearchTags isOpen={isOpen} changeOpen={changeOpen} />
+      {isOpen && <UpdateName changeOpen={changeOpen} open={isOpen} />}
       <div className="flex items-center justify-between">
         <div
-          className={` mr-2 mb-2 flex   ${!!nameId && "rounded-md bg-secondary "} `}
+          className={` mr-2 mb-2 flex ${!!nameId && "rounded-md bg-secondary "} `}
         >
           <Input
             form="write-form"
             placeholder="TITULO"
             autoFocus
-            value={name}
             {...register("name", {
               required: true,
               minLength: 10,
               maxLength: 150,
             })}
             readOnly={!!nameId}
-            onChange={(e) => setName(e.target.value)}
             className={`text-xl px-3 py-2 font-bold   ${!!nameId && "rounded-md bg-secondary "}  outline-none ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0`}
           />
-          <UpdateName open={isUpdateOpen} changeOpen={changeUpdateOpen} />
         </div>
         <TooltipProvider>
           <Tooltip>
@@ -104,7 +92,14 @@ export default function CompactSection() {
             </Button>
           </Badge>
         ))}
-        <Button onClick={() => setIsOpen(true)} variant="outline" size="sm">
+        {tagsVisible && (
+          <SearchTags changeOpen={changeTagsOpen} isOpen={tagsVisible} />
+        )}
+        <Button
+          onClick={() => setTagsVisible(true)}
+          variant="outline"
+          size="sm"
+        >
           <Plus />
         </Button>
       </div>
@@ -115,8 +110,6 @@ export default function CompactSection() {
           maxLength: 200,
         })}
         form="write-form"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
         placeholder="Descripción breve..."
         className="h-full  outline-none ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0"
       />
@@ -166,15 +159,6 @@ export default function CompactSection() {
             </span>
           ))}
       </div>
-      <Card className="mt-4">
-        <CardHeader>
-          <CardTitle>Estadísticas</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>Palabras: {text[index].split(/\s+/).filter(Boolean).length}</p>
-          <p>Caracteres: {text[index].length}</p>
-        </CardContent>
-      </Card>
     </div>
   );
 }
