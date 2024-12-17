@@ -1,17 +1,10 @@
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-} from "@/components/ui/pagination";
 import { ITagsPagination, searchTags } from "@/lib/api/tags";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   Select,
   SelectTrigger,
@@ -23,15 +16,20 @@ import {
 } from "../ui/select";
 import { Badge } from "../ui/badge";
 import { debounce } from "lodash";
-import { useTotalWrite } from "@/hooks/useTotalWrite";
+import { useFetchErrors } from "@/hooks/useFetchErrors";
+import { useWriteTags } from "@/hooks/write/useTags";
+import dynammic from "next/dynamic";
+const Paginate = dynammic(() => import("@/components/Pagination"), {
+  ssr: true,
+});
 export default function SearchTags({ isOpen, changeOpen }) {
-  const [query, setQuery] = useState<string>("");
   const t = useTranslations();
+  const [query, setQuery] = useState<string>("");
   const [order, setOrder] = useState<number>(1);
-  const [errors, setErrors] = useState<string>("");
-  const [resultTags, setResultTags] = useState<ITagsPagination | null>(null);
   const [page, setPage] = useState<number>(1);
-  const { addTag } = useTotalWrite();
+  const { errors, set: setErrors } = useFetchErrors();
+  const { add: addTag } = useWriteTags();
+  const [resultTags, setResultTags] = useState<ITagsPagination | null>(null);
 
   const handleSearch = async () => {
     const { data, errors } = await searchTags(page, order, query);
@@ -49,8 +47,7 @@ export default function SearchTags({ isOpen, changeOpen }) {
     if (goto > resultTags?.totalPages || goto <= 0) return;
     setPage(goto);
   };
-
-  const debounceSerch = debounce(handleSearch, 1000);
+  const debounceSerch = debounce(handleSearch, 700);
 
   useEffect(() => {
     setPage(1);
@@ -104,107 +101,34 @@ export default function SearchTags({ isOpen, changeOpen }) {
                 </div>
               </form>
               <div className="flex flex-wrap gap-2 py-4 flex-row ">
-                {errors && <span className="error-message">{errors}</span>}
-                {!errors && resultTags && (
-                  <>
-                    {resultTags.docs.map((tags) => (
-                      <Badge className="px-3 py-1 " key={tags.name}>
-                        {tags.name}
-                        <Button
-                          onClick={() => {
-                            addTag(tags);
-                          }}
-                          className="rounded-full max-w-3 max-h-6 ml-2"
-                          variant={"default"}
-                        >
-                          <Plus />
-                        </Button>
-                      </Badge>
-                    ))}
-                    <Pagination className="pt-3">
-                      <PaginationContent>
-                        {/* primer item */}
-                        <PaginationItem
-                          onClick={() => handleClickPaginate(-1)}
-                          className="rounded-full p-2 hover:bg-secondary  hover:cursor-pointer"
-                        >
-                          <ChevronLeft />
-                        </PaginationItem>
-                        <PaginationItem>
-                          <PaginationLink
-                            onClick={() => setPage(1)}
-                            className={`rounded-full hover:cursor-pointer ${page == 1 && "bg-green-500"} `}
-                          >
-                            1
-                          </PaginationLink>
-                        </PaginationItem>
-                        {/* paginacion intermedia */}
-                        {resultTags.totalPages > 1 && (
-                          <>
-                            {page <= 3 ? (
-                              [2, 3, 4].map((item) => (
-                                <PaginationItem key={item}>
-                                  <PaginationLink
-                                    onClick={() => setPage(item)}
-                                    className={`rounded-full hover:cursor-pointer ${page == item && "bg-green-500"} `}
-                                  >
-                                    {item}
-                                  </PaginationLink>
-                                </PaginationItem>
-                              ))
-                            ) : (
-                              <>
-                                <PaginationItem>
-                                  <PaginationEllipsis />
-                                </PaginationItem>
-                                {[page - 1, page, page + 1]
-                                  .filter(
-                                    (thisPage) =>
-                                      thisPage <= resultTags.totalPages &&
-                                      thisPage != resultTags.totalPages
-                                  )
-                                  .map((item) => (
-                                    <PaginationItem key={item}>
-                                      <PaginationLink
-                                        onClick={() => setPage(item)}
-                                        className={`rounded-full hover:cursor-pointer ${page == item && "bg-green-500"} `}
-                                      >
-                                        {item}
-                                      </PaginationLink>
-                                    </PaginationItem>
-                                  ))}
-                              </>
-                            )}
-                          </>
-                        )}
-                        {/* item final y separador */}
-                        {resultTags.totalPages != 1 &&
-                          resultTags.totalPages > 4 && (
-                            <>
-                              {resultTags.totalPages - 1 != page && (
-                                <PaginationItem>
-                                  <PaginationEllipsis />
-                                </PaginationItem>
-                              )}
-                              <PaginationItem>
-                                <PaginationLink
-                                  onClick={() => setPage(resultTags.totalPages)}
-                                  className={`rounded-full hover:cursor-pointer ${page == resultTags.totalPages && "bg-green-500"} `}
-                                >
-                                  {resultTags.totalPages}
-                                </PaginationLink>
-                              </PaginationItem>
-                            </>
-                          )}
-                        <PaginationItem
-                          onClick={() => handleClickPaginate(+1)}
-                          className="rounded-full p-2 hover:bg-secondary hover:cursor-pointer"
-                        >
-                          <ChevronRight />
-                        </PaginationItem>
-                      </PaginationContent>
-                    </Pagination>
-                  </>
+                <div>
+                  {errors?.map((error, index) => (
+                    <span className="error-message" key={index}>
+                      {error}
+                    </span>
+                  ))}
+                </div>
+                {resultTags?.docs.map((tags) => (
+                  <Badge className="px-3 py-1 " key={tags.name}>
+                    {tags.name}
+                    <Button
+                      onClick={() => {
+                        addTag(tags);
+                      }}
+                      className="rounded-full max-w-3 max-h-6 ml-2"
+                      variant={"default"}
+                    >
+                      <Plus />
+                    </Button>
+                  </Badge>
+                ))}
+                {resultTags && (
+                  <Paginate
+                    actual={page}
+                    total={resultTags?.totalPages as number}
+                    setPage={setPage}
+                    handleClickPaginate={handleClickPaginate}
+                  />
                 )}
               </div>
             </div>

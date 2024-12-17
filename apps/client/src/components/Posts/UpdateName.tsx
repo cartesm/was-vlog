@@ -9,14 +9,13 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { useTotalWrite } from "@/hooks/useTotalWrite";
 import { Input } from "../ui/input";
 import { SubmitHandler, useForm, useFormContext } from "react-hook-form";
 import { IResponseCreate, updatePost } from "@/lib/api/posts";
-import { useRouter } from "@/i18n/routing";
 import { useState } from "react";
 import { Spinner } from "../ui/spiner";
 import { IData } from "@/interfaces/IWriteData.interface";
+import { useFetchErrors } from "@/hooks/useFetchErrors";
 interface Inputs {
   name: string;
 }
@@ -30,16 +29,14 @@ function UpdateName({
   changeOpen: () => void;
   id: string;
 }) {
-  const { setErrors, submitErrors } = useTotalWrite();
-
   const { reset } = useFormContext<IData>();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
+  const { errors: submitErrors, removeAll, set: setErrors } = useFetchErrors();
 
-  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
@@ -52,12 +49,12 @@ function UpdateName({
     if (error) {
       setErrors(message);
       const timeErrors = setTimeout(() => {
-        setErrors([]);
+        removeAll();
         return clearTimeout(timeErrors);
       }, 3000);
       return;
     }
-    router.replace(`/write/${data.name}`);
+    window.history.pushState(null, `${data.name}`);
     reset({ name: data.name });
     changeOpen();
   };
@@ -79,7 +76,7 @@ function UpdateName({
           <DialogTitle>Actualizar nombre</DialogTitle>
           <DialogDescription>
             El nombre se actualiza aparte del contenido por la logica que
-            conlleva detras. Asegurate de escoger un nombre que no este en uso
+            conlleva detras. Asegurate de guardar cambios antes.
           </DialogDescription>
         </DialogHeader>
         <div>
@@ -91,7 +88,7 @@ function UpdateName({
                   minLength: 10,
                   maxLength: 150,
                 })}
-                defaultValue={id}
+                defaultValue={id.replaceAll("%20", " ")}
                 type="text"
                 autoComplete="off"
               />

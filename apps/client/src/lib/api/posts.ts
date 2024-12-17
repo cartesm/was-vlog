@@ -143,7 +143,6 @@ export const getOnePost = async (name: string): Promise<IGetResp> => {
     console.log(resp.data);
     return { data: resp.data as IPost };
   } catch (e: any) {
-    console.log(e);
     let message = e.response.data.message;
     message = Array.isArray(message) ? message : [message];
     return {

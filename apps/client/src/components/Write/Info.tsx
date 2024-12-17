@@ -2,7 +2,7 @@ import { Info as InfoIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 function Info() {
   return (
-    <div className="">
+    <div>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">

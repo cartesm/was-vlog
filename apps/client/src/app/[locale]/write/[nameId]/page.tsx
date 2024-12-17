@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { DebouncedFuncLeading, throttle } from "lodash";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
@@ -16,7 +16,6 @@ import {
   updatePost,
 } from "@/lib/api/posts";
 import { useLocale } from "next-intl";
-import { useTotalWrite } from "@/hooks/useTotalWrite";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "@/i18n/routing";
@@ -24,6 +23,8 @@ import { useParams } from "next/navigation";
 import { IData } from "@/interfaces/IWriteData.interface";
 import LoaderSkeleton from "@/components/Write/LoaderSkeleton";
 import { Loader } from "lucide-react";
+import { useWriteTags } from "@/hooks/write/useTags";
+import { useFetchErrors } from "@/hooks/useFetchErrors";
 const Info = dynamic(() => import("@/components/Write/Info"), { ssr: false });
 const WriteSeo = dynamic(() => import("@/components/Write/WriteSeo"), {
   ssr: false,
@@ -45,64 +46,32 @@ const Previewer = dynamic(() => import("@/components/Posts/LocalViewer"), {
 
 function Write() {
   const { nameId: param }: { nameId: string } = useParams();
-
+  const { tags } = useWriteTags();
+  const { set: setErrors, removeAll } = useFetchErrors();
   const lang: string = useLocale();
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
-  useEffect(() => {
-    if (param == "new") return setLoading(false);
-    const fetchPost = async () => {
-      const { data, error }: IGetResp = await getOnePost(param as string);
-      setLoading(false);
-      if (error) {
-        router.replace("/");
-        router.refresh();
-        return;
-      }
-      setNameId((data as IPost).name);
-      methods.reset({
-        content: data?.content,
-        name: data?.name,
-        description: data?.description,
-      });
-    };
-    fetchPost();
-  }, []);
+
+  const fetchPost = async () => {
+    const { data, error }: IGetResp = await getOnePost(param as string);
+    if (error) {
+      router.replace("/");
+      router.refresh();
+      return;
+    }
+    methods.reset({
+      content: data?.content || "",
+      name: data?.name || "",
+      description: data?.description || "",
+    });
+  };
 
   const methods = useForm<IData>({
     defaultValues: { content: "", name: "", description: "" },
   });
-  const { setErrors, id: nameId, setId: setNameId, tags } = useTotalWrite();
-  const textAreaRef: React.MutableRefObject<HTMLTextAreaElement | null> =
-    useRef(null);
 
   const handleEdit = (value: string) => {
-    const selection: string | undefined = window.getSelection()?.toString();
-    const selectedArea = textAreaRef.current;
-    if (!selectedArea)
-      return toast({
-        title: "error",
-        description: "ref not definded",
-        variant: "destructive",
-      });
-
-    const start: number = selectedArea.selectionStart;
-    const end: number = selectedArea.selectionEnd;
-    const actual: string = selectedArea.value;
-    if (!selection) {
-      const newChange: string =
-        actual.slice(0, start) + value + actual.slice(end, actual.length);
-      selectedArea.value = newChange;
-      return;
-    }
-
-    const newChange: string =
-      actual.slice(0, start) +
-      value.replace("ExampleTextWas", `${actual.substring(start, end)}`) +
-      actual.slice(end, actual.length);
-
-    selectedArea.value = newChange;
-    return;
+    return methods.reset({ content: methods.watch("content") + value });
   };
   const onSubmit: SubmitHandler<IData> = async (data: IData) => {
     const createData: ICreatePost = {
@@ -113,19 +82,18 @@ function Write() {
       tags: tags.length ? tags.map(({ _id }) => ({ _id })) : undefined, // Procesar tags en línea si existen.
     };
 
-    const resp: IResponseCreate = !nameId
+    const resp: IResponseCreate = !param
       ? await createPost(createData)
-      : await updatePost({ ...createData, name: undefined }, nameId);
+      : await updatePost({ ...createData, name: undefined }, param);
 
     if (!resp.error) {
       toast({ title: "Exito", description: resp.message });
-      if (!nameId) setNameId(createData.name);
       return;
     }
     setErrors(resp.message);
 
     const timer = setTimeout(() => {
-      setErrors([]);
+      removeAll();
       return clearTimeout(timer);
     }, 3000);
   };
@@ -140,6 +108,12 @@ function Write() {
       ),
       []
     );
+
+  useEffect(() => {
+    if (param == "new") return setLoading(false);
+    fetchPost();
+    return setLoading(false);
+  }, []);
 
   if (loading) {
     return <LoaderSkeleton />;
@@ -174,12 +148,6 @@ function Write() {
                     })}
                     form="write-form"
                     spellCheck={false}
-                    ref={(instance) => {
-                      methods.register("content").ref(instance);
-                      if (instance && textAreaRef.current === null) {
-                        textAreaRef.current = instance;
-                      }
-                    }}
                     placeholder="Escribe tu texto aquí..."
                     className=" py-3 text-area-data w-full bg-secondary  h-full min-h-[500px] ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0"
                   />
@@ -202,7 +170,7 @@ function Write() {
               <Info />
             </TabsContent>
             <TabsContent value="seo">
-              <WriteSeo />
+              <WriteSeo nameId={param} />
             </TabsContent>
           </Tabs>
         </div>

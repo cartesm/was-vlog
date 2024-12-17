@@ -13,27 +13,29 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { useFormContext } from "react-hook-form";
-import { useTotalWrite } from "@/hooks/useTotalWrite";
-
 import dynamic from "next/dynamic";
 import { IData } from "@/interfaces/IWriteData.interface";
+import { useFetchErrors } from "@/hooks/useFetchErrors";
+import { useWriteTags } from "@/hooks/write/useTags";
 const UpdateName = dynamic(() => import("@/components/Posts/UpdateName"), {
   ssr: false,
 });
 const SearchTags = dynamic(() => import("@/components/Write/SearchTags"), {
   ssr: false,
 });
-export default function CompactSection() {
+export default function CompactSection({ nameId }: { nameId: string }) {
+  const { errors: submitErrors } = useFetchErrors();
+  const { delete: deleteTag, tags } = useWriteTags();
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [tagsVisible, setTagsVisible] = useState<boolean>(false);
+
   const changeTagsOpen = () => setTagsVisible((actual) => !actual);
   const changeOpen = () => setIsOpen((actual) => !actual);
   const {
     register,
     formState: { errors },
   } = useFormContext<IData>();
-
-  const { tags, deleteTag, submitErrors, id: nameId } = useTotalWrite();
 
   return (
     <div className="bg-background p-4 my-4 rounded-lg ">
@@ -80,14 +82,14 @@ export default function CompactSection() {
       </div>
 
       <div className="flex items-center flex-wrap gap-2">
-        {tags.map((tag) => (
+        {tags?.map((tag) => (
           <Badge
             variant={"secondary"}
             className="flex items-center justify-evenly gap-2 "
             key={tag._id}
             onClick={() => deleteTag(tag._id)}
           >
-            {tag.name}
+            {tag?.name}
             <Button
               size={"sm"}
               variant={"link"}
@@ -155,12 +157,11 @@ export default function CompactSection() {
         )}
       </div>
       <div className=" grid grid-cols-1 gap-3 items-center justify-start">
-        {submitErrors &&
-          submitErrors.map((error, index) => (
-            <span className="error-message" key={index}>
-              {error}
-            </span>
-          ))}
+        {submitErrors?.map((error, index) => (
+          <span className="error-message" key={index}>
+            {error}
+          </span>
+        ))}
       </div>
     </div>
   );

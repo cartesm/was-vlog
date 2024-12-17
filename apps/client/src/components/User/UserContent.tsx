@@ -21,7 +21,6 @@ import { Badge } from "../ui/badge";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Spinner } from "../ui/spiner";
 import { useTranslations } from "next-intl";
-import { Button } from "../ui/button";
 import { Edit } from "lucide-react";
 import { Link } from "@/i18n/routing";
 function UserContent({ userId }: { userId: string }): React.ReactElement {
@@ -66,8 +65,6 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
       setHaveMorePage(data.hasNextPage);
     }
   };
-  // ? -1 mas nuevo primero
-  // ? mas viejo primero
   return (
     <div className="grid grid-cols-1 gap-4">
       <Select
@@ -80,8 +77,8 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
         <SelectContent>
           <SelectGroup>
             <SelectLabel>{t("user.posts.orderBy")}</SelectLabel>
-            <SelectItem value="1">{t("user.posts.new")}</SelectItem>
-            <SelectItem value="-1">{t("user.posts.old")}</SelectItem>
+            <SelectItem value="1">{t("user.posts.old")}</SelectItem>
+            <SelectItem value="-1">{t("user.posts.new")}</SelectItem>
           </SelectGroup>
         </SelectContent>
       </Select>
