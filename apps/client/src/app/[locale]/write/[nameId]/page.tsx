@@ -55,8 +55,7 @@ function Write() {
   const fetchPost = async () => {
     const { data, error }: IGetResp = await getOnePost(param as string);
     if (error) {
-      router.replace("/");
-      router.refresh();
+      router.push("/");
       return;
     }
     methods.reset({
@@ -111,6 +110,7 @@ function Write() {
 
   useEffect(() => {
     if (param == "new") return setLoading(false);
+    if (param.length < 10) return router.push("/");
     fetchPost();
     return setLoading(false);
   }, []);

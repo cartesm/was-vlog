@@ -58,9 +58,8 @@ export default function Component() {
     toast({ title: t("signUp.page"), description: message });
     const cookies = (await import("js-cookie")).default;
     const redirectTo: string | undefined = cookies.get("was_redirect_to");
-    router.replace(redirectTo ? redirectTo : "/");
+    router.push(redirectTo ? redirectTo : "/");
     cookies.remove("was_redirect_to");
-    router.refresh();
   };
 
   return (

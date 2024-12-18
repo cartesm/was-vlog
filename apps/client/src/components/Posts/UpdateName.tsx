@@ -64,7 +64,7 @@ function UpdateName({
       <DialogTrigger>
         <Button
           type="button"
-          className={`${!!id ? "block" : "hidden"} `}
+          className={`${!!id && id != "new" ? "block" : "hidden"} `}
           variant={"secondary"}
           size={"icon"}
         >
@@ -87,6 +87,7 @@ function UpdateName({
                   required: true,
                   minLength: 10,
                   maxLength: 150,
+                  pattern: /^[a-zA-Z0-9\s]+$/,
                 })}
                 defaultValue={id.replaceAll("%20", " ")}
                 type="text"
@@ -105,6 +106,11 @@ function UpdateName({
                 {errors.name?.type == "minLength" && (
                   <span className="error-message">
                     El titulo es de minimo 10 caracteres
+                  </span>
+                )}
+                {errors.name?.type == "pattern" && (
+                  <span className="error-message">
+                    El titulo puede ser solo texto y numeros
                   </span>
                 )}
                 {errors.name?.type == "maxLength" && (

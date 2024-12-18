@@ -41,7 +41,7 @@ export default function CompactSection({ nameId }: { nameId: string }) {
     <div className="bg-background p-4 my-4 rounded-lg ">
       <div className="flex items-center justify-between">
         <div
-          className={` mr-2 mb-2 flex ${!!nameId && "rounded-md bg-secondary "} `}
+          className={` mr-2 mb-2 flex ${!!nameId && nameId != "new" && "rounded-md bg-secondary "} `}
         >
           <Input
             form="write-form"
@@ -51,9 +51,10 @@ export default function CompactSection({ nameId }: { nameId: string }) {
               required: true,
               minLength: 10,
               maxLength: 150,
+              pattern: /^[a-zA-Z0-9\s]+$/,
             })}
-            readOnly={!!nameId}
-            className={`text-xl px-3 py-2 font-bold   ${!!nameId && "rounded-md bg-secondary "}  outline-none ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0`}
+            readOnly={!!nameId && nameId != "new"}
+            className={`text-xl px-3 py-2 font-bold   ${!!nameId && nameId != "new" && "rounded-md bg-secondary "}  outline-none ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0`}
           />
           <UpdateName
             id={nameId as string}
@@ -121,6 +122,11 @@ export default function CompactSection({ nameId }: { nameId: string }) {
       <div className=" grid grid-cols-1 gap-3 items-center justify-start">
         {errors.name?.type == "required" && (
           <span className="error-message">El titulo es requerido</span>
+        )}
+        {errors.name?.type == "pattern" && (
+          <span className="error-message">
+            El titulo puede ser solo texto y numeros
+          </span>
         )}
         {errors.name?.type == "minLength" && (
           <span className="error-message">

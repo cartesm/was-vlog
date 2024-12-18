@@ -61,8 +61,7 @@ export default function Component() {
   };
 
   const signInWithGoogle = async (): Promise<void> => {
-    router.replace(baseUrl + "/auth/google");
-    router.refresh();
+    router.push(baseUrl + "/auth/google");
   };
 
   return (
