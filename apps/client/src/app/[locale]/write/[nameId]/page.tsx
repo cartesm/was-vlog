@@ -25,6 +25,7 @@ import LoaderSkeleton from "@/components/Write/LoaderSkeleton";
 import { Loader } from "lucide-react";
 import { useWriteTags } from "@/hooks/write/useTags";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
+import { TypeRender } from "../../post/[postId]/page";
 const Info = dynamic(() => import("@/components/Write/Info"), { ssr: false });
 const WriteSeo = dynamic(() => import("@/components/Write/WriteSeo"), {
   ssr: false,
@@ -34,7 +35,7 @@ const WriteSeo = dynamic(() => import("@/components/Write/WriteSeo"), {
     </div>
   ),
 });
-const Previewer = dynamic(() => import("@/components/Posts/LocalViewer"), {
+const Previewer = dynamic(() => import("@/components/Posts/Viewer"), {
   ssr: false,
   loading: () => (
     <section className="container-html max-w-3xl mx-auto w-full py-12 mt-3 rounded-md px-6 bg-secondary flex items-center justify-center">
@@ -153,7 +154,10 @@ function Write() {
                   />
                 </TabsContent>
                 <TabsContent value="preview">
-                  <Previewer />
+                  <Previewer
+                    type={TypeRender.Write}
+                    content={methods.watch("content")}
+                  />
                 </TabsContent>
               </Tabs>
             </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "@formkit/tempo";
-import { getLogedUser, IErrorResp, IUser, IUserResp } from "@/lib/api/user";
+import { getLogedUser, IUser, IUserResp } from "@/lib/api/user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -46,8 +46,8 @@ function UserCard({ id, locale }: { id: string; locale: string }) {
           <div>
             {!user ? (
               <div className="space-y-2">
-                <Skeleton className="h-5 w-[200px]" />
                 <Skeleton className="h-5 w-[150px]" />
+                <Skeleton className="h-5 w-[140px]" />
               </div>
             ) : (
               <>

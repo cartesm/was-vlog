@@ -1,13 +1,5 @@
 "use client";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Link } from "@/i18n/routing";
 import {
   Card,
   CardContent,
@@ -15,19 +7,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getUserPosts, IPostContent, IRespPagination } from "@/lib/api/posts";
+import {
+  getUserPosts,
+  IPostContent,
+  IRespPagination,
+  TypePagination,
+} from "@/lib/api/posts";
 import React, { useEffect, useState } from "react";
 import { Badge } from "../ui/badge";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Spinner } from "../ui/spiner";
 import { useTranslations } from "next-intl";
 import { Edit } from "lucide-react";
-import { Link } from "@/i18n/routing";
+import { Button } from "../ui/button";
 function UserContent({ userId }: { userId: string }): React.ReactElement {
   const t = useTranslations();
   const [posts, setPosts] = useState<IPostContent[]>([]);
   const [order, setOrder] = useState<number | -1 | 1>(-1);
   const [page, setPage] = useState<number>(1);
+  const [typeSearch, setTypeSearch] = useState<TypePagination>(
+    TypePagination.Normal
+  );
   const [haveMorePage, setHaveMorePage] = useState<boolean>(true);
   const [errorFetch, setErrorFetch] = useState<string>("");
   useEffect(() => {
@@ -35,9 +35,12 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
     setPage(1);
     const fectchPosts = async () => {
       const { data, errors }: IRespPagination = await getUserPosts(
-        userId,
-        page,
-        order
+        {
+          userId,
+          page,
+          order,
+        },
+        typeSearch
       );
       if (data) {
         setPosts(data.docs);
@@ -51,13 +54,16 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
       }, 5000);
     };
     fectchPosts();
-  }, [order]);
+  }, [order, typeSearch]);
 
   const fetchMorePosts = async () => {
     const { data }: IRespPagination = await getUserPosts(
-      userId,
-      page + 1,
-      order
+      {
+        userId,
+        page: page + 1,
+        order,
+      },
+      typeSearch
     );
     if (data) {
       setPosts(posts.concat(data.docs));
@@ -67,22 +73,37 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
   };
   return (
     <div className="grid grid-cols-1 gap-4">
-      <Select
-        defaultValue={order.toString()}
-        onValueChange={(nValue: string) => setOrder(Number(nValue))}
-      >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Ordenar por" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>{t("user.posts.orderBy")}</SelectLabel>
-            <SelectItem value="1">{t("user.posts.old")}</SelectItem>
-            <SelectItem value="-1">{t("user.posts.new")}</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-      <h2 className="text-2xl font-bold mb-4">{t("user.posts.contentOf")}</h2>
+      <div className="flex -space-x-px">
+        <Button
+          onClick={() => {
+            setTypeSearch(TypePagination.Normal);
+            setOrder(-1);
+          }}
+          variant="outline"
+          className="rounded-r-none focus:z-10"
+        >
+          Mas Nuevos
+        </Button>
+        <Button
+          onClick={() => {
+            setTypeSearch(TypePagination.Best);
+          }}
+          variant="outline"
+          className="rounded-none focus:z-10"
+        >
+          Mejores
+        </Button>
+        <Button
+          onClick={() => {
+            setTypeSearch(TypePagination.Normal);
+            setOrder(1);
+          }}
+          variant="outline"
+          className="rounded-l-none focus:z-10"
+        >
+          Mas Viejos
+        </Button>
+      </div>
       <div className="overflow-hidden">
         {posts && !errorFetch && (
           <InfiniteScroll
@@ -116,16 +137,24 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
 
 const PostItem = ({ post }: { post: IPostContent }): React.ReactElement => {
   return (
-    <Card className="my-3">
+    <Card className="mt-3">
       <CardHeader>
-        <CardTitle>{post.name}</CardTitle>
+        <CardTitle>
+          <Link
+            href={`/post/${post.name}`}
+            target="_blank"
+            className="hover:underline"
+          >
+            {post.name}
+          </Link>
+        </CardTitle>
         <CardDescription>
           {new Date(post.createdAt).toLocaleDateString()}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div>
-          {post.description && <div className="mb-3">{post.description}</div>}
+          {post.description && <div className="">{post.description}</div>}
           <div className="flex items-center justify-between gap-2">
             <Badge variant="secondary">{post.likeCount} likes</Badge>
             {post.tags.map((tag: { name: string; _id: string }) => (
@@ -133,11 +162,7 @@ const PostItem = ({ post }: { post: IPostContent }): React.ReactElement => {
                 {tag.name}
               </Badge>
             ))}
-            <Link
-              href={`/write/${post.name}`}
-              target="_blank"
-              className="border-2 border-gray-200 p-2 rounded-md"
-            >
+            <Link href={`/write/${post.name}`} target="_blank">
               <Edit />
             </Link>
           </div>

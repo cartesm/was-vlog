@@ -51,7 +51,7 @@ export class PostsController {
 
   @Public()
   @HttpCode(HttpStatus.OK)
-  @Get('best/:user/:page')
+  @Get('best/:id/:page')
   async getBestOfAnUser(@Param(PageAndIdPipe) param: IPageAndId): Promise<any> {
     return this.postsService.getBestOfAnUser(param.id, param.page);
   }

@@ -4,23 +4,22 @@ import { useEffect, useState } from "react";
 import { remark } from "remark";
 import remarkHtml from "remark-html";
 import remarkParse from "remark-parse";
-import { FileX2 } from "lucide-react";
-import { IData } from "@/interfaces/IWriteData.interface";
-import { useFormContext } from "react-hook-form";
-function Viewer() {
+import { FileX2, LoaderIcon } from "lucide-react";
+import { TypeRender } from "@/app/[locale]/post/[postId]/page";
+
+function Viewer({ content, type }: { content: string; type: TypeRender }) {
   const [htmlToRender, setHtmlToRender] = useState<string>("");
-  const { watch } = useFormContext<IData>();
   useEffect(() => {
     (async () => {
       const file = await remark()
         .use(remarkParse)
         .use(remarkHtml)
-        .process(watch("content"));
+        .process(content);
       setHtmlToRender(String(file));
     })();
   }, []);
 
-  if (!htmlToRender)
+  if (!content)
     return (
       <section className="container-html max-w-3xl mx-auto w-full py-12 mt-3 rounded-md px-6 bg-secondary flex items-center justify-center">
         <FileX2 />
@@ -28,9 +27,17 @@ function Viewer() {
       </section>
     );
 
+  if (!htmlToRender)
+    return (
+      <section className="container-html max-w-3xl mx-auto w-full py-12 mt-3 rounded-md px-6 bg-secondary flex items-center justify-center">
+        <LoaderIcon />
+        <span>Cargando</span>
+      </section>
+    );
+
   return (
     <section
-      className="container-html max-w-3xl mx-auto w-full mt-3 rounded-md max-h-[500px] overflow-y-auto px-6 bg-secondary"
+      className={`container-html max-w-3xl mx-auto w-full mt-3 ${type == TypeRender.Write && "overflow-y-auto rounded-md max-h-[500px] "} px-6 bg-secondary`}
       dangerouslySetInnerHTML={{ __html: htmlToRender }}
     ></section>
   );

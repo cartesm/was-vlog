@@ -1,6 +1,10 @@
 import { AxiosResponse } from "axios";
 import axios from "./axios";
-import { TrainFrontTunnel } from "lucide-react";
+
+export enum TypePagination {
+  Normal = "NORMMAL",
+  Best = "BEST",
+}
 
 export interface IPostPagination {
   docs: IPostContent[];
@@ -35,14 +39,21 @@ export interface IPostContent {
 }
 
 export const getUserPosts = async (
-  userId: string,
-  page: number,
-  order: number
+  options: {
+    userId: string;
+    page: number;
+    order: number;
+  },
+  type: TypePagination
 ): Promise<IRespPagination> => {
+  const { order, page, userId } = options;
   try {
-    const resp: AxiosResponse = await axios.get(
-      `/posts/user/${userId}/${page}?order=${order}`
-    );
+    let resp: AxiosResponse;
+    if (type == TypePagination.Normal)
+      resp = await axios.get(`/posts/user/${userId}/${page}?order=${order}`);
+    else if (type == TypePagination.Best)
+      resp = await axios.get(`/posts/best/${userId}/${page}`);
+    else throw new Error();
     return { data: resp.data as IPostPagination };
   } catch (e: any) {
     return { errors: e.response.data.message };
@@ -143,6 +154,7 @@ export const getOnePost = async (name: string): Promise<IGetResp> => {
     console.log(resp.data);
     return { data: resp.data as IPost };
   } catch (e: any) {
+    console.log(e);
     let message = e.response.data.message;
     message = Array.isArray(message) ? message : [message];
     return {
