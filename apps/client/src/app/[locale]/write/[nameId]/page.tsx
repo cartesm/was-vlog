@@ -69,7 +69,6 @@ function Write() {
   const methods = useForm<IData>({
     defaultValues: { content: "", name: "", description: "" },
   });
-
   const handleEdit = (value: string) => {
     return methods.reset({ content: methods.watch("content") + value });
   };
@@ -79,7 +78,7 @@ function Write() {
       name: data.name.trimEnd(),
       content: data.content,
       languaje: lang,
-      tags: tags.length ? tags.map(({ _id }) => ({ _id })) : undefined, // Procesar tags en línea si existen.
+      tags: tags.length > 0 ? tags.map((tag) => tag._id) : undefined,
     };
 
     const resp: IResponseCreate = !param

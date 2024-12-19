@@ -68,7 +68,7 @@ async function page({ params }: { params: Promise<{ postId: string }> }) {
                 </div>
               </Link>
             </div>
-            <div className="flex items-center justify-start pt-4">
+            <div className="flex items-center justify-start pt-4 gap-2 flex-wrap">
               {data.tags.map((tag) => (
                 <Link href={"#"} key={tag._id}>
                   <Badge variant={"outline"} className="px-2 py-1">

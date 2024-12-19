@@ -62,7 +62,7 @@ export const getUserPosts = async (
 
 export interface ICreatePost {
   content: string;
-  tags?: { _id: string }[];
+  tags?: string[];
   name: string;
   description: string;
   languaje: string;
@@ -95,7 +95,7 @@ export const createPost = async (
 
 export interface IUpdatePost {
   content?: string;
-  tags?: { _id: string }[];
+  tags?: string[];
   description?: string;
   languaje?: string;
   name?: string;

@@ -17,12 +17,11 @@ import dynamic from "next/dynamic";
 import { IData } from "@/interfaces/IWriteData.interface";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
 import { useWriteTags } from "@/hooks/write/useTags";
+import SearchTags from "./SearchTags";
 const UpdateName = dynamic(() => import("@/components/Posts/UpdateName"), {
   ssr: false,
 });
-const SearchTags = dynamic(() => import("@/components/Write/SearchTags"), {
-  ssr: false,
-});
+
 export default function CompactSection({ nameId }: { nameId: string }) {
   const { errors: submitErrors } = useFetchErrors();
   const { delete: deleteTag, tags } = useWriteTags();

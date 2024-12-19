@@ -28,7 +28,7 @@ export default function SearchTags({ isOpen, changeOpen }) {
   const [order, setOrder] = useState<number>(1);
   const [page, setPage] = useState<number>(1);
   const { errors, set: setErrors } = useFetchErrors();
-  const { add: addTag } = useWriteTags();
+  const { add: addTag, tags: writeTags } = useWriteTags();
   const [resultTags, setResultTags] = useState<ITagsPagination | null>(null);
 
   const handleSearch = async () => {
@@ -108,20 +108,25 @@ export default function SearchTags({ isOpen, changeOpen }) {
                     </span>
                   ))}
                 </div>
-                {resultTags?.docs.map((tags) => (
-                  <Badge className="px-3 py-1 " key={tags.name}>
-                    {tags.name}
-                    <Button
-                      onClick={() => {
-                        addTag(tags);
-                      }}
-                      className="rounded-full max-w-3 max-h-6 ml-2"
-                      variant={"default"}
-                    >
-                      <Plus />
-                    </Button>
-                  </Badge>
-                ))}
+                {resultTags?.docs
+                  .filter(
+                    (tag) =>
+                      !writeTags.some((writeTag) => writeTag._id == tag._id)
+                  )
+                  .map((tags) => (
+                    <Badge className="px-3 py-1 " key={tags.name}>
+                      {tags.name}
+                      <Button
+                        onClick={() => {
+                          addTag(tags);
+                        }}
+                        className="rounded-full max-w-3 max-h-6 ml-2"
+                        variant={"default"}
+                      >
+                        <Plus />
+                      </Button>
+                    </Badge>
+                  ))}
                 {resultTags && (
                   <Paginate
                     actual={page}
