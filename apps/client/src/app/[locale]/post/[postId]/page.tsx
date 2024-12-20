@@ -1,4 +1,4 @@
-import { IGetResp, IPost } from "@/lib/api/posts";
+import { IGetResp, IPost } from "@/lib/api/posts/posts";
 import { baseUrl } from "@/lib/configs";
 import Image from "next/image";
 import dynamic from "next/dynamic";
@@ -6,8 +6,12 @@ import { ThumbsUp } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "@/i18n/routing";
 import { Badge } from "@/components/ui/badge";
-const Viewer = dynamic(() => import("@/components/Posts/Viewer"), {
+import Viewer from "@/components/Posts/Viewer";
+/* const Viewer = dynamic(() => import("@/components/Posts/Viewer"), {
   loading: () => <div>sds</div>,
+}); */
+const Comments = dynamic(() => import("@/components/comments/Comments"), {
+  loading: () => <div>cargando comentarios</div>,
 });
 const getOnePost = async (name: string): Promise<IGetResp> => {
   const resp = await fetch(`${baseUrl}/posts/${name}`, { method: "GET" });
@@ -77,10 +81,14 @@ async function page({ params }: { params: Promise<{ postId: string }> }) {
                 </Link>
               ))}
             </div>
-            <span className="flex gap-2 py-6 text-lg ">
-              <ThumbsUp /> {data.likeCount}
-            </span>
+            <Badge
+              variant={"secondary"}
+              className=" text-[20px] my-3 cursor-pointer hover:bg-neutral-300"
+            >
+              <ThumbsUp size={20} className="mr-2" /> {data.likeCount}
+            </Badge>
           </div>
+          <Comments postId={data._id} />
         </>
       )}
     </section>

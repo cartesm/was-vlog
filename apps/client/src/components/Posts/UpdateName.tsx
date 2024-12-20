@@ -11,7 +11,7 @@ import {
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { SubmitHandler, useForm, useFormContext } from "react-hook-form";
-import { IResponseCreate, updatePost } from "@/lib/api/posts";
+import { IResponseCreate, updatePost } from "@/lib/api/posts/posts";
 import { useState } from "react";
 import { Spinner } from "../ui/spiner";
 import { IData } from "@/interfaces/IWriteData.interface";

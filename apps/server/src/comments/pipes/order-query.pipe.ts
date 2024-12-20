@@ -17,8 +17,7 @@ export class OrderQueryPipe implements PipeTransform {
 
     if (![1, -1].includes(parsedOrder))
       this.exceptions.throwNotAceptable('test.orderPageInvalid');
-
-    if (value.respond && isValidObjectId(value.respond))
+    if (value.respond && !isValidObjectId(value.respond))
       this.exceptions.throwNotAceptable('test.idNotAcceptable');
 
     return { order: parsedOrder, response: value.respond };

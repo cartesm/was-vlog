@@ -12,7 +12,7 @@ const onlyWithoutSession: string[] = ["/sign-in", "/sign-up"];
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const isLoged: IAuthData | null = await isAuth();
-
+  console.log(pathname);
   const isValidLocale: boolean = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
@@ -22,8 +22,11 @@ export default async function middleware(req: NextRequest) {
   const locale: string = await getLocale();
 
   const matchRegex = (routes: string[], toTest: string): boolean => {
-    return RegExp(
-      `^(/(${locales.join("|")}))?(${routes
+    const dynamicRoutes = routes.map((route) =>
+      route.includes(":") ? route.replace(/:([^/]+)/g, "([^/]+)") : route
+    );
+    return new RegExp(
+      `^(/(${locales.join("|")}))?(${dynamicRoutes
         .flatMap((route) => (route === "/" ? ["", "/"] : route))
         .join("|")})/?$`,
       "i"

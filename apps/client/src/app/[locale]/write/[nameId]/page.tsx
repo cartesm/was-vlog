@@ -14,7 +14,7 @@ import {
   IPost,
   IResponseCreate,
   updatePost,
-} from "@/lib/api/posts";
+} from "@/lib/api/posts/posts";
 import { useLocale } from "next-intl";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";

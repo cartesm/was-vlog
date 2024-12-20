@@ -12,7 +12,7 @@ import {
   IPostContent,
   IRespPagination,
   TypePagination,
-} from "@/lib/api/posts";
+} from "@/lib/api/posts/posts";
 import React, { useEffect, useState } from "react";
 import { Badge } from "../ui/badge";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -157,11 +157,15 @@ const PostItem = ({ post }: { post: IPostContent }): React.ReactElement => {
           {post.description && <div className="">{post.description}</div>}
           <div className="flex items-center justify-between gap-2">
             <Badge variant="secondary">{post.likeCount} likes</Badge>
-            {post.tags.map((tag: { name: string; _id: string }) => (
-              <Badge key={tag._id} variant={"outline"}>
-                {tag.name}
-              </Badge>
-            ))}
+            <div className="flex items-center justify-start pt-4 gap-2 flex-wrap">
+              {post.tags.map((tag) => (
+                <Link href={"#"} key={tag._id}>
+                  <Badge variant={"outline"} className="px-2 py-1">
+                    {tag.name}
+                  </Badge>
+                </Link>
+              ))}
+            </div>
             <Link href={`/write/${post.name}`} target="_blank">
               <Edit />
             </Link>

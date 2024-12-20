@@ -1,4 +1,4 @@
-import { ITagsPagination, searchTags } from "@/lib/api/tags";
+import { ITagsPagination, searchTags } from "@/lib/api/posts/tags";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";

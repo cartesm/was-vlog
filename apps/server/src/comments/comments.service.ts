@@ -27,7 +27,6 @@ export class CommentsService {
       post: postId,
     };
     if (respond) query.respondTo = respond;
-
     return await this.commentModel.paginate(query, {
       page: page,
       populate: {

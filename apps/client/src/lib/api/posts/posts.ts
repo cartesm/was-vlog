@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import axios from "./axios";
+import axios from "../axios";
 
 export enum TypePagination {
   Normal = "NORMMAL",
