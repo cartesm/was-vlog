@@ -7,12 +7,11 @@ import {
   IGetComments,
   PaginationData,
 } from "@/lib/api/posts/comments";
-import { ThumbsUp } from "lucide-react";
+import { FileX2, ThumbsUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "@/i18n/routing";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
-import { Skeleton } from "../ui/skeleton";
 
 export default function SubComment({
   postId,
@@ -45,9 +44,12 @@ export default function SubComment({
 
   if (!comments || comments.docs.length <= 0)
     return (
-      <div>
-        <Skeleton />
-        <div className="flex p-4 items-center justify-center">
+      <div className="flex gap-3 items-center justify-start py-4 flex-col">
+        <div className="flex gap-2 items-center justify-start">
+          <FileX2 />
+          <span>Nada que mostrar</span>
+        </div>
+        <div className="flex items-start w-full justify-start flex-col gap-2">
           {errors?.map((err, index) => (
             <span className="error-message" key={index}>
               {err}
@@ -60,6 +62,7 @@ export default function SubComment({
   return (
     <div>
       <div className="pb-4">
+        <span>sdsd</span>
         {comments.docs.map((comment) => (
           <div className="py-4 my-4 pl-6 border-l-2 flex" key={comment._id}>
             <Link href={`/user/${comment.user.username}`}>

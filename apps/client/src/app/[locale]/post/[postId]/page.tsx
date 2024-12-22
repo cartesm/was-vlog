@@ -83,7 +83,7 @@ async function page({ params }: { params: Promise<{ postId: string }> }) {
             </div>
             <Badge
               variant={"secondary"}
-              className=" text-[20px] my-3 cursor-pointer hover:bg-neutral-300"
+              className=" text-[15px] my-3 cursor-pointer hover:bg-neutral-300"
             >
               <ThumbsUp size={20} className="mr-2" /> {data.likeCount}
             </Badge>

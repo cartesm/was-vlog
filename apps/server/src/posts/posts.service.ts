@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotAcceptableException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { PaginateModel, Types } from 'mongoose';
+import { Model, PaginateModel, Types } from 'mongoose';
 import { Posts, PostsType } from './schemas/post.schema';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { CreatePostDto } from './dto/createPost.dto';
@@ -8,9 +8,8 @@ import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { UpdateInfoPostDto } from './dto/updatePost.dto';
-import { threeHoursInMiliseconds } from 'src/configs';
 import { ExceptionsService } from 'src/utils/exceptions.service';
-import { SourceTextModule } from 'vm';
+import { PostLikes } from 'src/likes/schemas/post.like.schema';
 
 @Injectable()
 export class PostsService {
@@ -26,23 +25,11 @@ export class PostsService {
     return !!postMactch;
   }
   async getOnePost(name: string): Promise<PostsType> {
-    /*  const cacheMatch: string = await this.cacheManager.get(
-      'post:' + name.replaceAll(' ', '-'),
-    );
-
-    if (cacheMatch) {
-      return JSON.parse(cacheMatch);
-    } */
     const postMatch: PostsType = await this.postModel
       .findOne({ name })
       .populate('user tags', 'username name _id img');
 
     if (!postMatch) this.exceptions.throwNotFound('test.posts.notExists');
-    /*  await this.cacheManager.set(
-      'post:' + postMatch.name.replaceAll(' ', '-'),
-      JSON.stringify(postMatch),
-      threeHoursInMiliseconds,
-    ); */
 
     return postMatch;
   }

@@ -49,7 +49,6 @@ export const getCommentsOf = async ({
     const query: string =
       `/comments/${postId}/${page}?order=${order}` +
       (respond ? `&respond=${respond}` : "");
-    console.log(query);
     const { data } = await axios.get(query);
     return { data };
   } catch (e: any) {

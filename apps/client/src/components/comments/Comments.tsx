@@ -25,6 +25,7 @@ function Comments({ postId }: { postId: string }) {
   const [comments, setComments] = useState<PaginationData<Comment> | null>(
     null
   );
+
   const fetchComments = async () => {
     const resp: IGetComments<PaginationData<Comment>> = await getCommentsOf({
       page: 1,

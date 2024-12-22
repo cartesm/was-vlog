@@ -15,7 +15,6 @@ export class PageAndIdPipe implements PipeTransform {
       this.exceptions.throwNotAceptable('test.pageNotAceptable');
     if (parsePage <= 0)
       this.exceptions.throwNotAceptable('test.pageInvalidValue');
-    console.log(id + ': id valida: ' + isValidObjectId(id));
     if (!isValidObjectId(id))
       this.exceptions.throwNotAceptable('test.idNotAcceptable');
 
