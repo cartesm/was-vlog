@@ -26,6 +26,7 @@ import { UpdateInfoPostDto } from './dto/updatePost.dto';
 import { IsAuhtorGuard } from './guards/is-auhtor.guard';
 import { PageAndIdPipe } from 'src/utils/pipes/page-and-id.pipe';
 import { IPageAndId } from 'src/utils/interfaces/pageAndId.interface';
+import { GetPostQueryPipe } from './pipes/get-post-query.pipe';
 
 @UseGuards(JwtGuard)
 @Controller('posts')
@@ -35,25 +36,28 @@ export class PostsController {
   @Public()
   @Get('/:name')
   @HttpCode(HttpStatus.OK)
-  async getSpecificPost(@Param() param: { name: string }): Promise<PostsType> {
-    return this.postsService.getOnePost(param.name);
+  async getSpecificPost(
+    @Param() param: { name: string },
+    @Req() req: UserRequest,
+  ): Promise<any> {
+    return this.postsService.getOnePost(param.name, req.user?.id);
   }
 
   @Public()
   @HttpCode(HttpStatus.OK)
   @Get('user/:id/:page')
   async getUserPost(
-    @Query('order', ParseIntPipe) querry: number,
+    @Query(GetPostQueryPipe) querry: { order: number; best: number },
     @Param(PageAndIdPipe) param: IPageAndId,
+    @Req() req: UserRequest,
   ): Promise<any> {
-    return this.postsService.getPostOfAnUser(param.id, param.page, querry);
-  }
-
-  @Public()
-  @HttpCode(HttpStatus.OK)
-  @Get('best/:id/:page')
-  async getBestOfAnUser(@Param(PageAndIdPipe) param: IPageAndId): Promise<any> {
-    return this.postsService.getBestOfAnUser(param.id, param.page);
+    return this.postsService.getPostOfAnUser({
+      postOf: param.id,
+      page: param.page,
+      order: querry.order,
+      best: querry.best,
+      userId: req.user?.id,
+    });
   }
 
   @Public()
@@ -68,6 +72,7 @@ export class PostsController {
       created: number;
       alphabetical: number;
     },
+    @Req() req: UserRequest,
   ) {
     const { alphabetical, created, name, tags } = query;
     return await this.postsService.search(
@@ -76,6 +81,7 @@ export class PostsController {
       created,
       alphabetical,
       tags,
+      req.user?.id,
     );
   }
 

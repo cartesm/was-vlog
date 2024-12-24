@@ -1,0 +1,25 @@
+export interface ISubUser {
+  img: string;
+  _id: string;
+  username: string;
+  createdAt: string;
+}
+
+// ni idea donde se usa pero weno
+export interface IUserAuth {
+  username?: string;
+  name?: string;
+  pass?: string;
+  email?: string;
+  id?: string;
+}
+
+export interface IUser {
+  username: string;
+  img: string;
+  name: string;
+  description?: string;
+  createdAt: Date;
+  followerCount: number;
+  follow: boolean;
+}

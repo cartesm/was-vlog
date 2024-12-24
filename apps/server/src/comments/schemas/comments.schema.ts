@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import * as paginate from 'mongoose-paginate-v2';
+import * as aggregatePaginnate from 'mongoose-aggregate-paginate-v2';
 import { Posts } from 'src/posts/schemas/post.schema';
 import { Users } from 'src/users/schemas/users.schema';
 export type CommentType = HydratedDocument<Comments>;
@@ -33,11 +34,9 @@ export class Comments {
 
   @Prop({ type: String, unique: false, required: true, minLength: 1 })
   content: string;
-
-  @Prop({ required: true, default: 0, unique: false, type: Number })
-  likeCount: number;
 }
 
 const schema = SchemaFactory.createForClass(Comments);
 schema.plugin(paginate);
+schema.plugin(aggregatePaginnate);
 export const CommentSchema = schema;

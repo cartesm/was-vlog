@@ -7,12 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  getUserPosts,
-  IPostContent,
-  IRespPagination,
-  TypePagination,
-} from "@/lib/api/posts/posts";
+import { getUserPosts } from "@/lib/api/posts/posts";
 import React, { useEffect, useState } from "react";
 import { Badge } from "../ui/badge";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -20,51 +15,53 @@ import { Spinner } from "../ui/spiner";
 import { useTranslations } from "next-intl";
 import { Edit } from "lucide-react";
 import { Button } from "../ui/button";
+import { ISimplePostContent } from "@/interfaces/posts.interface";
+import { IPaginationData } from "@/interfaces/pagination.interface";
+import { IRespData } from "@/interfaces/errorDataResponse.interface";
+import { useFetchErrors } from "@/hooks/useFetchErrors";
 function UserContent({ userId }: { userId: string }): React.ReactElement {
   const t = useTranslations();
-  const [posts, setPosts] = useState<IPostContent[]>([]);
+  const [posts, setPosts] = useState<ISimplePostContent[]>([]);
   const [order, setOrder] = useState<number | -1 | 1>(-1);
   const [page, setPage] = useState<number>(1);
-  const [typeSearch, setTypeSearch] = useState<TypePagination>(
-    TypePagination.Normal
-  );
+  const [bestOrder, setBestOrder] = useState<number>(1);
   const [haveMorePage, setHaveMorePage] = useState<boolean>(true);
-  const [errorFetch, setErrorFetch] = useState<string>("");
+
+  const { errors, set: setErrors, removeAll } = useFetchErrors();
+
   useEffect(() => {
     setPosts([]);
     setPage(1);
     const fectchPosts = async () => {
-      const { data, errors }: IRespPagination = await getUserPosts(
-        {
+      const { data, error }: IRespData<IPaginationData<ISimplePostContent>> =
+        await getUserPosts({
           userId,
           page,
           order,
-        },
-        typeSearch
-      );
+          best: bestOrder,
+        });
       if (data) {
         setPosts(data.docs);
         setHaveMorePage(data.hasNextPage);
         return;
       }
-      setErrorFetch(errors ? errors : "");
+      setErrors(error ? error : []);
       const clearErrorsTimeout = setTimeout(() => {
-        setErrorFetch("");
+        removeAll();
         return clearTimeout(clearErrorsTimeout);
       }, 5000);
     };
     fectchPosts();
-  }, [order, typeSearch]);
+  }, [order, bestOrder]);
 
   const fetchMorePosts = async () => {
-    const { data }: IRespPagination = await getUserPosts(
-      {
+    const { data }: IRespData<IPaginationData<ISimplePostContent>> =
+      await getUserPosts({
         userId,
         page: page + 1,
         order,
-      },
-      typeSearch
-    );
+        best: bestOrder,
+      });
     if (data) {
       setPosts(posts.concat(data.docs));
       setPage(data.page);
@@ -76,7 +73,7 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
       <div className="flex -space-x-px">
         <Button
           onClick={() => {
-            setTypeSearch(TypePagination.Normal);
+            setBestOrder(1);
             setOrder(-1);
           }}
           variant="outline"
@@ -86,7 +83,8 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
         </Button>
         <Button
           onClick={() => {
-            setTypeSearch(TypePagination.Best);
+            setBestOrder(-1);
+            setOrder(1);
           }}
           variant="outline"
           className="rounded-none focus:z-10"
@@ -95,7 +93,7 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
         </Button>
         <Button
           onClick={() => {
-            setTypeSearch(TypePagination.Normal);
+            setBestOrder(1);
             setOrder(1);
           }}
           variant="outline"
@@ -105,7 +103,7 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
         </Button>
       </div>
       <div className="overflow-hidden">
-        {posts && !errorFetch && (
+        {posts && !errors && (
           <InfiniteScroll
             dataLength={posts.length}
             next={fetchMorePosts}
@@ -122,20 +120,28 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
             }
           >
             {posts &&
-              posts.map((post: IPostContent) => (
+              posts.map((post: ISimplePostContent) => (
                 <PostItem key={post._id} post={post} />
               ))}
           </InfiniteScroll>
         )}
         <div className="flex items-center justify-center mx-auto">
-          <span className="error-message ">{errorFetch}</span>
+          {errors.map((err, index) => (
+            <span className="error-message" key={index}>
+              {err}
+            </span>
+          ))}
         </div>
       </div>
     </div>
   );
 }
 
-const PostItem = ({ post }: { post: IPostContent }): React.ReactElement => {
+const PostItem = ({
+  post,
+}: {
+  post: ISimplePostContent;
+}): React.ReactElement => {
   return (
     <Card className="mt-3">
       <CardHeader>
@@ -156,7 +162,8 @@ const PostItem = ({ post }: { post: IPostContent }): React.ReactElement => {
         <div>
           {post.description && <div className="">{post.description}</div>}
           <div className="flex items-center justify-between gap-2">
-            <Badge variant="secondary">{post.likeCount} likes</Badge>
+            <Badge variant="default">{post.likeCount} likes</Badge>
+            <Badge variant="secondary">{post.commentCount} comments</Badge>
             <div className="flex items-center justify-start pt-4 gap-2 flex-wrap">
               {post.tags.map((tag) => (
                 <Link href={"#"} key={tag._id}>

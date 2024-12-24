@@ -1,18 +1,7 @@
 "use client";
-import { AxiosError } from "axios";
+import { IRespData } from "@/interfaces/errorDataResponse.interface";
 import axios from "../axios";
-export interface ITagsPagination {
-  docs: ITags[];
-  hasNextPage: boolean;
-  hasPrevPage: boolean;
-  limit: number;
-  nextPage: number | null;
-  prevPage: number | null;
-  page: number;
-  pagingCounter: number;
-  totalDocs: number;
-  totalPages: number;
-}
+import { IPaginationData } from "@/interfaces/pagination.interface";
 
 export interface ITags {
   name: string;
@@ -23,21 +12,22 @@ export interface ITags {
     _id: string;
   };
 }
-interface ITagResponse {
-  errors?: string;
-  data?: ITagsPagination;
-}
+
 export const searchTags = async (
   page: number,
   order: number,
   value: string
-): Promise<ITagResponse> => {
+): Promise<IRespData<IPaginationData<ITags>>> => {
   try {
-    const { data }: { data: ITagsPagination } = await axios.get(
+    const { data } = await axios.get(
       `/tags/s/${page}?orderBy=${order}&value=${value}`
     );
     return { data };
   } catch (e: any) {
-    return { errors: e.response.data.message };
+    return {
+      error: Array.isArray(e.response.data.message)
+        ? e.response.data.message
+        : [e.response.data.message],
+    };
   }
 };

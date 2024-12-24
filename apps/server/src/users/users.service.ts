@@ -27,18 +27,71 @@ export class UsersService {
   ) {}
 
   async getPublicUserData(userId: Types.ObjectId): Promise<UsersType> {
-    const cacheMatch: string = await this.cacheManager.get('user:' + userId);
-    if (cacheMatch) return JSON.parse(cacheMatch);
-    const userMatch: UsersType = await this.UsersModel.findById(userId).select(
-      '-email -pass -__v -updatedAt',
-    );
+    console.log(await this.UsersModel.findById(userId));
+    const userMatch: UsersType = (
+      await this.UsersModel.aggregate([
+        {
+          $match: {
+            _id: new Types.ObjectId(userId),
+          },
+        },
+        {
+          $lookup: {
+            let: {
+              localUserId: { $toString: '_id' },
+            },
+            from: 'followers',
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ['$user', '$$localUserId'],
+                  },
+                },
+              },
+              {
+                $project: {
+                  follower: 1,
+                },
+              },
+            ],
+            as: 'followerCount',
+          },
+        },
+        {
+          $addFields: {
+            followerCount: {
+              $size: '$followerCount',
+            },
+            follow: userId
+              ? {
+                  $in: [
+                    userId,
+                    {
+                      $map: {
+                        input: '$followerCount',
+                        as: 'follower',
+                        in: '$$follower.follower',
+                      },
+                    },
+                  ],
+                }
+              : false,
+          },
+        },
+        {
+          $project: {
+            email: 0,
+            pass: 0,
+            updatedAt: 0,
+            __v: 0,
+          },
+        },
+      ])
+    )[0];
 
     if (!userMatch) this.exceptions.throwNotFound('test.users.notFound');
-    await this.cacheManager.set(
-      'user:' + userMatch._id,
-      JSON.stringify(userMatch),
-      sevenMinutesInMilisecons,
-    );
+    console.log(userMatch);
     return userMatch;
   }
   async getUserDataByEmail(email: string): Promise<UsersType> {

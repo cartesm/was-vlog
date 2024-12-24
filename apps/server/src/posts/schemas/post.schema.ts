@@ -3,8 +3,8 @@ import { HydratedDocument, Types } from 'mongoose';
 import * as paginate from 'mongoose-paginate-v2';
 import { Tags } from 'src/tags/schemas/tag.schema';
 import { Users } from 'src/users/schemas/users.schema';
-import { PostItemEnum, PostSubItemEnum } from '../enums/posts.enum';
 import { LanguajeEnum } from 'src/utils/enums/languaje.enums';
+import * as aggregatePaginate from 'mongoose-aggregate-paginate-v2';
 
 export type PostsType = HydratedDocument<Posts>;
 
@@ -50,13 +50,10 @@ export class Posts {
   @Prop({ enum: LanguajeEnum, type: String, required: true, unique: false })
   languaje: string;
 
-  @Prop({ required: true, unique: false, type: Number, default: 0 })
-  likeCount: number;
-
   @Prop()
   numero: number;
 }
 
 const schema = SchemaFactory.createForClass(Posts);
-schema.plugin(paginate);
+schema.plugin(aggregatePaginate);
 export const PostsSchema = schema;

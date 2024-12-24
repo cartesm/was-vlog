@@ -3,8 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { PostLikes, PostLikeType } from './schemas/post.like.schema';
 import { PaginateModel, Types } from 'mongoose';
 import { CommentLike, CommentLikeType } from './schemas/comment.like.schema';
-import { CommentsService } from 'src/comments/comments.service';
-import { PostsService } from 'src/posts/posts.service';
 import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @Injectable()
@@ -14,8 +12,6 @@ export class LikesService {
     private postLikeModel: PaginateModel<PostLikeType>,
     @InjectModel(CommentLike.name)
     private commentLikeModel: PaginateModel<CommentLikeType>,
-    private postService: PostsService,
-    private commentService: CommentsService,
     private exceptions: ExceptionsService,
   ) {}
 
@@ -32,7 +28,6 @@ export class LikesService {
       post: postId,
       userId,
     }).save();
-    await this.postService.modifyLikeCount(postId, 1);
     return;
   }
   async getUsersThatLikePost(post: Types.ObjectId, page: number) {
@@ -57,19 +52,7 @@ export class LikesService {
       post,
       userId: user,
     });
-    await this.postService.modifyLikeCount(post, -1);
     return;
-  }
-  async isLikedPost(
-    post: Types.ObjectId,
-    user: Types.ObjectId,
-  ): Promise<boolean> {
-    const likeMatch: PostLikeType = await this.postLikeModel.findOne({
-      post,
-      userId: user,
-    });
-    if (!likeMatch) return false;
-    return true;
   }
 
   //* LIKES DE COMENTARIOS
@@ -91,8 +74,6 @@ export class LikesService {
       userId,
       post: postId,
     }).save();
-
-    await this.commentService.modifyLikeCount(commentId, 1);
 
     return;
   }
@@ -123,8 +104,6 @@ export class LikesService {
     comment: Types.ObjectId,
   ): Promise<void> {
     await this.commentLikeModel.findOneAndDelete({ userId: user, comment });
-    await this.commentService.modifyLikeCount(comment, -1);
-
     return;
   }
 }

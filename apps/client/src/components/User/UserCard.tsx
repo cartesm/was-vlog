@@ -1,89 +1,71 @@
 "use client";
 
-import { format } from "@formkit/tempo";
-import { getLogedUser, IUser, IUserResp } from "@/lib/api/user";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  CardContent,
-  CardTitle,
-  Card,
-  CardDescription,
-  CardHeader,
-} from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
+import { format } from "@formkit/tempo";
+import { IUser } from "@/interfaces/user.interface";
+import { IRespData } from "@/interfaces/errorDataResponse.interface";
+import { useFetchErrors } from "@/hooks/useFetchErrors";
+import { getLogedUser } from "@/lib/api/user";
+import { Card, CardContent, CardFooter } from "../ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import UserCardSkeleton from "./Skeleton";
 import { Button } from "../ui/button";
 
 function UserCard({ id, locale }: { id: string; locale: string }) {
-  const [user, setUser] = useState<IUser | null>(null);
-  const [errors, setErrors] = useState<string | string[] | null>(null);
+  const [user, setUser] = useState<IUser | undefined>(undefined);
   const [attemps, setAttemps] = useState<number>(0);
-  const refrashComponent = () => setAttemps(attemps + 1);
+
+  const refreshComponent = () => setAttemps(attemps + 1);
+  const { set: setErrors } = useFetchErrors();
+  const fetchUserData = async () => {
+    const { data, error }: IRespData<IUser> = await getLogedUser(id);
+    if (error) {
+      setErrors(error);
+      return;
+    }
+    setUser(data);
+  };
+
   useEffect(() => {
-    getLogedUser(id).then((data: IUserResp) => {
-      if (data.errors) {
-        setErrors(data.errors.message);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: data.errors.message,
-        });
-        return;
-      }
-      setErrors(null);
-      setUser(data.user ? data.user : null);
-    });
+    fetchUserData();
   }, [id, attemps]);
+  if (!user) return <UserCardSkeleton refreshComponent={refreshComponent} />;
+
   return (
-    <Card className="mb-6">
-      <CardHeader>
+    <Card className="">
+      <CardContent className="flex flex-col gap-3 items-center p-4">
         <div className="flex items-center space-x-4">
-          <Avatar className="w-24 h-24">
+          <Avatar className="max-w-40 rounded-full">
             <AvatarImage src={user?.img} alt={user?.username} />
             <AvatarFallback>{user?.username}</AvatarFallback>
           </Avatar>
-          <div>
-            {!user ? (
-              <div className="space-y-2">
-                <Skeleton className="h-5 w-[150px]" />
-                <Skeleton className="h-5 w-[140px]" />
-              </div>
-            ) : (
-              <>
-                <CardTitle>{user.name}</CardTitle>
-                <CardDescription>{user.username}</CardDescription>
-              </>
-            )}
+        </div>
+        <div>
+          <p className="flex items-center flex-col">
+            <span>{user.followerCount}</span>
+            <span>Seguidores</span>
+          </p>
+          <div className="grid grid-cols-1 place-items-center">
+            <span className="text-lg">{user.name}</span>
+            <i className="text-sm">#{user.username}</i>
           </div>
+          <p className="my-2">{user.description}</p>
         </div>
-      </CardHeader>
-      <CardContent>
-        <p className="mb-4">{user?.description}</p>
-        <div className="flex items-center gap-3">
-          {!user ? (
-            <div className="flex flex-col gap-2">
-              <Skeleton className="h-5 w-[250px]" />
-              <Skeleton className="h-5 w-[140px]" />
-            </div>
-          ) : (
-            <>
-              <span className="text-xs">
-                Se unió el {format(user.createdAt, "medium", locale)}
-              </span>
-            </>
-          )}
-        </div>
-        {errors && (
-          <Button
-            onClick={refrashComponent}
-            className="mt-5"
-            variant={"destructive"}
-          >
-            Try gain
+      </CardContent>
+      <CardFooter className="flex w-full flex-col gap-2">
+        {user.follow ? (
+          <Button className=" w-full max-h-8" variant={"destructive"}>
+            Sejar de seguir
+          </Button>
+        ) : (
+          <Button className="w-full max-h-8" variant={"default"}>
+            Seguir
           </Button>
         )}
-      </CardContent>
+        <span className="text-xs">
+          Se unió el {format(user.createdAt, "medium", locale)}
+        </span>
+      </CardFooter>
     </Card>
   );
 }

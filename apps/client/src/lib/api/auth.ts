@@ -1,29 +1,20 @@
 import { AxiosResponse } from "axios";
 import axios from "./axios";
-import { IAuthData } from "@/interfaces/authData.interface";
-import { getAuthData } from "../getAuthData";
-export interface IReturnResponse {
-  message: string | string[];
-  error?: boolean;
-  data?: {
-    username?: string;
-    name?: string;
-    pass?: string;
-    email?: string;
-    id?: string;
-  };
-}
+import { IRespData } from "@/interfaces/errorDataResponse.interface";
 
 export const signInRequest = async (loginData: {
   email: string;
   pass: string;
-}): Promise<IReturnResponse> => {
+}): Promise<IRespData<string>> => {
   try {
     const resp: AxiosResponse = await axios.post("/auth/login", loginData);
-    return { message: resp.data.message };
-  } catch (e: unknown) {
-    const message: string = (e as any).response.data.message;
-    return { message: message, error: true };
+    return { data: resp.data.message };
+  } catch (e: any) {
+    return {
+      error: Array.isArray(e.response.data.message)
+        ? e.response.data.message
+        : [e.response.data.message],
+    };
   }
 };
 
@@ -32,19 +23,18 @@ export const signUpRequest = async (registerData: {
   name: string;
   pass: string;
   email: string;
-}): Promise<IReturnResponse> => {
+}): Promise<IRespData<string>> => {
   try {
     const resp: AxiosResponse = await axios.post(
       "/auth/register",
       registerData
     );
-    return { message: resp.data.message, data: { id: "" } };
-  } catch (e: unknown) {
-    const message: string = (e as any).response.data.message;
-    console.error(e);
+    return { data: resp.data.message };
+  } catch (e: any) {
     return {
-      message,
-      error: true,
+      error: Array.isArray(e.response.data.message)
+        ? e.response.data.message
+        : [e.response.data.message],
     };
   }
 };

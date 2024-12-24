@@ -40,11 +40,13 @@ export class CommentsController {
     @Param(PageAndIdPipe)
     param: IPageAndId,
     @Query(OrderQueryPipe) query: { order: number; response: Types.ObjectId },
+    @Req() req: UserRequest,
   ): Promise<any> {
     return await this.commentsService.getComments(
       param.id,
       param.page,
       query.order,
+      req.user?.id,
       query.response,
     );
   }

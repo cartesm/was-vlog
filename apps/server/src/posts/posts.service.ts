@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotAcceptableException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, PaginateModel, Types } from 'mongoose';
+import { AggregatePaginateModel, Types } from 'mongoose';
 import { Posts, PostsType } from './schemas/post.schema';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { CreatePostDto } from './dto/createPost.dto';
@@ -9,12 +9,12 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { UpdateInfoPostDto } from './dto/updatePost.dto';
 import { ExceptionsService } from 'src/utils/exceptions.service';
-import { PostLikes } from 'src/likes/schemas/post.like.schema';
 
 @Injectable()
 export class PostsService {
   constructor(
-    @InjectModel(Posts.name) private postModel: PaginateModel<PostsType>,
+    @InjectModel(Posts.name)
+    private postModel: AggregatePaginateModel<PostsType>,
     private i18n: I18nService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private exceptions: ExceptionsService,
@@ -24,66 +24,247 @@ export class PostsService {
     const postMactch: PostsType = await this.postModel.findOne({ name });
     return !!postMactch;
   }
-  async getOnePost(name: string): Promise<PostsType> {
-    const postMatch: PostsType = await this.postModel
-      .findOne({ name })
-      .populate('user tags', 'username name _id img');
+  async getOnePost(name: string, userId?: Types.ObjectId): Promise<any> {
+    const postMatch: any = await this.postModel.aggregate([
+      {
+        $match: {
+          name,
+        },
+      },
+      {
+        $lookup: {
+          from: 'postlikes',
+          let: {
+            localId: { $toString: '$_id' },
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$post', '$$localId'] },
+              },
+            },
+            {
+              $project: { userId: 1 }, // Solo incluir userId para optimizar
+            },
+          ],
+          as: 'likeCount',
+        },
+      },
+      {
+        $addFields: {
+          like: userId
+            ? {
+                $in: [
+                  userId,
+                  {
+                    $map: {
+                      input: '$likeCount',
+                      as: 'likes',
+                      in: '$$likes.userId',
+                    },
+                  },
+                ],
+              }
+            : false,
+          likeCount: {
+            $size: '$likeCount',
+          },
+        },
+      },
+    ]);
 
     if (!postMatch) this.exceptions.throwNotFound('test.posts.notExists');
 
-    return postMatch;
+    return (
+      await this.postModel.populate(postMatch, {
+        path: 'user tags',
+        select: 'username name _id img',
+      })
+    )[0];
   }
-  async getPostOfAnUser(
-    userID: Types.ObjectId,
-    page: number = 1,
-    order: number = 1,
-  ) {
+  async getPostOfAnUser({
+    postOf,
+    userId,
+    page,
+    order,
+    best,
+  }: {
+    postOf: Types.ObjectId;
+    userId: Types.ObjectId;
+    page: number;
+    order: number;
+    best: number;
+  }) {
     // ? -1 mas nuevo primero
     // ? mas viejo primero
-    return await this.postModel.paginate(
-      { user: userID },
+    const aggregate = this.postModel.aggregate([
       {
-        page: page,
-        limit: 20,
-        sort: {
-          createdAt: order,
-        },
-        select: '-user -updatedAt -__v -content',
-        populate: {
-          path: 'tags',
-          select: '_id name',
+        $match: {
+          user: postOf,
         },
       },
-    );
-  }
-  async getBestOfAnUser(user: Types.ObjectId, page: number = 1): Promise<any> {
-    return await this.postModel.paginate(
-      { user },
       {
-        limit: 20,
-        sort: {
-          likeCount: -1,
-        },
-        page,
-        select: '-user -updatedAt -__v -content',
-        populate: {
-          path: 'tags',
-          select: '_id name',
+        $lookup: {
+          from: 'postlikes',
+          let: {
+            localId: { $toString: '$_id' },
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$post', '$$localId'] },
+              },
+            },
+            {
+              $project: { userId: 1 },
+            },
+          ],
+          as: 'likeCount',
         },
       },
-    );
+      {
+        $lookup: {
+          from: 'comments',
+          let: {
+            localId: { $toString: '$_id' },
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$post', '$$localId'] },
+              },
+            },
+            {
+              $project: { userId: 1 },
+            },
+          ],
+          as: 'commentCount',
+        },
+      },
+
+      {
+        $addFields: {
+          likeCount: {
+            $size: '$likeCount',
+          },
+          commentCount: {
+            $size: '$commentCount',
+          },
+          like: userId
+            ? {
+                $in: [
+                  userId,
+                  {
+                    $map: {
+                      input: '$likeCount',
+                      as: 'likes',
+                      in: '$$likes.userId',
+                    },
+                  },
+                ],
+              }
+            : false,
+        },
+      },
+    ]);
+
+    return await this.postModel.aggregatePaginate(aggregate, {
+      page,
+      limit: 20,
+      sort: {
+        createdAt: order,
+        likeCount: best,
+      },
+      select: '-user -updatedAt -__v -content',
+      populate: {
+        path: 'tags user',
+        select: '_id name username name  img',
+      },
+    });
   }
+
   async search(
     name: string,
     page: number,
     created: number,
     alphabetical: number,
     tags: Array<Types.ObjectId>,
+    userId: Types.ObjectId,
   ): Promise<any> {
     let query: any = {};
     if (name) query = { name: { $regex: name } };
     if (tags) query.tags = tags;
-    return await this.postModel.paginate(query, {
+
+    const aggregate = this.postModel.aggregate([
+      {
+        $match: query,
+      },
+      {
+        $lookup: {
+          from: 'postlikes',
+          let: {
+            localId: { $toString: '$_id' },
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$post', '$$localId'] },
+              },
+            },
+            {
+              $project: { userId: 1 },
+            },
+          ],
+          as: 'likeCount',
+        },
+      },
+      {
+        $lookup: {
+          from: 'comments',
+          let: {
+            localId: { $toString: '$_id' },
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$post', '$$localId'] },
+              },
+            },
+            {
+              $project: { userId: 1 },
+            },
+          ],
+          as: 'commentCount',
+        },
+      },
+
+      {
+        $addFields: {
+          likeCount: {
+            $size: '$likeCount',
+          },
+          commentCount: {
+            $size: '$commentCount',
+          },
+          like: userId
+            ? {
+                $in: [
+                  userId,
+                  {
+                    $map: {
+                      input: '$likeCount',
+                      as: 'likes',
+                      in: '$$likes.userId',
+                    },
+                  },
+                ],
+              }
+            : false,
+        },
+      },
+    ]);
+
+    return await this.postModel.arguments(aggregate, {
       limit: 30,
       page,
       sort: {
@@ -162,11 +343,5 @@ export class PostsService {
         lang: I18nContext.current().lang,
       }),
     };
-  }
-  async modifyLikeCount(postId: Types.ObjectId, value: number): Promise<void> {
-    await this.postModel
-      .findByIdAndUpdate(postId, { $inc: { likeCount: value } })
-      .exec();
-    return;
   }
 }

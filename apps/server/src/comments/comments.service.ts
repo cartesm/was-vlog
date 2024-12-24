@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { Comments, CommentType } from './schemas/comments.schema';
-import { PaginateModel, Types } from 'mongoose';
+import { AggregatePaginateModel, PaginateModel, Types } from 'mongoose';
 import { CreateCommentDto } from './dto/create.comment.dto';
 import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { UpdateCommentDto } from './dto/update.comment.dto';
@@ -12,7 +12,8 @@ import { ExceptionsService } from 'src/utils/exceptions.service';
 export class CommentsService {
   constructor(
     @InjectModel(Comments.name)
-    private commentModel: PaginateModel<CommentType>,
+    private commentModel: PaginateModel<CommentType> &
+      AggregatePaginateModel<CommentType>,
     private i18n: I18nService,
     private exceptions: ExceptionsService,
   ) {}
@@ -21,13 +22,67 @@ export class CommentsService {
     postId: Types.ObjectId,
     page: number,
     orderBy: number,
+    userId: Types.ObjectId,
     respond?: Types.ObjectId,
   ): Promise<any> {
     let query: { post: Types.ObjectId; respondTo?: Types.ObjectId } = {
       post: postId,
     };
     if (respond) query.respondTo = respond;
-    return await this.commentModel.paginate(query, {
+
+    const aggregate = this.commentModel.aggregate([
+      {
+        $match: query,
+      },
+      {
+        $lookup: {
+          from: 'commentlikes',
+          let: {
+            commentId: { $toString: '$_id' },
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$comment', '$$commentId'],
+                },
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+              },
+            },
+          ],
+          localField: '_id',
+          foreignField: 'comment',
+          as: 'likeCount',
+        },
+      },
+      {
+        $addFields: {
+          likeCount: {
+            $size: '$likeCount',
+          },
+          like: userId
+            ? {
+                $in: [
+                  userId,
+                  {
+                    $map: {
+                      input: '$likeCount',
+                      as: 'likes',
+                      in: '$$likes.userId',
+                    },
+                  },
+                ],
+              }
+            : false,
+        },
+      },
+    ]);
+
+    return await this.commentModel.aggregatePaginate(aggregate, {
       page: page,
       populate: {
         path: 'user',
@@ -126,16 +181,5 @@ export class CommentsService {
         newData,
       ),
     };
-  }
-
-  async modifyLikeCount(
-    commentId: Types.ObjectId,
-    value: number,
-  ): Promise<void> {
-    await this.commentModel.findOneAndUpdate(
-      { _id: commentId },
-      { $inc: { likeCount: value } },
-    );
-    return;
   }
 }

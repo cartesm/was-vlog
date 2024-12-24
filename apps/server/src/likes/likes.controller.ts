@@ -54,15 +54,6 @@ export class LikesController {
     return await this.likesService.deleteLikePost(param.id, req.user.id);
   }
 
-  @Get('p/liked/:id')
-  @HttpCode(HttpStatus.OK)
-  async isLikedPost(
-    @Param(ParseidPipe) param: { id: Types.ObjectId },
-    @Req() req: UserRequest,
-  ): Promise<boolean> {
-    return await this.likesService.isLikedPost(param.id, req.user.id);
-  }
-
   // * seccion de likes de comentarios
 
   @Post('c')
