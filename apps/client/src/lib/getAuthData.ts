@@ -13,3 +13,7 @@ export const getAuthData = async (): Promise<null | IAuthData> => {
     return null;
   }
 };
+
+export const getAuthToken = async (): Promise<undefined | string> => {
+  return (await cookies()).get("was_auth_token")?.value;
+};

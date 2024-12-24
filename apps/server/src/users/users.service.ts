@@ -27,7 +27,6 @@ export class UsersService {
   ) {}
 
   async getPublicUserData(userId: Types.ObjectId): Promise<UsersType> {
-    console.log(await this.UsersModel.findById(userId));
     const userMatch: UsersType = (
       await this.UsersModel.aggregate([
         {
@@ -91,7 +90,6 @@ export class UsersService {
     )[0];
 
     if (!userMatch) this.exceptions.throwNotFound('test.users.notFound');
-    console.log(userMatch);
     return userMatch;
   }
   async getUserDataByEmail(email: string): Promise<UsersType> {

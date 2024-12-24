@@ -1,3 +1,4 @@
+import { IComment } from "@/interfaces/comment.interface";
 import { IRespData } from "@/interfaces/errorDataResponse.interface";
 import { IPaginationData } from "@/interfaces/pagination.interface";
 import axios from "@/lib/api/axios";
@@ -12,7 +13,7 @@ export const getCommentsOf = async ({
   page: number;
   order: number;
   respond?: string;
-}): Promise<IRespData<IPaginationData<Comment>>> => {
+}): Promise<IRespData<IPaginationData<IComment>>> => {
   try {
     const query: string =
       `/comments/${postId}/${page}?order=${order}` +

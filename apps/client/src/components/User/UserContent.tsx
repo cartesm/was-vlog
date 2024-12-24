@@ -69,7 +69,7 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
     }
   };
   return (
-    <div className="grid grid-cols-1 gap-4">
+    <div className="">
       <div className="flex -space-x-px">
         <Button
           onClick={() => {
@@ -84,7 +84,6 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
         <Button
           onClick={() => {
             setBestOrder(-1);
-            setOrder(1);
           }}
           variant="outline"
           className="rounded-none focus:z-10"
@@ -103,7 +102,7 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
         </Button>
       </div>
       <div className="overflow-hidden">
-        {posts && !errors && (
+        {posts && errors.length < 1 && (
           <InfiniteScroll
             dataLength={posts.length}
             next={fetchMorePosts}
@@ -119,10 +118,9 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
               </span>
             }
           >
-            {posts &&
-              posts.map((post: ISimplePostContent) => (
-                <PostItem key={post._id} post={post} />
-              ))}
+            {posts?.map((post: ISimplePostContent) => (
+              <PostItem key={post._id} post={post} />
+            ))}
           </InfiniteScroll>
         )}
         <div className="flex items-center justify-center mx-auto">
@@ -165,8 +163,8 @@ const PostItem = ({
             <Badge variant="default">{post.likeCount} likes</Badge>
             <Badge variant="secondary">{post.commentCount} comments</Badge>
             <div className="flex items-center justify-start pt-4 gap-2 flex-wrap">
-              {post.tags.map((tag) => (
-                <Link href={"#"} key={tag._id}>
+              {post.tags?.map((tag, index) => (
+                <Link href={"#"} key={index}>
                   <Badge variant={"outline"} className="px-2 py-1">
                     {tag.name}
                   </Badge>

@@ -1,5 +1,8 @@
 import { ISubUser } from "./user.interface";
-
+export enum TypeRender {
+  Write = "WRITE",
+  Post = "POST",
+}
 export interface ISimplePostContent {
   createdAt: Date;
   languaje: string;

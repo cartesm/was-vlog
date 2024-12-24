@@ -74,7 +74,7 @@ export class PostsService {
     ]);
 
     if (!postMatch) this.exceptions.throwNotFound('test.posts.notExists');
-
+    console.log(postMatch);
     return (
       await this.postModel.populate(postMatch, {
         path: 'user tags',
@@ -171,10 +171,14 @@ export class PostsService {
     return await this.postModel.aggregatePaginate(aggregate, {
       page,
       limit: 20,
-      sort: {
-        createdAt: order,
-        likeCount: best,
-      },
+      sort:
+        best == -1
+          ? {
+              likeCount: best,
+            }
+          : {
+              createdAt: order,
+            },
       select: '-user -updatedAt -__v -content',
       populate: {
         path: 'tags user',
@@ -182,7 +186,6 @@ export class PostsService {
       },
     });
   }
-
   async search(
     name: string,
     page: number,

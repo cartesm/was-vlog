@@ -1,6 +1,6 @@
 import { ISubUser } from "./user.interface";
 
-export interface Comment {
+export interface IComment {
   _id: string;
   post: string;
   user: ISubUser;

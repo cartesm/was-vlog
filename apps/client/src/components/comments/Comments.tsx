@@ -1,12 +1,5 @@
 "use client";
-
 import { useFetchErrors } from "@/hooks/useFetchErrors";
-import {
-  Comment,
-  getCommentsOf,
-  IGetComments,
-  PaginationData,
-} from "@/lib/api/posts/comments";
 import { ThumbsUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "@/i18n/routing";
@@ -15,6 +8,10 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import dynamic from "next/dynamic";
 import Skeleton from "@/components/comments/CommentSkeleton";
+import { getCommentsOf } from "@/lib/api/posts/comments";
+import { IPaginationData } from "@/interfaces/pagination.interface";
+import { IRespData } from "@/interfaces/errorDataResponse.interface";
+import { IComment } from "@/interfaces/comment.interface";
 const SubComments = dynamic(() => import("@/components/comments/SubComment"), {
   loading: () => <Skeleton />,
 });
@@ -22,22 +19,22 @@ const SubComments = dynamic(() => import("@/components/comments/SubComment"), {
 function Comments({ postId }: { postId: string }) {
   const { errors, set: setError, removeAll } = useFetchErrors();
   const [visibleSubComments, setVisibleSubComments] = useState<string[]>([""]);
-  const [comments, setComments] = useState<PaginationData<Comment> | null>(
+  const [comments, setComments] = useState<IPaginationData<IComment> | null>(
     null
   );
 
   const fetchComments = async () => {
-    const resp: IGetComments<PaginationData<Comment>> = await getCommentsOf({
-      page: 1,
-      postId,
-      order: 1,
-    });
-    console.log(resp);
-    if (resp.error) {
-      setError(resp.error);
+    const { error, data }: IRespData<IPaginationData<IComment>> =
+      await getCommentsOf({
+        page: 1,
+        postId,
+        order: 1,
+      });
+    if (error) {
+      setError(error);
       return;
     }
-    setComments(resp.data ? resp.data : null);
+    setComments(data ? data : null);
   };
   useEffect(() => {
     fetchComments();
@@ -81,9 +78,10 @@ function Comments({ postId }: { postId: string }) {
               <div className="flex gap-2 items-center">
                 <Badge
                   variant={"secondary"}
-                  className="flex gap-2 text-[15px] items-center justify-center cursor-pointer hover:bg-neutral-300"
+                  className={`flex gap-2 text-[15px] items-center justify-center cursor-pointer hover:bg-neutral-300 ${comment.like && "bg-neutral-300 hover:bg-neutral-400"}`}
                 >
-                  <ThumbsUp size={15} /> {comment.likeCount}
+                  <ThumbsUp size={15} />
+                  {comment.likeCount}
                 </Badge>
 
                 {visibleSubComments.some((comm) => comm == comment._id) ? (

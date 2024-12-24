@@ -20,6 +20,8 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { baseUrl } from "@/lib/configs";
 import { emailPattern } from "@/lib/utils/regex";
+import { IRespData } from "@/interfaces/errorDataResponse.interface";
+import { useFetchErrors } from "@/hooks/useFetchErrors";
 interface IInputs {
   email: string;
   password: string;
@@ -29,7 +31,7 @@ export default function Component() {
   const t = useTranslations();
   const { toast } = useToast();
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+  const { errors: fetchErrors, removeAll, set: setErrors } = useFetchErrors();
   const [charging, setCharging] = useState(false);
   const {
     register,
@@ -39,20 +41,20 @@ export default function Component() {
 
   const onSubmit: SubmitHandler<IInputs> = async (data: IInputs) => {
     setCharging(true);
-    const resultLogin = await signInRequest({ ...data, pass: data.password });
+    const { error, data: respData }: IRespData<string> = await signInRequest({
+      ...data,
+      pass: data.password,
+    });
     setCharging(false);
-    if (resultLogin.error) {
-      setError(Array.isArray(resultLogin.message) ? "" : resultLogin.message);
+    if (error) {
+      setErrors(error);
       const setTimeError = setTimeout(() => {
-        setError(null);
+        removeAll();
         return clearTimeout(setTimeError);
-      }, 4000);
-      toast({ title: t("signIn.page"), description: resultLogin.message });
-
+      }, 7000);
       return;
     }
-
-    toast({ title: t("signIn.page"), description: resultLogin.message });
+    toast({ title: t("signIn.page"), description: respData });
     const cookies = (await import("js-cookie")).default;
     const redirectTo: string | undefined = cookies.get("was_redirect_to");
     router.replace(redirectTo ? redirectTo : "/");
@@ -77,65 +79,67 @@ export default function Component() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="space-y-6"
-              noValidate
-            >
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  autoFocus
-                  className="w-full"
-                  autoComplete="off"
-                  placeholder={t("auth.placeholder.email")}
-                  {...register("email", {
-                    required: true,
-                    pattern: emailPattern,
-                  })}
-                />
-                {errors.email?.type == "required" && (
-                  <span className="error-message space-y-1">
-                    {t("auth.auth.emailEmpty")}
-                  </span>
-                )}
-                {errors.email?.type == "pattern" && (
-                  <span className="error-message space-y-1">
-                    {t("auth.auth.emailWrong")}
-                  </span>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">{t("auth.pass")}</Label>
-                <Input
-                  autoComplete="off"
-                  id="password"
-                  type="password"
-                  placeholder={t("auth.placeholder.pass")}
-                  {...register("password", {
-                    required: true,
-                  })}
-                />
-                {errors.password?.type == "required" && (
-                  <span className="error-message space-y-1">
-                    {t("auth.auth.passEmpty")}
-                  </span>
-                )}
-              </div>
-
-              {error && (
-                <span className="error-message space-y-1">{error}</span>
-              )}
-              {charging && (
-                <div className="w-full flex items-center justify-center">
-                  <Spinner size={"medium"} />
+            <form onSubmit={handleSubmit(onSubmit)} noValidate>
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    autoFocus
+                    className="w-full"
+                    autoComplete="off"
+                    placeholder={t("auth.placeholder.email")}
+                    {...register("email", {
+                      required: true,
+                      pattern: emailPattern,
+                    })}
+                  />
+                  {errors.email?.type == "required" && (
+                    <span className="error-message space-y-1">
+                      {t("auth.auth.emailEmpty")}
+                    </span>
+                  )}
+                  {errors.email?.type == "pattern" && (
+                    <span className="error-message space-y-1">
+                      {t("auth.auth.emailWrong")}
+                    </span>
+                  )}
                 </div>
-              )}
-              <Button className="w-full " type="submit">
-                {t("signIn.page")}
-              </Button>
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="password">{t("auth.pass")}</Label>
+                  <Input
+                    autoComplete="off"
+                    id="password"
+                    type="password"
+                    placeholder={t("auth.placeholder.pass")}
+                    {...register("password", {
+                      required: true,
+                    })}
+                  />
+                  {errors.password?.type == "required" && (
+                    <span className="error-message space-y-1">
+                      {t("auth.auth.passEmpty")}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex flex-col gap-1 py-2">
+                  {fetchErrors?.map((err, index) => (
+                    <span className="error-message" key={index}>
+                      {err}
+                    </span>
+                  ))}
+                </div>
+                {charging && (
+                  <div className="w-full flex items-center justify-center">
+                    <Spinner size={"medium"} />
+                  </div>
+                )}
+                <Button className="w-full " type="submit">
+                  {t("signIn.page")}
+                </Button>
+              </div>
             </form>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">

@@ -7,9 +7,9 @@ import { IRespData } from "@/interfaces/errorDataResponse.interface";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
 import { getLogedUser } from "@/lib/api/user";
 import { Card, CardContent, CardFooter } from "../ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import UserCardSkeleton from "./Skeleton";
 import { Button } from "../ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 function UserCard({ id, locale }: { id: string; locale: string }) {
   const [user, setUser] = useState<IUser | undefined>(undefined);
@@ -34,10 +34,10 @@ function UserCard({ id, locale }: { id: string; locale: string }) {
   return (
     <Card className="">
       <CardContent className="flex flex-col gap-3 items-center p-4">
-        <div className="flex items-center space-x-4">
-          <Avatar className="max-w-40 rounded-full">
-            <AvatarImage src={user?.img} alt={user?.username} />
-            <AvatarFallback>{user?.username}</AvatarFallback>
+        <div className="flex items-center ">
+          <Avatar className="w-[150px] h-[150px]">
+            <AvatarImage alt={user.username} src={user.img} />
+            <AvatarFallback>{user.username}</AvatarFallback>
           </Avatar>
         </div>
         <div>
@@ -52,13 +52,13 @@ function UserCard({ id, locale }: { id: string; locale: string }) {
           <p className="my-2">{user.description}</p>
         </div>
       </CardContent>
-      <CardFooter className="flex w-full flex-col gap-2">
+      <CardFooter className="flex max-w-md items-center mx-auto w-full flex-col gap-2">
         {user.follow ? (
           <Button className=" w-full max-h-8" variant={"destructive"}>
             Sejar de seguir
           </Button>
         ) : (
-          <Button className="w-full max-h-8" variant={"default"}>
+          <Button className="  w-full max-h-8" variant={"default"}>
             Seguir
           </Button>
         )}

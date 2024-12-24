@@ -14,11 +14,13 @@ import { Lock, User, Mail, UserPlus } from "lucide-react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { emailPattern, passwordPattern } from "@/lib/utils/regex";
 import { Link, useRouter } from "@/i18n/routing";
-import { IReturnResponse, signUpRequest } from "@/lib/api/auth";
+import { signUpRequest } from "@/lib/api/auth";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useTranslations } from "next-intl";
 import { Spinner } from "@/components/ui/spiner";
+import { IRespData } from "@/interfaces/errorDataResponse.interface";
+import { useFetchErrors } from "@/hooks/useFetchErrors";
 
 interface IRegisterData {
   username: string;
@@ -35,27 +37,27 @@ export default function Component() {
     formState: { errors },
   } = useForm<IRegisterData>();
   const t = useTranslations();
-  const [authErrors, setAuthErrors] = useState<string[]>([]);
+  const { errors: fetchErrors, set: setErrors, removeAll } = useFetchErrors();
   const [loading, setLoading] = useState(false);
 
   const onSubmit: SubmitHandler<IRegisterData> = async (
     data: IRegisterData
   ): Promise<void> => {
     setLoading(true);
-    const { error, message }: IReturnResponse = await signUpRequest({
+    const { error, data: respdata }: IRespData<string> = await signUpRequest({
       ...data,
       pass: data.password,
     });
     setLoading(false);
     if (error) {
-      setAuthErrors(Array.isArray(message) ? message : [message]);
+      setErrors(error);
       const setTimeErrors = setTimeout(() => {
-        setAuthErrors([]);
+        removeAll();
         return clearTimeout(setTimeErrors);
-      }, 10000);
+      }, 7000);
       return;
     }
-    toast({ title: t("signUp.page"), description: message });
+    toast({ title: t("signUp.page"), description: respdata });
     const cookies = (await import("js-cookie")).default;
     const redirectTo: string | undefined = cookies.get("was_redirect_to");
     router.push(redirectTo ? redirectTo : "/");
@@ -80,9 +82,9 @@ export default function Component() {
               className="space-y-4"
               noValidate
             >
-              <div className="space-y-2 max-w-[446px] mx-auto">
+              <div className="flex flex-col gap-2">
                 <Label htmlFor="username">{t("auth.username")}</Label>
-                <div className="relative">
+                <div className="flex flex-col gap-2">
                   <User
                     className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                     size={18}
@@ -91,7 +93,7 @@ export default function Component() {
                     id="username"
                     type="text"
                     placeholder={t("auth.placeholder.username")}
-                    className="pl-10 w-full"
+                    className=" w-full"
                     required
                     autoComplete="off"
                     {...register("username", {
@@ -101,7 +103,7 @@ export default function Component() {
                     })}
                   />
                 </div>
-                <div className=" inline ">
+                <div className="flex flex-col">
                   {errors.username?.type == "required" && (
                     <span className="error-message">
                       {t("auth.auth.usernameEmpty")}
@@ -119,7 +121,7 @@ export default function Component() {
                   )}
                 </div>
               </div>
-              <div className="space-y-2">
+              <div className="flex flex-col gap-2">
                 <Label htmlFor="name">{t("auth.name")}</Label>
                 <div className="relative">
                   <UserPlus
@@ -140,7 +142,7 @@ export default function Component() {
                     })}
                   />
                 </div>
-                <div className=" inline ">
+                <div className="flex flex-col">
                   {errors.name?.type == "required" && (
                     <span className="error-message">
                       {t("auth.auth.nameEmpty")}
@@ -158,7 +160,7 @@ export default function Component() {
                   )}
                 </div>
               </div>
-              <div className="space-y-2">
+              <div className="flex flex-col gap-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
                   <Mail
@@ -178,7 +180,7 @@ export default function Component() {
                     })}
                   />
                 </div>
-                <div className=" inline ">
+                <div className="flex flex-col">
                   {errors.email?.type == "required" && (
                     <span className="error-message">
                       {t("auth.auth.emailEmpty")}
@@ -191,7 +193,7 @@ export default function Component() {
                   )}
                 </div>
               </div>
-              <div className="space-y-2">
+              <div className="flex flex-col gap-2">
                 <Label htmlFor="password">{t("auth.pass")}</Label>
                 <div className="relative">
                   <Lock
@@ -212,7 +214,7 @@ export default function Component() {
                     })}
                   />
                 </div>
-                <div className=" inline ">
+                <div className="flex flex-col">
                   {errors.password?.type == "required" && (
                     <span className="error-message">
                       {t("auth.auth.passEmpty")}
@@ -240,7 +242,7 @@ export default function Component() {
               </Button>
             </form>
             <div className="flex flex-col gap-1 py-2">
-              {authErrors?.map((err, index) => (
+              {fetchErrors?.map((err, index) => (
                 <span className="error-message" key={index}>
                   {`${index + 1}- ${err}`}
                 </span>

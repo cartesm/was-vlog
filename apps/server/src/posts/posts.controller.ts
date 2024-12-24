@@ -19,7 +19,6 @@ import { CreatePostDto } from './dto/createPost.dto';
 import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { UserRequest } from 'src/auth/interfaces/userRequest.interface';
 import { Public } from 'src/auth/decorators/public.decorator';
-import { PostsType } from './schemas/post.schema';
 import { Types } from 'mongoose';
 import { SearchPipe } from './pipes/search.pipe';
 import { UpdateInfoPostDto } from './dto/updatePost.dto';

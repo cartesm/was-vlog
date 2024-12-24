@@ -1,4 +1,3 @@
-"use client";
 import cookies from "js-cookie";
 import axios, { Axios, InternalAxiosRequestConfig } from "axios";
 import { baseUrl as baseURL } from "@/lib/configs";

@@ -27,9 +27,9 @@ export class CommentsService {
   ): Promise<any> {
     let query: { post: Types.ObjectId; respondTo?: Types.ObjectId } = {
       post: postId,
+      ...(respond && { respondTo: respond }),
     };
-    if (respond) query.respondTo = respond;
-
+    console.log(userId);
     const aggregate = this.commentModel.aggregate([
       {
         $match: query,
@@ -50,20 +50,15 @@ export class CommentsService {
             },
             {
               $project: {
-                _id: 1,
+                userId: 1,
               },
             },
           ],
-          localField: '_id',
-          foreignField: 'comment',
           as: 'likeCount',
         },
       },
       {
         $addFields: {
-          likeCount: {
-            $size: '$likeCount',
-          },
           like: userId
             ? {
                 $in: [
@@ -78,6 +73,14 @@ export class CommentsService {
                 ],
               }
             : false,
+          likeCount: {
+            $size: '$likeCount',
+          },
+        },
+      },
+      {
+        $project: {
+          __v: 0,
         },
       },
     ]);

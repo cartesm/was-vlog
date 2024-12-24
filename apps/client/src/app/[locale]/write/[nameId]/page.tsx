@@ -6,15 +6,7 @@ import { toast } from "@/hooks/use-toast";
 import ControlPanel from "@/components/Write/ControlPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import {
-  createPost,
-  getOnePost,
-  ICreatePost,
-  IGetResp,
-  IPost,
-  IResponseCreate,
-  updatePost,
-} from "@/lib/api/posts/posts";
+import { createPost, getOnePost, updatePost } from "@/lib/api/posts/posts";
 import { useLocale } from "next-intl";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -25,7 +17,12 @@ import LoaderSkeleton from "@/components/Write/LoaderSkeleton";
 import { Loader } from "lucide-react";
 import { useWriteTags } from "@/hooks/write/useTags";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
-import { TypeRender } from "../../post/[postId]/page";
+import {
+  ICompletePost,
+  ICreatePost,
+  TypeRender,
+} from "@/interfaces/posts.interface";
+import { IRespData } from "@/interfaces/errorDataResponse.interface";
 const Info = dynamic(() => import("@/components/Write/Info"), { ssr: false });
 const WriteSeo = dynamic(() => import("@/components/Write/WriteSeo"), {
   ssr: false,
@@ -54,7 +51,9 @@ function Write() {
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchPost = async () => {
-    const { data, error }: IGetResp = await getOnePost(param as string);
+    const { data, error }: IRespData<ICompletePost> = await getOnePost(
+      param as string
+    );
     if (error) {
       router.push("/");
       return;
@@ -81,20 +80,19 @@ function Write() {
       tags: tags.length > 0 ? tags.map((tag) => tag._id) : undefined,
     };
 
-    const resp: IResponseCreate = !param
+    const resp: IRespData<string> = !param
       ? await createPost(createData)
       : await updatePost({ ...createData, name: undefined }, param);
 
-    if (!resp.error) {
-      toast({ title: "Exito", description: resp.message });
-      return;
+    if (resp.error) {
+      const timer = setTimeout(() => {
+        removeAll();
+        return clearTimeout(timer);
+      }, 3000);
+      setErrors(resp.error);
     }
-    setErrors(resp.message);
-
-    const timer = setTimeout(() => {
-      removeAll();
-      return clearTimeout(timer);
-    }, 3000);
+    toast({ title: "Exito", description: resp.data });
+    return;
   };
   const throttledSubmit: DebouncedFuncLeading<(data: IData) => void> =
     useCallback(

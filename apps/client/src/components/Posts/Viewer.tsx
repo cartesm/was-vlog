@@ -1,7 +1,7 @@
 "use client";
+import { TypeRender } from "@/interfaces/posts.interface";
 import "./htmlStyles.css";
 import { FileX2 } from "lucide-react";
-import { TypeRender } from "@/app/[locale]/post/[postId]/page";
 import ReactMarkdown from "react-markdown";
 function Viewer({ content, type }: { content: string; type: TypeRender }) {
   if (!content)
