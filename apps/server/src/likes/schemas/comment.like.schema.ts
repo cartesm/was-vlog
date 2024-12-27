@@ -27,7 +27,7 @@ export class CommentLike {
   @Prop({
     types: Types.ObjectId,
     required: true,
-    unique: true,
+    unique: false,
     ref: Users.name,
   })
   userId: Types.ObjectId;

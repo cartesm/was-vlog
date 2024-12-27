@@ -13,7 +13,6 @@ export class JwtGuard extends AuthGuard('jwt') implements CanActivate {
     context: ExecutionContext,
   ): Promise<boolean | Observable<Boolean> | any> {
     const req: UserRequest = await context.switchToHttp().getRequest();
-    console.log(req.headers.authorization);
     const isPublic = this.reflector.get<boolean>(
       'isPublic',
       context.getHandler(),

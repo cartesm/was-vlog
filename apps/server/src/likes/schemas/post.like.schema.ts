@@ -10,7 +10,7 @@ export class PostLikes {
   @Prop({
     type: Types.ObjectId,
     required: true,
-    unique: true,
+    unique: false,
     ref: Posts.name,
   })
   post: Types.ObjectId;
@@ -18,7 +18,7 @@ export class PostLikes {
   @Prop({
     types: Types.ObjectId,
     required: true,
-    unique: true,
+    unique: false,
     ref: Users.name,
   })
   userId: Types.ObjectId;

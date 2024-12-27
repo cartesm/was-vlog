@@ -33,25 +33,15 @@ export class LikesController {
   async likeAPost(
     @Req() req: UserRequest,
     @Body() body: CreateLikeDto,
-  ): Promise<void> {
+  ): Promise<{ status: 'Create' | 'Delete' }> {
     return await this.likesService.likePost(req.user.id, body.id);
   }
 
-  //TODO: cambiar el "Page and user pipe" para que sea un generico
   @Public()
   @Get('p/p/:id/:page')
   @HttpCode(HttpStatus.OK)
   async getLikesByPost(@Param(PageAndIdPipe) param: IPageAndId) {
     return await this.likesService.getUsersThatLikePost(param.id, param.page);
-  }
-
-  @Delete('p/:id')
-  @HttpCode(HttpStatus.OK)
-  async deleteLikePost(
-    @Param(ParseidPipe) param: { id: Types.ObjectId },
-    @Req() req: UserRequest,
-  ): Promise<void> {
-    return await this.likesService.deleteLikePost(param.id, req.user.id);
   }
 
   // * seccion de likes de comentarios
@@ -61,7 +51,7 @@ export class LikesController {
   async likeAComment(
     @Req() req: UserRequest,
     @Body() body: CreateCommentLikeDto,
-  ): Promise<void> {
+  ): Promise<{ status: 'Create' | 'Delete' }> {
     return await this.likesService.likeComment(
       req.user.id,
       body.commentId,
@@ -85,14 +75,5 @@ export class LikesController {
     @Param(PageAndIdPipe) param: IPageAndId,
   ): Promise<any> {
     return await this.likesService.getAllCommentLikes(param.id, param.page);
-  }
-
-  @Delete('c/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async unlikePost(
-    @Param(ParseidPipe) param: ParamId,
-    @Req() req: UserRequest,
-  ): Promise<void> {
-    return await this.likesService.dislikeComment(req.user.id, param.id);
   }
 }

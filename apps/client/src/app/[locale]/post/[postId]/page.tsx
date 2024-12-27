@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 const getOnePost = async (name: string): Promise<IRespData<ICompletePost>> => {
   const token: string | undefined = await getAuthToken();
-  const resp = await fetch(`${baseUrl}/posts/${name}`, {
+  const resp: Response = await fetch(`${baseUrl}/posts/${name}`, {
     method: "GET",
     credentials: "include",
     ...(token && {
@@ -22,7 +22,7 @@ const getOnePost = async (name: string): Promise<IRespData<ICompletePost>> => {
     }),
   });
   const data = await resp.json();
-  if (data.statusCode == 404) {
+  if (resp.status == 404) {
     return { error: data.message };
   }
   return { data: data as ICompletePost };
@@ -31,20 +31,22 @@ const getOnePost = async (name: string): Promise<IRespData<ICompletePost>> => {
 async function page({ params }: { params: Promise<{ postId: string }> }) {
   const { postId } = await params;
   const { data, error } = await getOnePost(postId);
-  if (error && !data)
-    <section className="max-w-3xl mx-auto w-full bg-secondary  p-4 rounded-md">
-      <div className="flex items-center justify-center gap-3 flex-col">
-        <Image
-          src={"https://http.cat/404"}
-          width={400}
-          height={400}
-          alt="No Content"
-          className="rounded-md"
-        />
-        <span className="error-message">{error}</span>
-      </div>
-    </section>;
 
+  if (error)
+    return (
+      <section className="max-w-3xl mx-auto w-full bg-secondary  p-4 rounded-md">
+        <div className="flex items-center justify-center gap-3 flex-col">
+          <Image
+            src={"https://http.cat/404"}
+            width={400}
+            height={400}
+            alt="No Content"
+            className="rounded-md"
+          />
+          <span className="error-message">{error}</span>
+        </div>
+      </section>
+    );
   return (
     <section className="max-w-3xl mx-auto w-full bg-secondary  p-4 rounded-md">
       <PostContent data={data as ICompletePost} />

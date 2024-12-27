@@ -1,7 +1,7 @@
 "use client";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
 import { ThumbsUp } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "@/i18n/routing";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
@@ -12,12 +12,16 @@ import { getCommentsOf } from "@/lib/api/posts/comments";
 import { IPaginationData } from "@/interfaces/pagination.interface";
 import { IRespData } from "@/interfaces/errorDataResponse.interface";
 import { IComment } from "@/interfaces/comment.interface";
+import { DebouncedFuncLeading, throttle } from "lodash";
+import { toast } from "@/hooks/use-toast";
+import { manageLikeComment } from "@/lib/api/posts/likeComment";
 const SubComments = dynamic(() => import("@/components/comments/SubComment"), {
   loading: () => <Skeleton />,
 });
 
 function Comments({ postId }: { postId: string }) {
   const { errors, set: setError, removeAll } = useFetchErrors();
+  const [isLiked, setIsLiked] = useState<{ id: string; count: number }[]>([]);
   const [visibleSubComments, setVisibleSubComments] = useState<string[]>([""]);
   const [comments, setComments] = useState<IPaginationData<IComment> | null>(
     null
@@ -35,10 +39,56 @@ function Comments({ postId }: { postId: string }) {
       return;
     }
     setComments(data ? data : null);
+    data?.docs.forEach(
+      (comment) =>
+        comment.like &&
+        setIsLiked((actual) => [
+          ...actual,
+          { count: comment.likeCount, id: comment._id },
+        ])
+    );
   };
   useEffect(() => {
     fetchComments();
   }, []);
+  const handleLike = async (commentId: string) => {
+    const Cookies = (await import("js-cookie")).default;
+    const authToken: string | undefined = Cookies.get("was_auth_token");
+    if (!authToken) {
+      toast({
+        title: "Sesion requerida",
+        description: "Inicia seseion para popder dar un like",
+      });
+      return;
+    }
+
+    const { error, data: resp }: IRespData<string> = await manageLikeComment(
+      // psot- comment
+      postId,
+      commentId
+    );
+
+    if (error) {
+      toast({
+        title: "Like",
+        description: error[0],
+        variant: "destructive",
+      });
+      return;
+    }
+    if (resp == "Create") {
+      setIsLiked((actual) => [...actual, { id: postId, count: 2 }]);
+      return;
+    }
+    setIsLiked((actual) => actual.filter((like) => like.id != commentId));
+  };
+  const throttledOnclick: DebouncedFuncLeading<(commentId: string) => void> =
+    useCallback(
+      throttle((commentId: string) => handleLike(commentId), 1500, {
+        trailing: false,
+      }),
+      []
+    );
 
   if (!comments || comments.docs.length <= 0)
     return (
@@ -77,8 +127,9 @@ function Comments({ postId }: { postId: string }) {
               <p>{comment.content}</p>
               <div className="flex gap-2 items-center">
                 <Badge
+                  onClick={() => throttledOnclick(comment._id)}
                   variant={"secondary"}
-                  className={`flex gap-2 text-[15px] items-center justify-center cursor-pointer hover:bg-neutral-300 ${comment.like && "bg-neutral-300 hover:bg-neutral-400"}`}
+                  className={`flex gap-2 text-[15px] items-center justify-center cursor-pointer hover:bg-neutral-300 ${isLiked.some((like) => like.id == comment._id) && "bg-neutral-300 hover:bg-neutral-400"}`}
                 >
                   <ThumbsUp size={15} />
                   {comment.likeCount}

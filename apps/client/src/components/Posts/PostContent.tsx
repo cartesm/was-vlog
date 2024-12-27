@@ -1,11 +1,56 @@
+"use client";
 import { ICompletePost, TypeRender } from "@/interfaces/posts.interface";
 import { ThumbsUp } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "@/i18n/routing";
 import { Badge } from "@/components/ui/badge";
 import Viewer from "@/components/Posts/Viewer";
-
+import { IRespData } from "@/interfaces/errorDataResponse.interface";
+import { toast } from "@/hooks/use-toast";
+import { useCallback, useState } from "react";
+import { throttle } from "lodash";
+import { manageLikePost } from "@/lib/api/posts/likeComment";
 function PostContent({ data }: { data: ICompletePost }) {
+  const [isLiked, setIsLiked] = useState<{ like: boolean; count: number }>({
+    count: data.likeCount,
+    like: data.like,
+  });
+
+  const handleLike = async () => {
+    const Cookies = (await import("js-cookie")).default;
+    const authToken: string | undefined = Cookies.get("was_auth_token");
+    if (!authToken) {
+      toast({
+        title: "Sesion requerida",
+        description: "Inicia seseion para popder dar un like",
+      });
+      return;
+    }
+
+    const { error, data: resp }: IRespData<string> = await manageLikePost(
+      data._id
+    );
+
+    if (error) {
+      toast({
+        title: "Like",
+        description: error[0],
+        variant: "destructive",
+      });
+      return;
+    }
+    if (resp == "Create") {
+      setIsLiked((actual) => ({ like: !actual.like, count: actual.count + 1 }));
+      return;
+    }
+    setIsLiked((actual) => ({ like: !actual.like, count: actual.count - 1 }));
+  };
+
+  const throttledOnclick = useCallback(
+    throttle(handleLike, 1500, { trailing: false }),
+    []
+  );
+
   return (
     <div>
       <div>
@@ -40,16 +85,12 @@ function PostContent({ data }: { data: ICompletePost }) {
           ))}
         </div>
         <Badge
+          onClick={() => throttledOnclick()}
           variant={"secondary"}
-          className=" text-[15px] my-3 cursor-pointer hover:bg-neutral-300"
+          className={`text-[15px] my-3 gap-2 cursor-pointer hover:bg-neutral-300 ${isLiked.like && "bg-neutral-300 hover:bg-neutral-400"}`}
         >
-          <Badge
-            variant={"secondary"}
-            className={`flex gap-2 text-[15px] items-center justify-center cursor-pointer hover:bg-neutral-300 ${data.like && "bg-neutral-300 hover:bg-neutral-400"}`}
-          >
-            <ThumbsUp size={15} />
-            {data.likeCount}
-          </Badge>
+          <ThumbsUp size={15} />
+          {isLiked.count}
         </Badge>
       </div>
     </div>

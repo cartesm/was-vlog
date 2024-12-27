@@ -72,9 +72,8 @@ export class PostsService {
         },
       },
     ]);
-
-    if (!postMatch) this.exceptions.throwNotFound('test.posts.notExists');
-    console.log(postMatch);
+    if (postMatch?.length <= 0)
+      this.exceptions.throwNotFound('test.posts.notExists');
     return (
       await this.postModel.populate(postMatch, {
         path: 'user tags',

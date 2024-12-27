@@ -144,11 +144,7 @@ const PostItem = ({
     <Card className="mt-3">
       <CardHeader>
         <CardTitle>
-          <Link
-            href={`/post/${post.name}`}
-            target="_blank"
-            className="hover:underline"
-          >
+          <Link href={`/post/${post.name}`} className="hover:underline">
             {post.name}
           </Link>
         </CardTitle>
@@ -171,7 +167,7 @@ const PostItem = ({
                 </Link>
               ))}
             </div>
-            <Link href={`/write/${post.name}`} target="_blank">
+            <Link href={`/write/${post.name}`}>
               <Edit />
             </Link>
           </div>

@@ -18,17 +18,23 @@ export class LikesService {
   async likePost(
     userId: Types.ObjectId,
     postId: Types.ObjectId,
-  ): Promise<void> {
+  ): Promise<{ status: 'Create' | 'Delete' }> {
     const likeMatch: PostLikeType = await this.postLikeModel.findOne({
       post: postId,
       userId,
     });
-    if (likeMatch) this.exceptions.throwConflict('test.likes.alreadyExists');
+    if (likeMatch) {
+      await this.postLikeModel.findOneAndDelete({
+        post: postId,
+        userId: userId,
+      });
+      return { status: 'Delete' };
+    }
     await new this.postLikeModel({
       post: postId,
       userId,
     }).save();
-    return;
+    return { status: 'Create' };
   }
   async getUsersThatLikePost(post: Types.ObjectId, page: number) {
     return await this.postLikeModel.paginate(
@@ -44,16 +50,6 @@ export class LikesService {
       },
     );
   }
-  async deleteLikePost(
-    post: Types.ObjectId,
-    user: Types.ObjectId,
-  ): Promise<void> {
-    await this.postLikeModel.findOneAndDelete({
-      post,
-      userId: user,
-    });
-    return;
-  }
 
   //* LIKES DE COMENTARIOS
 
@@ -61,21 +57,26 @@ export class LikesService {
     userId: Types.ObjectId,
     commentId: Types.ObjectId,
     postId: Types.ObjectId,
-  ): Promise<void> {
+  ): Promise<{ status: 'Create' | 'Delete' }> {
     const likeMatch: CommentLikeType = await this.commentLikeModel.findOne({
       comment: commentId,
       userId,
     });
 
-    if (likeMatch)
-      this.exceptions.throwConflict('test.likes.alreadyExistsComment');
+    if (likeMatch) {
+      await this.commentLikeModel.findOneAndDelete({
+        userId,
+        comment: commentId,
+      });
+      return { status: 'Delete' };
+    }
     await new this.commentLikeModel({
       comment: commentId,
       userId,
       post: postId,
     }).save();
 
-    return;
+    return { status: 'Create' };
   }
   async getAllLikesInAPost(
     user: Types.ObjectId,
@@ -98,12 +99,5 @@ export class LikesService {
         select: 'userId createAt post',
       },
     );
-  }
-  async dislikeComment(
-    user: Types.ObjectId,
-    comment: Types.ObjectId,
-  ): Promise<void> {
-    await this.commentLikeModel.findOneAndDelete({ userId: user, comment });
-    return;
   }
 }
