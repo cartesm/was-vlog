@@ -11,11 +11,12 @@ import {
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { SubmitHandler, useForm, useFormContext } from "react-hook-form";
-import { IResponseCreate, updatePost } from "@/lib/api/posts/posts";
+import { updatePost } from "@/lib/api/posts/posts";
 import { useState } from "react";
 import { Spinner } from "../ui/spiner";
 import { IData } from "@/interfaces/IWriteData.interface";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
+import { IRespData } from "@/interfaces/errorDataResponse.interface";
 interface Inputs {
   name: string;
 }
@@ -41,13 +42,13 @@ function UpdateName({
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setLoading(true);
-    const { error, message }: IResponseCreate = await updatePost(
+    const { error }: IRespData<string> = await updatePost(
       { name: data.name.trimEnd() },
       id
     );
     setLoading(false);
     if (error) {
-      setErrors(message);
+      setErrors(error);
       const timeErrors = setTimeout(() => {
         removeAll();
         return clearTimeout(timeErrors);

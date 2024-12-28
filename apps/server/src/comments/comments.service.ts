@@ -57,6 +57,7 @@ export class CommentsService {
           as: 'likeCount',
         },
       },
+
       {
         $addFields: {
           like: userId
@@ -85,12 +86,15 @@ export class CommentsService {
       },
     ]);
 
+    console.log(
+      await this.commentModel.aggregatePaginate(aggregate, {
+        page: page,
+        limit: 30,
+        sort: { createdAt: orderBy },
+      }),
+    );
     return await this.commentModel.aggregatePaginate(aggregate, {
       page: page,
-      populate: {
-        path: 'user',
-        select: 'username _id img createdAt',
-      },
       limit: 30,
       sort: { createdAt: orderBy },
     });

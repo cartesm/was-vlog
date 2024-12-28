@@ -61,6 +61,7 @@ export class LikesService {
     const likeMatch: CommentLikeType = await this.commentLikeModel.findOne({
       comment: commentId,
       userId,
+      post: postId,
     });
 
     if (likeMatch) {

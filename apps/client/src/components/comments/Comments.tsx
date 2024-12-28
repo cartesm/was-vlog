@@ -1,6 +1,6 @@
 "use client";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
-import { ThumbsUp } from "lucide-react";
+import { IconNode, ThumbsUp } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "@/i18n/routing";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -15,42 +15,41 @@ import { IComment } from "@/interfaces/comment.interface";
 import { DebouncedFuncLeading, throttle } from "lodash";
 import { toast } from "@/hooks/use-toast";
 import { manageLikeComment } from "@/lib/api/posts/likeComment";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { Spinner } from "../ui/spiner";
+import { format } from "@formkit/tempo";
+
 const SubComments = dynamic(() => import("@/components/comments/SubComment"), {
   loading: () => <Skeleton />,
 });
 
 function Comments({ postId }: { postId: string }) {
-  const { errors, set: setError, removeAll } = useFetchErrors();
-  const [isLiked, setIsLiked] = useState<{ id: string; count: number }[]>([]);
+  const { errors, set: setErrors, removeAll } = useFetchErrors();
   const [visibleSubComments, setVisibleSubComments] = useState<string[]>([""]);
-  const [comments, setComments] = useState<IPaginationData<IComment> | null>(
-    null
-  );
+  const [comments, setComments] = useState<IComment[] | null>(null);
+  const [order, setOrder] = useState<number | -1 | 1>(-1);
+  const [page, setPage] = useState<number>(1);
+  const [haveMorePage, setHaveMorePage] = useState<boolean>(true);
 
   const fetchComments = async () => {
     const { error, data }: IRespData<IPaginationData<IComment>> =
       await getCommentsOf({
-        page: 1,
+        page,
         postId,
-        order: 1,
+        order,
       });
     if (error) {
-      setError(error);
+      setErrors(error);
       return;
     }
-    setComments(data ? data : null);
-    data?.docs.forEach(
-      (comment) =>
-        comment.like &&
-        setIsLiked((actual) => [
-          ...actual,
-          { count: comment.likeCount, id: comment._id },
-        ])
-    );
+    if (!data) return alert("dick");
+    setHaveMorePage(data.hasNextPage);
+    setComments(data.docs);
   };
   useEffect(() => {
     fetchComments();
-  }, []);
+  }, [order]);
+
   const handleLike = async (commentId: string) => {
     const Cookies = (await import("js-cookie")).default;
     const authToken: string | undefined = Cookies.get("was_auth_token");
@@ -63,7 +62,6 @@ function Comments({ postId }: { postId: string }) {
     }
 
     const { error, data: resp }: IRespData<string> = await manageLikeComment(
-      // psot- comment
       postId,
       commentId
     );
@@ -76,12 +74,28 @@ function Comments({ postId }: { postId: string }) {
       });
       return;
     }
+    console.log(commentId);
     if (resp == "Create") {
-      setIsLiked((actual) => [...actual, { id: postId, count: 2 }]);
+      setComments(
+        (actual) =>
+          actual?.map((doc) =>
+            doc._id == commentId
+              ? { ...doc, like: true, likeCount: doc.likeCount + 1 }
+              : doc
+          ) as IComment[]
+      );
       return;
     }
-    setIsLiked((actual) => actual.filter((like) => like.id != commentId));
+    setComments(
+      (actual) =>
+        actual?.map((doc) =>
+          doc._id == commentId
+            ? { ...doc, like: false, likeCount: doc.likeCount - 1 }
+            : doc
+        ) as IComment[]
+    );
   };
+
   const throttledOnclick: DebouncedFuncLeading<(commentId: string) => void> =
     useCallback(
       throttle((commentId: string) => handleLike(commentId), 1500, {
@@ -90,7 +104,26 @@ function Comments({ postId }: { postId: string }) {
       []
     );
 
-  if (!comments || comments.docs.length <= 0)
+  const fetchMoreComments = async () => {
+    const { data, error }: IRespData<IPaginationData<IComment>> =
+      await getCommentsOf({
+        page,
+        postId,
+        order,
+      });
+    if (data) {
+      setComments((actual) => (actual as IComment[]).concat(data.docs));
+      setPage(data.page);
+      setHaveMorePage(data.hasNextPage);
+    }
+    setErrors(error as string[]);
+    const clearErrorsTimeout = setTimeout(() => {
+      removeAll();
+      return clearTimeout(clearErrorsTimeout);
+    }, 5000);
+  };
+
+  if (!comments || comments.length <= 0)
     return (
       <div>
         <Skeleton />
@@ -106,70 +139,120 @@ function Comments({ postId }: { postId: string }) {
 
   return (
     <div>
-      <h3 className="font-semibold text-2xl">Comentarios</h3>
       <div className="py-4">
-        {comments.docs.map((comment) => (
-          <div className="py-4 my-4 pl-6 border-l-2 flex" key={comment._id}>
-            <Link href={`/user/${comment.user.username}`}>
-              <Avatar>
-                <AvatarImage
-                  src={comment.user.img}
-                  alt={comment.user.username}
-                />
-                <AvatarFallback>{comment.user.username}</AvatarFallback>
-              </Avatar>
-            </Link>
-            <div className="pl-4 flex items-start gap-1 flex-col">
-              <span className="text-sm">
-                {new Date(comment.createdAt).toLocaleDateString()}
-                {comment.updatedAt != comment.createdAt && " (Editado)"}
-              </span>
-              <p>{comment.content}</p>
-              <div className="flex gap-2 items-center">
-                <Badge
-                  onClick={() => throttledOnclick(comment._id)}
-                  variant={"secondary"}
-                  className={`flex gap-2 text-[15px] items-center justify-center cursor-pointer hover:bg-neutral-300 ${isLiked.some((like) => like.id == comment._id) && "bg-neutral-300 hover:bg-neutral-400"}`}
-                >
-                  <ThumbsUp size={15} />
-                  {comment.likeCount}
-                </Badge>
-
-                {visibleSubComments.some((comm) => comm == comment._id) ? (
-                  <Button
-                    onClick={() => {
-                      setVisibleSubComments((actual) =>
-                        actual.filter((commentId) => commentId != comment._id)
-                      );
-                      removeAll();
-                    }}
-                    variant={"link"}
-                  >
-                    Mostrar Menos
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() =>
-                      setVisibleSubComments((actual) => [
-                        ...actual,
-                        comment._id,
-                      ])
-                    }
-                    variant={"link"}
-                  >
-                    Ver respuestas
-                  </Button>
-                )}
-              </div>
-              {visibleSubComments.some((comm) => comm == comment._id) && (
-                <SubComments commentId={comment._id} postId={postId} />
-              )}
+        <div className="flex -space-x-px">
+          <Button
+            onClick={() => {
+              setOrder(-1);
+            }}
+            variant="outline"
+            className="rounded-r-none focus:z-10"
+          >
+            Mas Nuevos
+          </Button>
+          <Button
+            onClick={() => {
+              setOrder(1);
+            }}
+            variant="outline"
+            className="rounded-l-none focus:z-10"
+          >
+            Mas Viejos
+          </Button>
+        </div>
+        <InfiniteScroll
+          dataLength={comments.length}
+          next={fetchMoreComments}
+          hasMore={haveMorePage}
+          loader={
+            <div className="mx-auto flex items-center justify-center overflow-hidden">
+              <Spinner size={"medium"} />
             </div>
-          </div>
-        ))}
+          }
+          endMessage={
+            <span className="mx-auto text-center font-semibold text-lg py-12 block">
+              No hay mas nada
+            </span>
+          }
+        >
+          {comments?.map((comment, index) => (
+            <CommentItem
+              key={index}
+              comment={comment}
+              postId={postId}
+              removeAll={removeAll}
+              setVisibleSubComments={setVisibleSubComments}
+              throttledOnclick={throttledOnclick}
+              visibleSubComments={visibleSubComments}
+            />
+          ))}
+        </InfiniteScroll>
       </div>
     </div>
   );
 }
+
+const CommentItem = ({
+  comment,
+  postId,
+  visibleSubComments,
+  setVisibleSubComments,
+  throttledOnclick,
+  removeAll,
+}) => {
+  return (
+    <div className="py-4 my-4 pl-6 border-l-2 flex" key={comment._id}>
+      <Link href={`/user/${comment.user.username}`}>
+        <Avatar>
+          <AvatarImage src={comment.user.img} alt={comment.user.username} />
+          <AvatarFallback>{comment.user.username}</AvatarFallback>
+        </Avatar>
+      </Link>
+      <div className="pl-4 flex items-start gap-1 flex-col">
+        <span className="text-sm">
+          {format(comment.createdAt, "medium")}
+          {comment.updatedAt != comment.createdAt && " (Editado)"}
+        </span>
+        <p>{comment.content}</p>
+        <div className="flex gap-2 items-center">
+          <Badge
+            onClick={() => throttledOnclick(comment._id)}
+            variant={"secondary"}
+            className={`flex gap-2 text-[15px] items-center justify-center cursor-pointer hover:bg-neutral-300 ${comment.like && "bg-neutral-300 hover:bg-neutral-400"}`}
+          >
+            <ThumbsUp size={15} />
+            {comment.likeCount}
+          </Badge>
+
+          {visibleSubComments.some((comm) => comm == comment._id) ? (
+            <Button
+              onClick={() => {
+                setVisibleSubComments((actual) =>
+                  actual.filter((commentId) => commentId != comment._id)
+                );
+                removeAll();
+              }}
+              variant={"link"}
+            >
+              Mostrar Menos
+            </Button>
+          ) : (
+            <Button
+              onClick={() =>
+                setVisibleSubComments((actual) => [...actual, comment._id])
+              }
+              variant={"link"}
+            >
+              Ver respuestas
+            </Button>
+          )}
+        </div>
+        {visibleSubComments.some((comm) => comm == comment._id) && (
+          <SubComments commentId={comment._id} postId={postId} />
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default Comments;

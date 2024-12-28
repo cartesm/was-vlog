@@ -26,7 +26,6 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
   const [page, setPage] = useState<number>(1);
   const [bestOrder, setBestOrder] = useState<number>(1);
   const [haveMorePage, setHaveMorePage] = useState<boolean>(true);
-
   const { errors, set: setErrors, removeAll } = useFetchErrors();
 
   useEffect(() => {
@@ -45,7 +44,7 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
         setHaveMorePage(data.hasNextPage);
         return;
       }
-      setErrors(error ? error : []);
+      setErrors(error as string[]);
       const clearErrorsTimeout = setTimeout(() => {
         removeAll();
         return clearTimeout(clearErrorsTimeout);

@@ -5,7 +5,13 @@ import PostContent from "@/components/Posts/PostContent";
 import Comments from "@/components/comments/Comments";
 import { baseUrl } from "@/lib/configs";
 import { Metadata } from "next";
-import { getAuthToken } from "@/lib/getAuthData";
+import { getAuthData, getAuthToken } from "@/lib/getAuthData";
+import dynamic from "next/dynamic";
+const CreateComment = dynamic(
+  () => import("@/components/comments/CreateComment"),
+  { loading: () => <div>crear comentario</div> }
+);
+import { IAuthData } from "@/interfaces/authData.interface";
 export const metadata: Metadata = {
   title: "post",
 };
@@ -47,9 +53,12 @@ async function page({ params }: { params: Promise<{ postId: string }> }) {
         </div>
       </section>
     );
+  const user: IAuthData | null = await getAuthData();
   return (
     <section className="max-w-3xl mx-auto w-full bg-secondary  p-4 rounded-md">
       <PostContent data={data as ICompletePost} />
+      <h3 className="font-semibold text-2xl py-3">Comentarios</h3>
+      <CreateComment user={user} />
       <Comments postId={(data as ICompletePost)._id} />
     </section>
   );
