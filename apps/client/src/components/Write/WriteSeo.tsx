@@ -116,7 +116,7 @@ export default function CompactSection({ nameId }: { nameId: string }) {
         })}
         form="write-form"
         placeholder="Descripción breve..."
-        className="h-full  outline-none ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0"
+        className="h-full my-2  outline-none ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0"
       />
       <div className=" grid grid-cols-1 gap-3 items-center justify-start">
         {errors.name?.type == "required" && (

@@ -79,10 +79,11 @@ function Write() {
       languaje: lang,
       tags: tags.length > 0 ? tags.map((tag) => tag._id) : undefined,
     };
-
-    const resp: IRespData<string> = !param
-      ? await createPost(createData)
-      : await updatePost({ ...createData, name: undefined }, param);
+    console.log(param);
+    const resp: IRespData<string> =
+      param == "new"
+        ? await createPost(createData)
+        : await updatePost({ ...createData, name: undefined }, param);
 
     if (resp.error) {
       const timer = setTimeout(() => {

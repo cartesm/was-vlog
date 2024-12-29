@@ -28,7 +28,7 @@ export const getCommentsOf = async ({
     return { error: errorMessage ?? ["Error"] };
   }
 };
-// content- post - respondTo? - login
+
 export const createComment = async (content: {
   content: string;
   post: string;
@@ -36,10 +36,8 @@ export const createComment = async (content: {
 }): Promise<IRespData<string>> => {
   try {
     const resp: AxiosResponse = await axios.post("/comments", content);
-    console.log(resp.data);
-    return { data: "edata" };
+    return { data: resp.data.message };
   } catch (e: any) {
-    console.log(e);
     const errorMessage = Array.isArray(e.response.data.message)
       ? e.response.data.message
       : [e.response.data.message];

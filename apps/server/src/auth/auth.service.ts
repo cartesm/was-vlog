@@ -42,12 +42,9 @@ export class AuthService {
   async loginUserWithGoogle(req: any): Promise<string> {
     const { user }: { user: GoogleDataProfile } = req;
     if (!user) throw new UnauthorizedException();
-    console.log('va a buscar');
     const userMatch: UsersType = await this.usersService.getUserDataByEmail(
       user.email,
     );
-    console.log('user match: ' + userMatch);
-    console.log('despues del user match');
     if (userMatch)
       return await this.jwtService.signAsync(<Payload>{
         id: userMatch._id,
@@ -55,13 +52,10 @@ export class AuthService {
         email: userMatch.name,
         img: userMatch.img,
       });
-    console.log('no existe');
-    console.log(user);
     const newUser: UsersType = await this.usersService.createUser({
       ...user,
       username: 'user-' + nanoid(),
     });
-    console.log('new user: ' + newUser);
     return await this.jwtService.signAsync(<Payload>{
       id: newUser._id,
       username: newUser.username,

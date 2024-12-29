@@ -23,14 +23,18 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { Spinner } from "../ui/spiner";
 import { format } from "@formkit/tempo";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
-const SubComments = dynamic(() => import("@/components/comments/SubComment"), {
-  loading: () => <Skeleton />,
-});
+
 const ModalCreateComment = dynamic(
   () => import("@/components/comments/ModalCreateComment")
 );
 
-function Comments({ postId }: { postId: string }) {
+function Comments({
+  postId,
+  commentId,
+}: {
+  postId: string;
+  commentId?: string;
+}) {
   const { errors, set: setErrors, removeAll } = useFetchErrors();
   const [visibleSubComments, setVisibleSubComments] = useState<string[]>([""]);
   const [comments, setComments] = useState<IComment[] | null>(null);
@@ -44,6 +48,7 @@ function Comments({ postId }: { postId: string }) {
         page,
         postId,
         order,
+        ...(commentId && { respond: commentId }),
       });
     if (error) {
       setErrors(error);
@@ -130,7 +135,7 @@ function Comments({ postId }: { postId: string }) {
     }, 5000);
   };
 
-  if (!comments || comments.length <= 0)
+  if (!comments)
     return (
       <div>
         <Skeleton />
@@ -146,8 +151,8 @@ function Comments({ postId }: { postId: string }) {
 
   return (
     <div>
-      <div className="py-4">
-        <div className="flex -space-x-px">
+      <div className={`py-4 pl-3 ${commentId && "pl-14"}`}>
+        <div className={`${commentId && "hidden"} flex -space-x-px`}>
           <Button
             onClick={() => {
               setOrder(-1);
@@ -177,8 +182,8 @@ function Comments({ postId }: { postId: string }) {
             </div>
           }
           endMessage={
-            <span className="mx-auto text-center font-semibold text-lg py-12 block">
-              No hay mas nada
+            <span className="mx-auto text-center font-semibold text-lg py-2 block">
+              No hay mas comentarios
             </span>
           }
         >
@@ -259,7 +264,7 @@ const CommentItem = ({
       </div>
     </CardFooter>
     {visibleSubComments.some((comm) => comm == comment._id) && (
-      <SubComments commentId={comment._id} postId={postId} />
+      <Comments commentId={comment._id} postId={postId} />
     )}
   </Card>
 );

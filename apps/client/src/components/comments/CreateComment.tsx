@@ -26,6 +26,7 @@ function CreateComment({
     formState: { errors },
     handleSubmit,
     register,
+    reset,
   } = useForm<ICreateComment>();
 
   const onSubmit: SubmitHandler<ICreateComment> = async (
@@ -40,7 +41,7 @@ function CreateComment({
         variant: "destructive",
       });
 
-    const { error }: IRespData<string> = await createComment({
+    const { error, data: respData }: IRespData<string> = await createComment({
       content: data.content,
       post: postId,
     });
@@ -53,6 +54,8 @@ function CreateComment({
       });
       return;
     }
+    toast({ title: "Exito", description: respData });
+    reset();
   };
 
   const throttledOnclick: DebouncedFuncLeading<(data: ICreateComment) => void> =

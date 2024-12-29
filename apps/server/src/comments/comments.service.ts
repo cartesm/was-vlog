@@ -62,6 +62,38 @@ export class CommentsService {
         },
       },
       {
+        $lookup: {
+          from: 'users',
+          let: {
+            userId: { $toObjectId: '$user' },
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$_id', '$$userId'],
+                },
+              },
+            },
+            {
+              $project: {
+                username: 1,
+                _id: 1,
+                img: 1,
+                name: 1,
+              },
+            },
+          ],
+          as: 'user',
+        },
+      },
+      {
+        $unwind: {
+          path: '$user',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
         $addFields: {
           like: userId
             ? {
@@ -89,37 +121,6 @@ export class CommentsService {
       },
     ]);
 
-    console.log(
-      await this.commentModel.aggregate([
-        {
-          $match: query,
-        },
-        {
-          $lookup: {
-            from: 'users',
-            let: {
-              userId: { $toString: '_id' },
-            },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $eq: ['$user', '$$userId'],
-                  },
-                },
-              },
-            ],
-            as: 'user',
-          },
-        },
-        {
-          $project: {
-            __v: 0,
-          },
-        },
-        { $limit: 1 },
-      ]),
-    );
     return await this.commentModel.aggregatePaginate(aggregate, {
       page: page,
       limit: 30,
