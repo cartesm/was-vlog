@@ -93,9 +93,7 @@ export class UsersService {
     return userMatch;
   }
   async getUserDataByEmail(email: string): Promise<UsersType> {
-    const userMatch: UsersType = await this.UsersModel.findOne({ email });
-    if (!userMatch) this.exceptions.throwNotFound('test.users.notFound');
-    return userMatch;
+    return await this.UsersModel.findOne({ email });
   }
   async userExists(
     email?: string,
@@ -117,10 +115,9 @@ export class UsersService {
 
     if (userMatch && userMatch.username == userData.username)
       this.exceptions.throwConflict('test.auth.conflicWithUsername');
-
     const newUser: UsersType = await new this.UsersModel({
       ...userData,
-      pass: await bcrypt.hash(userData.pass, 12),
+      ...(userData.pass && { pass: await bcrypt.hash(userData.pass, 12) }),
     }).save();
     await this.historyService.createHistory(newUser.id);
     return newUser;

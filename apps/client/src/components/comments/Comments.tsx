@@ -1,10 +1,14 @@
 "use client";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
-import { IconNode, ThumbsUp } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { Link } from "@/i18n/routing";
+import { ThumbsUp } from "lucide-react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import dynamic from "next/dynamic";
 import Skeleton from "@/components/comments/CommentSkeleton";
@@ -18,10 +22,13 @@ import { manageLikeComment } from "@/lib/api/posts/likeComment";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Spinner } from "../ui/spiner";
 import { format } from "@formkit/tempo";
-
+import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 const SubComments = dynamic(() => import("@/components/comments/SubComment"), {
   loading: () => <Skeleton />,
 });
+const ModalCreateComment = dynamic(
+  () => import("@/components/comments/ModalCreateComment")
+);
 
 function Comments({ postId }: { postId: string }) {
   const { errors, set: setErrors, removeAll } = useFetchErrors();
@@ -180,7 +187,6 @@ function Comments({ postId }: { postId: string }) {
               key={index}
               comment={comment}
               postId={postId}
-              removeAll={removeAll}
               setVisibleSubComments={setVisibleSubComments}
               throttledOnclick={throttledOnclick}
               visibleSubComments={visibleSubComments}
@@ -194,65 +200,68 @@ function Comments({ postId }: { postId: string }) {
 
 const CommentItem = ({
   comment,
-  postId,
+  throttledOnclick,
   visibleSubComments,
   setVisibleSubComments,
-  throttledOnclick,
-  removeAll,
-}) => {
-  return (
-    <div className="py-4 my-4 pl-6 border-l-2 flex" key={comment._id}>
-      <Link href={`/user/${comment.user.username}`}>
-        <Avatar>
-          <AvatarImage src={comment.user.img} alt={comment.user.username} />
-          <AvatarFallback>{comment.user.username}</AvatarFallback>
-        </Avatar>
-      </Link>
-      <div className="pl-4 flex items-start gap-1 flex-col">
-        <span className="text-sm">
-          {format(comment.createdAt, "medium")}
-          {comment.updatedAt != comment.createdAt && " (Editado)"}
-        </span>
-        <p>{comment.content}</p>
-        <div className="flex gap-2 items-center">
-          <Badge
-            onClick={() => throttledOnclick(comment._id)}
-            variant={"secondary"}
-            className={`flex gap-2 text-[15px] items-center justify-center cursor-pointer hover:bg-neutral-300 ${comment.like && "bg-neutral-300 hover:bg-neutral-400"}`}
-          >
-            <ThumbsUp size={15} />
-            {comment.likeCount}
-          </Badge>
-
-          {visibleSubComments.some((comm) => comm == comment._id) ? (
-            <Button
-              onClick={() => {
-                setVisibleSubComments((actual) =>
-                  actual.filter((commentId) => commentId != comment._id)
-                );
-                removeAll();
-              }}
-              variant={"link"}
-            >
-              Mostrar Menos
-            </Button>
-          ) : (
-            <Button
-              onClick={() =>
-                setVisibleSubComments((actual) => [...actual, comment._id])
-              }
-              variant={"link"}
-            >
-              Ver respuestas
-            </Button>
-          )}
-        </div>
-        {visibleSubComments.some((comm) => comm == comment._id) && (
-          <SubComments commentId={comment._id} postId={postId} />
-        )}
+  postId,
+}: {
+  comment: IComment;
+  throttledOnclick: DebouncedFuncLeading<(commentId: string) => void>;
+  visibleSubComments: string[];
+  setVisibleSubComments: Dispatch<SetStateAction<string[]>>;
+  postId: string;
+}) => (
+  <Card className="my-2">
+    <CardHeader className="flex flex-row items-center gap-4">
+      <Avatar>
+        <AvatarImage src={comment.user.img} alt={comment.user.username} />
+        <AvatarFallback>{comment.user.username}</AvatarFallback>
+      </Avatar>
+      <div>
+        <h3 className="font-semibold">{comment.user.username}</h3>
+        <p className="text-sm text-gray-500">
+          {format(comment.createdAt, "medium")}{" "}
+          {comment.createdAt != comment.updatedAt && " - Editado"}
+        </p>
       </div>
-    </div>
-  );
-};
+    </CardHeader>
+    <CardContent>
+      <p>{comment.content}</p>
+    </CardContent>
+    <CardFooter className="flex justify-between">
+      <div className="flex -space-x-px">
+        <Button
+          variant={comment.like ? "default" : "outline"}
+          size="sm"
+          onClick={() => throttledOnclick(comment._id)}
+          className="rounded-r-none focus:z-10"
+        >
+          <ThumbsUp
+            className={`mr-2 h-4 w-4 ${comment.like ? "fill-current" : ""}`}
+          />
+          {comment.likeCount}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="rounded-none focus:z-10"
+          onClick={() =>
+            !visibleSubComments.some((comm) => comm == comment._id) &&
+            setVisibleSubComments((actual) => [...actual, comment._id])
+          }
+        >
+          {visibleSubComments.some((comm) => comm == comment._id)
+            ? "Mostrar Menos"
+            : "Ver respuestas"}
+        </Button>
+
+        <ModalCreateComment commentId={comment._id} postId={postId} />
+      </div>
+    </CardFooter>
+    {visibleSubComments.some((comm) => comm == comment._id) && (
+      <SubComments commentId={comment._id} postId={postId} />
+    )}
+  </Card>
+);
 
 export default Comments;

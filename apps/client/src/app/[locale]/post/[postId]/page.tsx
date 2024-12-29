@@ -38,7 +38,7 @@ async function page({ params }: { params: Promise<{ postId: string }> }) {
   const { postId } = await params;
   const { data, error } = await getOnePost(postId);
 
-  if (error)
+  if (error && !data)
     return (
       <section className="max-w-3xl mx-auto w-full bg-secondary  p-4 rounded-md">
         <div className="flex items-center justify-center gap-3 flex-col">
@@ -58,7 +58,7 @@ async function page({ params }: { params: Promise<{ postId: string }> }) {
     <section className="max-w-3xl mx-auto w-full bg-secondary  p-4 rounded-md">
       <PostContent data={data as ICompletePost} />
       <h3 className="font-semibold text-2xl py-3">Comentarios</h3>
-      <CreateComment user={user} />
+      <CreateComment postId={(data as ICompletePost)._id} user={user} />
       <Comments postId={(data as ICompletePost)._id} />
     </section>
   );

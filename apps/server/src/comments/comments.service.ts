@@ -7,6 +7,7 @@ import { CreateCommentDto } from './dto/create.comment.dto';
 import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { UpdateCommentDto } from './dto/update.comment.dto';
 import { ExceptionsService } from 'src/utils/exceptions.service';
+import { pipeline } from 'stream';
 
 @Injectable()
 export class CommentsService {
@@ -25,11 +26,14 @@ export class CommentsService {
     userId: Types.ObjectId,
     respond?: Types.ObjectId,
   ): Promise<any> {
-    let query: { post: Types.ObjectId; respondTo?: Types.ObjectId } = {
+    const query: {
+      post: Types.ObjectId;
+      respondTo?: Types.ObjectId | { $exists: boolean };
+    } = {
       post: postId,
-      ...(respond && { respondTo: respond }),
+      ...(respond ? { respondTo: respond } : { respondTo: { $exists: false } }),
     };
-    console.log(userId);
+    console.log(query);
     const aggregate = this.commentModel.aggregate([
       {
         $match: query,
@@ -57,7 +61,6 @@ export class CommentsService {
           as: 'likeCount',
         },
       },
-
       {
         $addFields: {
           like: userId
@@ -87,11 +90,35 @@ export class CommentsService {
     ]);
 
     console.log(
-      await this.commentModel.aggregatePaginate(aggregate, {
-        page: page,
-        limit: 30,
-        sort: { createdAt: orderBy },
-      }),
+      await this.commentModel.aggregate([
+        {
+          $match: query,
+        },
+        {
+          $lookup: {
+            from: 'users',
+            let: {
+              userId: { $toString: '_id' },
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ['$user', '$$userId'],
+                  },
+                },
+              },
+            ],
+            as: 'user',
+          },
+        },
+        {
+          $project: {
+            __v: 0,
+          },
+        },
+        { $limit: 1 },
+      ]),
     );
     return await this.commentModel.aggregatePaginate(aggregate, {
       page: page,
@@ -119,12 +146,15 @@ export class CommentsService {
     if (commentMatch)
       this.exceptions.throwNotAceptable('test.comment.alreadyExists');
 
-    let dataComment: any = {
+    const dataComment: any = {
       user: userId,
       content: content.content,
       post: content.post,
+      ...(content.respondTo && { respondTo: content.respondTo }),
     };
-    if (content.respondTo) dataComment.respondTo = content.respondTo;
+    console.log('crear comment');
+    console.log(content);
+    console.log(dataComment);
     return {
       message: this.i18n.t('test.comment.created'),
       data: await new this.commentModel(dataComment).save(),

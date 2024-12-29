@@ -8,28 +8,26 @@ import { RegisterDto } from './dto/register.dto';
 import { JwtService } from '@nestjs/jwt';
 import { nanoid } from 'nanoid';
 import { GoogleDataProfile } from './interfaces/googleData.interface';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private i18n: I18nService,
     private jwtService: JwtService,
+    private exceptions: ExceptionsService,
   ) {}
   async validateUser(email: string, pass: string): Promise<Payload> {
     const user: UsersType = await this.usersService.getUserDataByEmail(email);
+    //!
+    if (!user) this.exceptions.throwNotFound('test.users.notFound');
+
     if (!user.pass)
-      throw new UnauthorizedException(
-        this.i18n.t('test.auth.passwordEmpty', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+      this.exceptions.throwUnauthorized('test.auth.passwordEmpty');
+
     const verifyPass: Boolean = bcrypt.compareSync(pass, user.pass);
     if (!verifyPass)
-      throw new UnauthorizedException(
-        this.i18n.t('test.auth.incorrectPass', {
-          lang: I18nContext.current().lang,
-        }),
-      );
+      this.exceptions.throwUnauthorized('test.auth.incorrectPass');
     return {
       id: user._id,
       img: user.img,
@@ -44,9 +42,12 @@ export class AuthService {
   async loginUserWithGoogle(req: any): Promise<string> {
     const { user }: { user: GoogleDataProfile } = req;
     if (!user) throw new UnauthorizedException();
+    console.log('va a buscar');
     const userMatch: UsersType = await this.usersService.getUserDataByEmail(
       user.email,
     );
+    console.log('user match: ' + userMatch);
+    console.log('despues del user match');
     if (userMatch)
       return await this.jwtService.signAsync(<Payload>{
         id: userMatch._id,
@@ -54,10 +55,13 @@ export class AuthService {
         email: userMatch.name,
         img: userMatch.img,
       });
+    console.log('no existe');
+    console.log(user);
     const newUser: UsersType = await this.usersService.createUser({
       ...user,
       username: 'user-' + nanoid(),
     });
+    console.log('new user: ' + newUser);
     return await this.jwtService.signAsync(<Payload>{
       id: newUser._id,
       username: newUser.username,

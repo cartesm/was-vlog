@@ -6,12 +6,22 @@ import { Button } from "../ui/button";
 import { toast } from "@/hooks/use-toast";
 import { IAuthData } from "@/interfaces/authData.interface";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { IRespData } from "@/interfaces/errorDataResponse.interface";
+import { createComment } from "@/lib/api/posts/comments";
+import { useCallback } from "react";
+import { DebouncedFuncLeading, throttle } from "lodash";
 
 interface ICreateComment {
   content: string;
 }
 
-function CreateComment({ user }: { user: IAuthData | null }) {
+function CreateComment({
+  user,
+  postId,
+}: {
+  user: IAuthData | null;
+  postId: string;
+}) {
   const {
     formState: { errors },
     handleSubmit,
@@ -29,11 +39,28 @@ function CreateComment({ user }: { user: IAuthData | null }) {
         description: "Inicia sesion para poder agregar un comentario",
         variant: "destructive",
       });
+
+    const { error }: IRespData<string> = await createComment({
+      content: data.content,
+      post: postId,
+    });
+
+    if (error) {
+      toast({
+        title: "Error al comentar",
+        description: error[0],
+        variant: "destructive",
+      });
+      return;
+    }
   };
+
+  const throttledOnclick: DebouncedFuncLeading<(data: ICreateComment) => void> =
+    useCallback(throttle(onSubmit, 2000), []);
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit((data) => throttledOnclick(data))}>
         <div className="flex flex-col  items-center justify-between gap-2 p-2">
           <div className="flex gap-3 items-center justify-start w-full">
             <Avatar>
@@ -46,8 +73,6 @@ function CreateComment({ user }: { user: IAuthData | null }) {
               />
               <AvatarFallback>{user?.username ?? "User"}</AvatarFallback>
             </Avatar>
-            {/* //TODO: terminar de crear comentarios- hacer el lookup para que muestre las imagenes del usuario  */}
-            {/* //TODO: mojorar el validate para que actualize img */}
             <Label>Escribe un comentario</Label>
           </div>
           <Textarea
