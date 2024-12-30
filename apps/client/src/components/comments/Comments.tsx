@@ -1,6 +1,6 @@
 "use client";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
-import { ThumbsUp } from "lucide-react";
+import { Heart, ThumbsUp } from "lucide-react";
 import {
   Dispatch,
   SetStateAction,
@@ -19,8 +19,6 @@ import { IComment } from "@/interfaces/comment.interface";
 import { DebouncedFuncLeading, throttle } from "lodash";
 import { toast } from "@/hooks/use-toast";
 import { manageLikeComment } from "@/lib/api/posts/likeComment";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { Spinner } from "../ui/spiner";
 import { format } from "@formkit/tempo";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 
@@ -148,10 +146,9 @@ function Comments({
         </div>
       </div>
     );
-
   return (
     <div>
-      <div className={`py-4 pl-3 ${commentId && "pl-14"}`}>
+      <div className={`py-2 pl-3 pr-3 ${commentId && "ml-14 pr-1"}`}>
         <div className={`${commentId && "hidden"} flex -space-x-px`}>
           <Button
             onClick={() => {
@@ -172,21 +169,7 @@ function Comments({
             Mas Viejos
           </Button>
         </div>
-        <InfiniteScroll
-          dataLength={comments.length}
-          next={fetchMoreComments}
-          hasMore={haveMorePage}
-          loader={
-            <div className="mx-auto flex items-center justify-center overflow-hidden">
-              <Spinner size={"medium"} />
-            </div>
-          }
-          endMessage={
-            <span className="mx-auto text-center font-semibold text-lg py-2 block">
-              No hay mas comentarios
-            </span>
-          }
-        >
+        <div>
           {comments?.map((comment, index) => (
             <CommentItem
               key={index}
@@ -197,7 +180,12 @@ function Comments({
               visibleSubComments={visibleSubComments}
             />
           ))}
-        </InfiniteScroll>
+          {haveMorePage && (
+            <Button onClick={fetchComments} variant={"link"}>
+              Cargar Mas
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -241,7 +229,7 @@ const CommentItem = ({
           onClick={() => throttledOnclick(comment._id)}
           className="rounded-r-none focus:z-10"
         >
-          <ThumbsUp
+          <Heart
             className={`mr-2 h-4 w-4 ${comment.like ? "fill-current" : ""}`}
           />
           {comment.likeCount}
@@ -251,8 +239,11 @@ const CommentItem = ({
           size="sm"
           className="rounded-none focus:z-10"
           onClick={() =>
-            !visibleSubComments.some((comm) => comm == comment._id) &&
-            setVisibleSubComments((actual) => [...actual, comment._id])
+            !visibleSubComments.some((comm) => comm == comment._id)
+              ? setVisibleSubComments((actual) => [...actual, comment._id])
+              : setVisibleSubComments((actual) =>
+                  actual.filter((commentId) => commentId != comment._id)
+                )
           }
         >
           {visibleSubComments.some((comm) => comm == comment._id)

@@ -44,7 +44,7 @@ const Previewer = dynamic(() => import("@/components/Posts/Viewer"), {
 
 function Write() {
   const { nameId: param }: { nameId: string } = useParams();
-  const { tags } = useWriteTags();
+  const { tags, set: setTags } = useWriteTags();
   const { set: setErrors, removeAll } = useFetchErrors();
   const lang: string = useLocale();
   const router = useRouter();
@@ -58,6 +58,7 @@ function Write() {
       router.push("/");
       return;
     }
+    setTags(data?.tags ? data.tags : []);
     methods.reset({
       content: data?.content || "",
       name: data?.name || "",
@@ -79,7 +80,6 @@ function Write() {
       languaje: lang,
       tags: tags.length > 0 ? tags.map((tag) => tag._id) : undefined,
     };
-    console.log(param);
     const resp: IRespData<string> =
       param == "new"
         ? await createPost(createData)
@@ -104,7 +104,7 @@ function Write() {
         3000,
         { trailing: false }
       ),
-      []
+      [tags]
     );
 
   useEffect(() => {

@@ -284,6 +284,7 @@ export class PostsService {
     name: string,
     updatePostData: UpdateInfoPostDto,
   ): Promise<ResponseWithMessage> {
+    console.log(updatePostData);
     if (Object.keys(updatePostData).length <= 0)
       throw new NotAcceptableException(
         this.i18n.t('test.posts.minLengthUpdate', {
@@ -299,7 +300,10 @@ export class PostsService {
 
     const updatedPost: PostsType = await this.postModel.findOneAndUpdate(
       { name },
-      updatePostData,
+      {
+        ...updatePostData,
+        tags: !updatePostData.tags ? [] : updatePostData.tags,
+      },
       { new: true },
     );
 

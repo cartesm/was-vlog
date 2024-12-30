@@ -12,13 +12,14 @@ import React, { useEffect, useState } from "react";
 import { Badge } from "../ui/badge";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Spinner } from "../ui/spiner";
-import { useTranslations } from "next-intl";
-import { Edit } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { Edit, Heart, MessageCircle } from "lucide-react";
 import { Button } from "../ui/button";
 import { ISimplePostContent } from "@/interfaces/posts.interface";
 import { IPaginationData } from "@/interfaces/pagination.interface";
 import { IRespData } from "@/interfaces/errorDataResponse.interface";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
+import { format, formatStr } from "@formkit/tempo";
 function UserContent({ userId }: { userId: string }): React.ReactElement {
   const t = useTranslations();
   const [posts, setPosts] = useState<ISimplePostContent[]>([]);
@@ -117,8 +118,8 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
               </span>
             }
           >
-            {posts?.map((post: ISimplePostContent) => (
-              <PostItem key={post._id} post={post} />
+            {posts?.map((post: ISimplePostContent, index) => (
+              <PostItem index={index} key={post._id} post={post} />
             ))}
           </InfiniteScroll>
         )}
@@ -136,42 +137,67 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
 
 const PostItem = ({
   post,
+  index,
 }: {
   post: ISimplePostContent;
+  index: number;
 }): React.ReactElement => {
+  const lang = useLocale();
+
   return (
-    <Card className="mt-3">
-      <CardHeader>
-        <CardTitle>
-          <Link href={`/post/${post.name}`} className="hover:underline">
-            {post.name}
-          </Link>
-        </CardTitle>
-        <CardDescription>
-          {new Date(post.createdAt).toLocaleDateString()}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+    <Card
+      className={` my-4 p-4 ${index % 2 === 0 ? "bg-background" : "bg-muted"}`}
+    >
+      <div className="flex justify-between items-start mb-2">
         <div>
-          {post.description && <div className="">{post.description}</div>}
-          <div className="flex items-center justify-between gap-2">
-            <Badge variant="default">{post.likeCount} likes</Badge>
-            <Badge variant="secondary">{post.commentCount} comments</Badge>
-            <div className="flex items-center justify-start pt-4 gap-2 flex-wrap">
-              {post.tags?.map((tag, index) => (
-                <Link href={"#"} key={index}>
-                  <Badge variant={"outline"} className="px-2 py-1">
-                    {tag.name}
-                  </Badge>
-                </Link>
-              ))}
-            </div>
-            <Link href={`/write/${post.name}`}>
-              <Edit />
-            </Link>
-          </div>
+          <Link href={`/post/${post.name}`}>
+            <h3 className="font-semibold text-2xl hover:text-muted-foreground py-2">
+              {post.name}
+            </h3>
+          </Link>
+          <p className="text-sm text-muted-foreground">
+            {format(post.createdAt, "medium", lang)}
+          </p>
         </div>
-      </CardContent>
+        <Link href={`/write/${post.name}`}>
+          <Button variant="ghost" size="icon">
+            <Edit className="h-4 w-4" />
+          </Button>
+        </Link>
+      </div>
+      <p className="text-sm mb-3">
+        {post.description.length > 90
+          ? `${post.description.slice(0, 90)}...`
+          : post.description}
+      </p>
+      <div className="flex flex-wrap gap-2 mb-3">
+        {post.tags.map((tag) => (
+          <Badge key={tag._id} variant="secondary">
+            {tag.name}
+          </Badge>
+        ))}
+      </div>
+
+      <div className="flex items-center justify-between">
+        <div className="flex gap-4 items-center">
+          <Button
+            variant={`${post.like ? "default" : "ghost"}`}
+            size="sm"
+            className="flex items-center gap-1 "
+          >
+            <Heart className="h-4 w-4" />
+            <span>{post.likeCount}</span>
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="flex items-center gap-1 text-muted-foreground"
+          >
+            <MessageCircle className="h-4 w-4" />
+            <span>{post.commentCount}</span>
+          </Button>
+        </div>
+      </div>
     </Card>
   );
 };

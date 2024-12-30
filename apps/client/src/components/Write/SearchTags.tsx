@@ -8,7 +8,6 @@ import { Badge } from "../ui/badge";
 import { debounce, DebouncedFuncLeading, throttle } from "lodash";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
 import { useWriteTags } from "@/hooks/write/useTags";
-import dynammic from "next/dynamic";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { IRespData } from "@/interfaces/errorDataResponse.interface";
 import { IPaginationData } from "@/interfaces/pagination.interface";
@@ -17,16 +16,14 @@ import { TabsContent, TabsTrigger } from "../ui/tabs";
 import { ScrollArea } from "../ui/scroll-area";
 import { useForm } from "react-hook-form";
 import { toast } from "@/hooks/use-toast";
-const Paginate = dynammic(() => import("@/components/Pagination"), {
-  ssr: true,
-});
+
 interface ICreateTag {
   name: string;
 }
 export default function SearchTags({ isOpen, changeOpen }) {
   const [query, setQuery] = useState<string>("");
   const [page, setPage] = useState<number>(1);
-  const { errors, set: setErrors, removeAll } = useFetchErrors();
+  const { errors, set: setErrors } = useFetchErrors();
   const { add: addTag, tags: writeTags, delete: deleteTag } = useWriteTags();
   const [resultTags, setResultTags] = useState<IPaginationData<ITags> | null>(
     null

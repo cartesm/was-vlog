@@ -4,7 +4,7 @@ export enum TypeRender {
   Post = "POST",
 }
 export interface ISimplePostContent {
-  createdAt: Date;
+  createdAt: string;
   languaje: string;
   description: string;
   name: string;

@@ -33,7 +33,6 @@ export class CommentsService {
       post: postId,
       ...(respond ? { respondTo: respond } : { respondTo: { $exists: false } }),
     };
-    console.log(query);
     const aggregate = this.commentModel.aggregate([
       {
         $match: query,
