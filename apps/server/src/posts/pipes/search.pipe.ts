@@ -9,7 +9,7 @@ export class SearchPipe implements PipeTransform {
   transform(
     value: {
       name: string;
-      tags: Array<any>;
+      tags?: Array<any>;
       created: number;
       alphabetical: number;
     },
@@ -38,7 +38,6 @@ export class SearchPipe implements PipeTransform {
             !isValidObjectId(tag) &&
             this.exceptions.throwNotAceptable('test.pipes.notMongoIdTag'),
         );
-
     return {
       alphabetical: parsedAlphabetical,
       created: parsedCreated,

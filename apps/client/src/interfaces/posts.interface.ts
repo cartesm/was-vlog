@@ -1,4 +1,4 @@
-import { ISubUser } from "./user.interface";
+import { ISubUser, IUser } from "./user.interface";
 export enum TypeRender {
   Write = "WRITE",
   Post = "POST",
@@ -17,6 +17,7 @@ export interface ISimplePostContent {
       _id: string;
     },
   ];
+  user?: IUser;
   _id: string;
 }
 

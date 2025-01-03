@@ -13,13 +13,14 @@ import { Badge } from "../ui/badge";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Spinner } from "../ui/spiner";
 import { useLocale, useTranslations } from "next-intl";
-import { Edit, Heart, MessageCircle } from "lucide-react";
+import { Edit, Heart, MessageCircle, Tag } from "lucide-react";
 import { Button } from "../ui/button";
 import { ISimplePostContent } from "@/interfaces/posts.interface";
 import { IPaginationData } from "@/interfaces/pagination.interface";
 import { IRespData } from "@/interfaces/errorDataResponse.interface";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
 import { format, formatStr } from "@formkit/tempo";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 function UserContent({ userId }: { userId: string }): React.ReactElement {
   const t = useTranslations();
   const [posts, setPosts] = useState<ISimplePostContent[]>([]);
@@ -69,7 +70,7 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
     }
   };
   return (
-    <div className="">
+    <div className=" max-w-2xl w-full mx-auto">
       <div className="flex -space-x-px">
         <Button
           onClick={() => {
@@ -119,7 +120,7 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
             }
           >
             {posts?.map((post: ISimplePostContent, index) => (
-              <PostItem index={index} key={post._id} post={post} />
+              <PostItem index={index} key={post._id} post={post} edit={true} />
             ))}
           </InfiniteScroll>
         )}
@@ -135,12 +136,14 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
   );
 }
 
-const PostItem = ({
+export const PostItem = ({
   post,
   index,
+  edit = false,
 }: {
   post: ISimplePostContent;
   index: number;
+  edit?: boolean;
 }): React.ReactElement => {
   const lang = useLocale();
 
@@ -148,6 +151,17 @@ const PostItem = ({
     <Card
       className={` my-4 p-4 ${index % 2 === 0 ? "bg-background" : "bg-muted"}`}
     >
+      <Link href={`/user/${post.user?.username}`}>
+        <div className="flex items-center gap-3 mb-4">
+          <Avatar>
+            <AvatarImage src={post.user?.img} alt={post.user?.username} />
+            <AvatarFallback>{post.user?.username}</AvatarFallback>
+          </Avatar>
+          <div>
+            <p className="font-medium">{post.user?.username}</p>
+          </div>
+        </div>
+      </Link>
       <div className="flex justify-between items-start mb-2">
         <div>
           <Link href={`/post/${post.name}`}>
@@ -159,11 +173,13 @@ const PostItem = ({
             {format(post.createdAt, "medium", lang)}
           </p>
         </div>
-        <Link href={`/write/${post.name}`}>
-          <Button variant="ghost" size="icon">
-            <Edit className="h-4 w-4" />
-          </Button>
-        </Link>
+        {edit && (
+          <Link href={`/write/${post.name}`}>
+            <Button variant="ghost" size="icon">
+              <Edit className="h-4 w-4" />
+            </Button>
+          </Link>
+        )}
       </div>
       <p className="text-sm mb-3">
         {post.description.length > 90
@@ -171,7 +187,7 @@ const PostItem = ({
           : post.description}
       </p>
       <div className="flex flex-wrap gap-2 mb-3">
-        {post.tags.map((tag) => (
+        {post.tags?.map((tag) => (
           <Badge key={tag._id} variant="secondary">
             {tag.name}
           </Badge>

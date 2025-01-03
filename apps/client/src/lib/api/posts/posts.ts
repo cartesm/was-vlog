@@ -81,3 +81,34 @@ export const getOnePost = async (
     };
   }
 };
+
+export const searchPosts = async ({
+  page,
+  alphabetical,
+  name,
+  created,
+  tags,
+}: {
+  created: number;
+  alphabetical: number;
+  name: string;
+  page: number;
+  tags?: string[];
+}): Promise<IRespData<IPaginationData<ISimplePostContent>>> => {
+  try {
+    let tagQuery: string = "";
+    tags?.map((tag) => (tagQuery += `&tags[]=${tag}`));
+    const resp: AxiosResponse = await axios.get(
+      `/posts/search/${page}?name=${name}&created=${created}&alphabetical=${alphabetical}` +
+        tagQuery
+    );
+
+    return { data: resp.data };
+  } catch (e: any) {
+    return {
+      error: Array.isArray(e.response.data.message)
+        ? e.response.data.message
+        : [e.response.data.message],
+    };
+  }
+};

@@ -1,6 +1,6 @@
 "use client";
 import { ICompletePost, TypeRender } from "@/interfaces/posts.interface";
-import { Heart, ThumbsUp } from "lucide-react";
+import { Heart, Tag, ThumbsUp } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "@/i18n/routing";
 import { Badge } from "@/components/ui/badge";
@@ -72,18 +72,6 @@ function PostContent({ data }: { data: ICompletePost }) {
       </div>
       <hr />
       <Viewer content={data.content} type={TypeRender.Post} />
-      <hr />
-      <div className="max-w-2xl py-12 mx-auto">
-        <div className="flex items-center justify-start pt-4 gap-2 flex-wrap">
-          {data.tags.map((tag) => (
-            <Link href={"#"} key={tag._id}>
-              <Badge variant={"outline"} className="px-2 py-1">
-                {tag.name}
-              </Badge>
-            </Link>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
@@ -129,10 +117,11 @@ const UserPostContent = ({
         <span className="text-sm"></span>
       </div>
 
-      <div className="flex flex-wrap gap-2 items-center">
+      <div className="flex flex-wrap gap-2 items-center w-full">
         {postInfo.tags?.map((data, index) => (
           <Link href={"#"} key={index}>
-            <span className="text-xs font-medium px-3 py-1 rounded-full border">
+            <span className="text-xs font-medium flex items-center gap-2 px-3 py-1 rounded-full border">
+              <Tag size={15} />
               {data.name}
             </span>
           </Link>

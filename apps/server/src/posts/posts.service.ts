@@ -193,9 +193,11 @@ export class PostsService {
     tags: Array<Types.ObjectId>,
     userId: Types.ObjectId,
   ): Promise<any> {
-    let query: any = {};
-    if (name) query = { name: { $regex: name } };
-    if (tags) query.tags = tags;
+    const query: any = {
+      ...(name && { name: { $regex: name, $options: 'i' } }),
+      ...(tags?.length > 0 && { tags: tags }),
+    };
+    console.log(query);
 
     const aggregate = this.postModel.aggregate([
       {
@@ -239,7 +241,6 @@ export class PostsService {
           as: 'commentCount',
         },
       },
-
       {
         $addFields: {
           likeCount: {
@@ -264,19 +265,79 @@ export class PostsService {
             : false,
         },
       },
+      {
+        $lookup: {
+          from: 'users',
+          let: {
+            userId: { $toObjectId: '$user' },
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$_id', '$$userId'],
+                },
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                username: 1,
+                name: 1,
+                img: 1,
+              },
+            },
+          ],
+          as: 'user',
+        },
+      },
+      {
+        $unwind: {
+          path: '$user',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: 'tags',
+          let: {
+            tagId: '$tags',
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: [
+                    '$_id',
+                    {
+                      $map: {
+                        input: '$$tagId',
+                        as: 'tagId',
+                        in: { $toObjectId: '$$tagId' },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              $project: {
+                name: 1,
+                _id: 1,
+              },
+            },
+          ],
+          as: 'tags',
+        },
+      },
     ]);
 
-    return await this.postModel.arguments(aggregate, {
-      limit: 30,
+    return await this.postModel.aggregatePaginate(aggregate, {
       page,
+      limit: 20,
       sort: {
         createdAt: created,
         name: alphabetical,
-      },
-      select: '-user -updatedAt -__v -content',
-      populate: {
-        path: 'tags',
-        select: '_id name',
       },
     });
   }

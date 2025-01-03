@@ -1,6 +1,5 @@
-"use client";
-import { useTranslations } from "next-intl";
-export default function Page() {
-  const t = useTranslations("header");
-  return <section className="">Page {t("signIn")}</section>;
-}
+"user server";
+import dynamic from "next/dynamic";
+export default dynamic(() => import("@/components/Home/Search"), {
+  loading: () => <div>cargando...</div>,
+});

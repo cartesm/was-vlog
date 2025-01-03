@@ -8,7 +8,7 @@ import { Badge } from "../ui/badge";
 import { debounce, DebouncedFuncLeading, throttle } from "lodash";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
 import { useWriteTags } from "@/hooks/write/useTags";
-import { DialogDescription } from "@radix-ui/react-dialog";
+import { DialogDescription, DialogTrigger } from "@radix-ui/react-dialog";
 import { IRespData } from "@/interfaces/errorDataResponse.interface";
 import { IPaginationData } from "@/interfaces/pagination.interface";
 import { Tabs, TabsList } from "@radix-ui/react-tabs";
@@ -32,6 +32,7 @@ export default function SearchTags({ isOpen, changeOpen }) {
     formState: { errors: formErrors },
     register,
     handleSubmit,
+    reset,
   } = useForm<ICreateTag>();
 
   const handleSearch = async (optionalQuery?: string) => {
@@ -53,8 +54,9 @@ export default function SearchTags({ isOpen, changeOpen }) {
         description: error[0],
         variant: "destructive",
       });
-
     toast({ title: "Etiqueta", description: respData });
+    handleSearch();
+    reset();
   };
 
   const debounceSearch: DebouncedFuncLeading<(optionalQuery?: string) => any> =
@@ -71,9 +73,7 @@ export default function SearchTags({ isOpen, changeOpen }) {
     <Dialog open={isOpen} onOpenChange={changeOpen}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl">
-            Ver y editar etiquetas para este producto
-          </DialogTitle>
+          <DialogTitle className="text-2xl">Ver y editar etiquetas</DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
             Las etiquetas adecuadas deberían ser términos que otros usuarios
             verían como útiles a la hora de explorar contenido.
