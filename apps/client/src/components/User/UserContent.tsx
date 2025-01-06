@@ -1,25 +1,19 @@
 "use client";
 import { Link } from "@/i18n/routing";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { getUserPosts } from "@/lib/api/posts/posts";
 import React, { useEffect, useState } from "react";
 import { Badge } from "../ui/badge";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Spinner } from "../ui/spiner";
 import { useLocale, useTranslations } from "next-intl";
-import { Edit, Heart, MessageCircle, Tag } from "lucide-react";
+import { Edit, Heart, MessageCircle } from "lucide-react";
 import { Button } from "../ui/button";
 import { ISimplePostContent } from "@/interfaces/posts.interface";
 import { IPaginationData } from "@/interfaces/pagination.interface";
 import { IRespData } from "@/interfaces/errorDataResponse.interface";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
-import { format, formatStr } from "@formkit/tempo";
+import { format } from "@formkit/tempo";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 function UserContent({ userId }: { userId: string }): React.ReactElement {
   const t = useTranslations();
@@ -69,6 +63,7 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
       setHaveMorePage(data.hasNextPage);
     }
   };
+
   return (
     <div className=" max-w-2xl w-full mx-auto">
       <div className="flex -space-x-px">
@@ -154,7 +149,11 @@ export const PostItem = ({
       <Link href={`/user/${post.user?.username}`}>
         <div className="flex items-center gap-3 mb-4">
           <Avatar>
-            <AvatarImage src={post.user?.img} alt={post.user?.username} />
+            <AvatarImage
+              loading="eager"
+              src={post.user?.img}
+              alt={post.user?.username}
+            />
             <AvatarFallback>{post.user?.username}</AvatarFallback>
           </Avatar>
           <div>

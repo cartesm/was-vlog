@@ -63,7 +63,7 @@ export class PostsController {
   @Get('search/:page')
   @HttpCode(HttpStatus.OK)
   async searchPosts(
-    @Param('page', ParseIntPipe) param: { page: number },
+    @Param('page', ParseIntPipe) param: number,
     @Query(SearchPipe)
     query: {
       name: string;
@@ -76,7 +76,7 @@ export class PostsController {
     const { alphabetical, created, name, tags } = query;
     return await this.postsService.search(
       name,
-      param.page,
+      param,
       created,
       alphabetical,
       tags,

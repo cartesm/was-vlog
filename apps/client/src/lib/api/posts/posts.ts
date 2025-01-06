@@ -102,9 +102,9 @@ export const searchPosts = async ({
       `/posts/search/${page}?name=${name}&created=${created}&alphabetical=${alphabetical}` +
         tagQuery
     );
-
     return { data: resp.data };
   } catch (e: any) {
+    console.log(e);
     return {
       error: Array.isArray(e.response.data.message)
         ? e.response.data.message

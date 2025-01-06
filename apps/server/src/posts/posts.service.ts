@@ -194,11 +194,9 @@ export class PostsService {
     userId: Types.ObjectId,
   ): Promise<any> {
     const query: any = {
-      ...(name && { name: { $regex: name, $options: 'i' } }),
-      ...(tags?.length > 0 && { tags: tags }),
+      name: { $regex: name, $options: 'i' },
+      ...(tags?.length > 0 && { tags: { $all: tags } }),
     };
-    console.log(query);
-
     const aggregate = this.postModel.aggregate([
       {
         $match: query,
@@ -331,7 +329,6 @@ export class PostsService {
         },
       },
     ]);
-
     return await this.postModel.aggregatePaginate(aggregate, {
       page,
       limit: 20,
