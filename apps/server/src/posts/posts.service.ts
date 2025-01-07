@@ -140,7 +140,6 @@ export class PostsService {
           as: 'commentCount',
         },
       },
-
       {
         $addFields: {
           likeCount: {
@@ -165,8 +164,72 @@ export class PostsService {
             : false,
         },
       },
+      {
+        $lookup: {
+          from: 'users',
+          let: {
+            userId: { $toObjectId: '$user' },
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$_id', '$$userId'],
+                },
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                username: 1,
+                name: 1,
+                img: 1,
+              },
+            },
+          ],
+          as: 'user',
+        },
+      },
+      {
+        $unwind: {
+          path: '$user',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: 'tags',
+          let: {
+            tagId: '$tags',
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: [
+                    '$_id',
+                    {
+                      $map: {
+                        input: '$$tagId',
+                        as: 'tagId',
+                        in: { $toObjectId: '$$tagId' },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              $project: {
+                name: 1,
+                _id: 1,
+              },
+            },
+          ],
+          as: 'tags',
+        },
+      },
     ]);
-
     return await this.postModel.aggregatePaginate(aggregate, {
       page,
       limit: 20,
@@ -178,11 +241,6 @@ export class PostsService {
           : {
               createdAt: order,
             },
-      select: '-user -updatedAt -__v -content',
-      populate: {
-        path: 'tags user',
-        select: '_id name username name  img',
-      },
     });
   }
   async search(

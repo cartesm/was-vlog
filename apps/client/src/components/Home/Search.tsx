@@ -15,12 +15,12 @@ import { searchPosts } from "@/lib/api/posts/posts";
 import { ISimplePostContent } from "@/interfaces/posts.interface";
 import { IRespData } from "@/interfaces/errorDataResponse.interface";
 import { IPaginationData } from "@/interfaces/pagination.interface";
-import { PostItem } from "../User/UserContent";
 import { useWriteTags } from "@/hooks/write/useTags";
 import { Badge } from "../ui/badge";
 import SearchTags from "../Write/SearchTags";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
 import NotFound from "../NotFound";
+import { PostItem } from "../Posts/PostItem";
 
 function Search() {
   const { tags, delete: deleteTag } = useWriteTags();

@@ -17,6 +17,7 @@ export interface IUserAuth {
 export interface IUser {
   username: string;
   img: string;
+  _id: string;
   name: string;
   description?: string;
   createdAt: Date;
