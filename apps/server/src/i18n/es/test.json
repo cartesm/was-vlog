@@ -14,10 +14,8 @@
     "notFound": "Usuario no encontrado",
     "notPass": "Debes crear tu contraseña para continuar",
     "nameChanged": "El nombre ha sido actualizado exitosamente",
-    "descriptionChanged": "La descripción ha sido actualizada exitosamente",
-    "usernameChanged": "Nombre de usuario actualizado con éxito",
-    "passwordChanged": "La contraseña ha sido actualizada exitosamente",
-    "errorPass": "Contraseña de validación no encontrada",
+    "changed": "Se han actualizado los datos",
+    "errorPass": "La contraseña de validación no es correcta",
     "imgChanged": "La imagen de perfil se ha actualizado correctamente"
   },
   "auth": {

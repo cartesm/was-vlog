@@ -14,10 +14,8 @@
     "notFound": "User not found",
     "notPass": "You must create your password to continue",
     "nameChanged": "The name has been successfully updated",
-    "descriptionChanged": "The description has been successfully updated",
-    "usernameChanged": "Username updated successfully",
-    "passwordChanged": "The password has been successfully updated",
-    "errorPass": "Validation password not found",
+    "errorPass": "The validation password is incorrect",
+    "changed": "The data has been updated",
     "imgChanged": "Profile picture has been successfully updated"
   },
   "auth": {

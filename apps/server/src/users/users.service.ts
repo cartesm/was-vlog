@@ -15,6 +15,7 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { sevenMinutesInMilisecons } from 'src/configs';
 import { HistoryService } from 'src/history/history.service';
 import { ExceptionsService } from 'src/utils/exceptions.service';
+import { EditUserDto } from './dto/editUserData.dto';
 @Injectable()
 export class UsersService {
   constructor(
@@ -92,6 +93,12 @@ export class UsersService {
     if (!userMatch) this.exceptions.throwNotFound('test.users.notFound');
     return userMatch;
   }
+  async getPrivateUserData(userId: Types.ObjectId): Promise<UsersType> {
+    const userMatch: UsersType = await this.UsersModel.findOne({ _id: userId });
+
+    if (!userMatch) this.exceptions.throwNotFound('test.users.notFound');
+    return userMatch;
+  }
   async getUserDataByEmail(email: string): Promise<UsersType> {
     return await this.UsersModel.findOne({ email });
   }
@@ -124,98 +131,6 @@ export class UsersService {
   }
 
   // edit secction
-  async editName(
-    userID: Types.ObjectId,
-    name: string,
-  ): Promise<ResponseWithMessage> {
-    const updatedName: UsersType = await this.UsersModel.findOneAndUpdate(
-      { _id: userID },
-      { name },
-      { new: true },
-    ).select('-email -password');
-    await this.cacheManager.set(
-      'user:' + updatedName._id,
-      JSON.stringify(updatedName),
-    );
-    return {
-      message: this.i18n.t('test.users.nameChanged', {
-        lang: I18nContext.current().lang,
-      }),
-      data: updatedName.name,
-    };
-  }
-  async editDescription(
-    userID: Types.ObjectId,
-    description: string,
-  ): Promise<ResponseWithMessage> {
-    const updatedDescription: UsersType =
-      await this.UsersModel.findOneAndUpdate(
-        { _id: userID },
-        { description },
-        { new: true },
-      ).select('-email -password');
-    await this.cacheManager.set(
-      'user:' + updatedDescription._id,
-      JSON.stringify(updatedDescription),
-      sevenMinutesInMilisecons,
-    );
-    return {
-      message: this.i18n.t('test.users.descriptionChanged', {
-        lang: I18nContext.current().lang,
-      }),
-      data: updatedDescription.description,
-    };
-  }
-
-  //---
-  async changeUsername(
-    userId: Types.ObjectId,
-    username: string,
-  ): Promise<ResponseWithMessage> {
-    const exists: UsersType = await this.userExists(null, username);
-    if (exists) this.exceptions.throwConflict('test.auth.conflicWithUsername');
-
-    const updatedUsername: UsersType = await this.UsersModel.findOneAndUpdate(
-      { _id: userId },
-      { username },
-      { new: true },
-    ).select('-email -password username _id');
-
-    // TODO: NOTIFICAR VIA EMAIL
-    await this.cacheManager.set(
-      'user:' + updatedUsername._id,
-      JSON.stringify(updatedUsername),
-      sevenMinutesInMilisecons,
-    );
-    return {
-      message: this.i18n.t('test.users.usernameChanged'),
-      data: updatedUsername.username,
-    };
-  }
-  async changePassword(
-    userId: Types.ObjectId,
-    password: string,
-  ): Promise<ResponseWithMessage> {
-    //TODO:validar si existe contraseña o no
-    const updatedPassword: UsersType = await this.UsersModel.findOneAndUpdate(
-      { _id: userId },
-      { pass: await bcrypt.hash(password, 12) },
-      { new: true },
-    ).select('-email -password');
-
-    // TODO: NOTIFICAR VIA EMAIL
-
-    await this.cacheManager.set(
-      'user:' + updatedPassword._id,
-      JSON.stringify(updatedPassword),
-      sevenMinutesInMilisecons,
-    );
-    return {
-      message: this.i18n.t('test.users.passwordChanged', {
-        lang: I18nContext.current().lang,
-      }),
-    };
-  }
   async changeUserProfileImage(
     file: Express.Multer.File,
     userId: Types.ObjectId,
@@ -248,5 +163,52 @@ export class UsersService {
         }),
       );
     }
+  }
+
+  async editProfileInfo(
+    userId: Types.ObjectId,
+    data: EditUserDto,
+  ): Promise<ResponseWithMessage> {
+    //TODO:validar si existe contraseña o no
+
+    if (!data.password) {
+      await this.UsersModel.findOneAndUpdate({ _id: userId }, data);
+      return {
+        message: this.i18n.t('test.users.changed', {
+          lang: I18nContext.current().lang,
+        }),
+      };
+    }
+
+    const userMatch: UsersType = await this.UsersModel.findById(userId);
+    if (userMatch.pass) {
+      await this.UsersModel.findOneAndUpdate(
+        { _id: userId },
+        { ...data, pass: await bcrypt.hash(data.password, 12) },
+      );
+      return {
+        message: this.i18n.t('test.users.changed', {
+          lang: I18nContext.current().lang,
+        }),
+      };
+    }
+    if (!(await bcrypt.compare(data.validationPass, userMatch.pass))) {
+      return {
+        message: this.i18n.t('test.users.errorPass', {
+          lang: I18nContext.current().lang,
+        }),
+      };
+    }
+
+    await this.UsersModel.findOneAndUpdate(
+      { _id: userId },
+      { ...data, pass: await bcrypt.hash(data.password, 12) },
+    );
+
+    return {
+      message: this.i18n.t('test.users.changed', {
+        lang: I18nContext.current().lang,
+      }),
+    };
   }
 }

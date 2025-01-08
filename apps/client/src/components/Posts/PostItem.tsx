@@ -62,7 +62,6 @@ export const PostItem = ({
     throttle(handleLike, 1500, { trailing: false }),
     []
   );
-  //TODO: crear pagina para ver quien dio like
   // TODO: editar perfil
   // TODO: seguidores
 

@@ -8,6 +8,7 @@ import {
   ParseFilePipe,
   Patch,
   Post,
+  Put,
   Req,
   UploadedFile,
   UseGuards,
@@ -16,23 +17,22 @@ import {
 import { UsersService } from './users.service';
 import { ParamId } from 'src/utils/interfaces/paramId.interface';
 import { ParseidPipe } from 'src/utils/pipes/parseid.pipe';
-import {
-  ChangePasswordDto,
-  ChangeUserNameDto,
-  EditDescriptionDto,
-  EditNameDto,
-} from './dto/editUserData.dto';
+import { EditUserDto } from './dto/editUserData.dto';
 import { UserRequest } from 'src/auth/interfaces/userRequest.interface';
 import { JwtGuard } from 'src/auth/guards/jwt-guard.guard';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { ValidatePasswordGuard } from './guards/validatePassword.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ExceptionsService } from 'src/utils/exceptions.service';
 
 @UseGuards(JwtGuard)
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private exceptions: ExceptionsService,
+  ) {}
 
   @Public()
   @Get(':id')
@@ -41,42 +41,24 @@ export class UsersController {
     return await this.usersService.getPublicUserData(param.id);
   }
 
-  @Patch('name')
+  @Get('private/:id')
+  @HttpCode(HttpStatus.OK)
+  async getPrivateUserData(
+    @Param(ParseidPipe) param: ParamId,
+    @Req() req: UserRequest,
+  ) {
+    if (req.user.id != param.id)
+      this.exceptions.throwUnauthorized('auth.notMainUser');
+    return await this.usersService.getPrivateUserData(param.id);
+  }
+
+  @Put('edit')
   @HttpCode(HttpStatus.OK)
   async editName(
     @Req() req: UserRequest,
-    @Body() body: EditNameDto,
+    @Body() body: EditUserDto,
   ): Promise<ResponseWithMessage> {
-    return await this.usersService.editName(req.user.id, body.name);
-  }
-
-  @Patch('description')
-  @HttpCode(HttpStatus.OK)
-  async editDescription(
-    @Req() req: UserRequest,
-    @Body() body: EditDescriptionDto,
-  ): Promise<ResponseWithMessage> {
-    return this.usersService.editDescription(req.user.id, body.description);
-  }
-
-  @Patch('username')
-  @UseGuards(ValidatePasswordGuard)
-  @HttpCode(HttpStatus.OK)
-  async changeUsername(
-    @Req() req: UserRequest,
-    @Body() body: ChangeUserNameDto,
-  ): Promise<ResponseWithMessage> {
-    return await this.usersService.changeUsername(req.user.id, body.username);
-  }
-
-  @Patch('password')
-  @UseGuards(ValidatePasswordGuard)
-  @HttpCode(HttpStatus.OK)
-  async changePassword(
-    @Req() req: UserRequest,
-    @Body() body: ChangePasswordDto,
-  ): Promise<ResponseWithMessage> {
-    return this.usersService.changePassword(req.user.id, body.password);
+    return await this.usersService.editProfileInfo(req.user.id, body);
   }
 
   @Post('image')

@@ -20,6 +20,7 @@ export interface IUser {
   _id: string;
   name: string;
   description?: string;
+  pass?: string;
   createdAt: Date;
   followerCount: number;
   follow: boolean;
