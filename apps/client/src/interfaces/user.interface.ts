@@ -14,6 +14,13 @@ export interface IUserAuth {
   id?: string;
 }
 
+export interface IUpdateUser {
+  username?: string;
+  name?: string;
+  password?: string;
+  description?: string;
+}
+
 export interface IUser {
   username: string;
   img: string;
