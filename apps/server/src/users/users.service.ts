@@ -169,9 +169,10 @@ export class UsersService {
     userId: Types.ObjectId,
     data: EditUserDto,
   ): Promise<ResponseWithMessage> {
-    //TODO:validar si existe contraseña o no
-
+    console.log(data);
+    // si no hay contraseña se act ualiza y retorna
     if (!data.password) {
+      console.log('no contra');
       await this.UsersModel.findOneAndUpdate({ _id: userId }, data);
       return {
         message: this.i18n.t('test.users.changed', {
@@ -180,29 +181,39 @@ export class UsersService {
       };
     }
 
+    // busca si el user tiene contraseña creada o no
     const userMatch: UsersType = await this.UsersModel.findById(userId);
-    if (userMatch.pass) {
+    if (!userMatch.pass) {
       await this.UsersModel.findOneAndUpdate(
         { _id: userId },
         { ...data, pass: await bcrypt.hash(data.password, 12) },
       );
+      console.log('no existe contra');
       return {
         message: this.i18n.t('test.users.changed', {
           lang: I18nContext.current().lang,
         }),
       };
     }
-    if (!(await bcrypt.compare(data.validationPass, userMatch.pass))) {
-      return {
-        message: this.i18n.t('test.users.errorPass', {
-          lang: I18nContext.current().lang,
-        }),
-      };
-    }
 
+    // si la validacion no es valida se retorna el error
+    if (
+      !(await bcrypt.compare(data.validationPass, userMatch.pass)) ||
+      !data.validationPass
+    ) {
+      console.log('retorna error de validacion');
+      this.exceptions.throwUnauthorized('test.users.errorPass');
+    }
+    // TODO: validar nombre de usuario
+    console.log('se va');
+
+    // se retorna actualizar con los nuevos valores
     await this.UsersModel.findOneAndUpdate(
       { _id: userId },
-      { ...data, pass: await bcrypt.hash(data.password, 12) },
+      {
+        ...data,
+        ...(data.password && { pass: await bcrypt.hash(data.password, 12) }),
+      },
     );
 
     return {

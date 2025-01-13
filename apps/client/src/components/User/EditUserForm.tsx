@@ -16,14 +16,23 @@ import { passwordPattern } from "@/lib/utils/regex";
 import { toast } from "@/hooks/use-toast";
 import { Spinner } from "../ui/spiner";
 import Compressor from "compressorjs";
-import { AspectRatio } from "../ui/aspect-ratio";
 import { Card, CardContent } from "../ui/card";
+import { Eye, EyeOff } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 
 export function EditUserForm({ user }: { user: IUser }) {
   const t = useTranslations();
+  const [thisUser, setThisUser] = useState<IUpdateUser>({
+    ...user,
+    password: "",
+    ...(!user.description && { description: "" }),
+  });
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [img, setImg] = useState<null | File>(null);
   const { errors: fetchErrors, removeAll, set: setError } = useFetchErrors();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+
   const onSubmitImage = (e) => {
     e.preventDefault();
     if (!img)
@@ -72,16 +81,25 @@ export function EditUserForm({ user }: { user: IUser }) {
   };
 
   const onSubmit = async (data: IUpdateUser) => {
+    setModalOpen(false);
     removeAll();
-    const anyChange: boolean =
-      data.password != user.pass ||
-      data.description != user.description ||
-      data.name != user.name ||
-      data.username != user.username;
+    const fieldsToCheck = [
+      "password",
+      "description",
+      "name",
+      "username",
+    ] as const;
+    const anyChange = fieldsToCheck.some(
+      (field) => data[field] !== thisUser[field]
+    );
+    console.log(data.password);
+    console.log(thisUser.password);
+
     if (!anyChange) {
       setError(["Primero modifica algo"]);
       return;
     }
+
     const { data: respData, error }: IRespData<string> = await updateUser(
       Object.fromEntries(
         Object.entries(data).filter(
@@ -89,31 +107,33 @@ export function EditUserForm({ user }: { user: IUser }) {
         )
       )
     );
+    reset({ validationPass: undefined });
     if (error) {
       setError(error);
       return;
     }
+    setThisUser(data);
+    reset({ password: undefined });
     toast({ title: "Estado", description: respData });
   };
   const {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
+    reset,
   } = useForm<IUpdateUser>({
     defaultValues: {
       name: user.name,
       username: user.username,
       ...(user.description && { description: user.description }),
-      ...(user.pass && { pass: user.pass }),
     },
   });
-  // TODO: validar la contraseña nueva y viueja
 
   return (
     <div className="w-full mx-auto">
       <form onSubmit={onSubmitImage} encType="multipart/form-data">
         <div>
-          <Label htmlFor="image">Imagen de perfil</Label>
           <Card className="w-full max-w-2xl mx-auto">
             <CardContent className="p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
@@ -128,7 +148,7 @@ export function EditUserForm({ user }: { user: IUser }) {
                 </div>
                 <div className="w-full sm:w-2/3 space-y-2">
                   <Input
-                    className="hover:cursor-pointer"
+                    className="cursor-pointer"
                     id="image"
                     type="file"
                     accept=".jpg , .png , .jpge "
@@ -148,14 +168,72 @@ export function EditUserForm({ user }: { user: IUser }) {
         </div>
       </form>
       {/* data */}
+      <Dialog
+        open={modalOpen}
+        onOpenChange={() => setModalOpen((actual) => !actual)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogContent>
+              <span>Ingresa una nueva contraseña si deseas cambiarla.</span>
+              <div>
+                <Label htmlFor="validationPass">Contraseña de validacion</Label>
+                <div className="relative w-full ">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    id="validationPass"
+                    placeholder="********"
+                    className="mt-2"
+                    {...register("validationPass", {
+                      minLength: 6,
+                    })}
+                    form="formData"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword((actual) => !actual)}
+                    aria-label={
+                      showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                    }
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-500" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-500" />
+                    )}
+                  </Button>
+                </div>
+                <div className="flex flex-col">
+                  {errors.validationPass?.type == "required" && (
+                    <span className="error-message">
+                      {t("auth.auth.passEmpty")}
+                    </span>
+                  )}
+                  {errors.validationPass?.type == "minLength" && (
+                    <span className="error-message">min 6</span>
+                  )}
+                </div>
+                <Button className="my-3 " type="submit" form="formData">
+                  Validar
+                </Button>
+              </div>
+            </DialogContent>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
       <form
         onSubmit={handleSubmit((data: IUpdateUser) => {
-          if (data.password && user.pass) {
-            alert("ingresa contra");
+          if (user.pass && data.password && !watch("validationPass")) {
+            setModalOpen(true);
             return;
           }
           onSubmit(data);
         })}
+        id="formData"
         className="space-y-8 w-full"
       >
         <div className="flex flex-col">
@@ -227,18 +305,26 @@ export function EditUserForm({ user }: { user: IUser }) {
 
         <div>
           <Label htmlFor="description">Descripción</Label>
-          <Textarea
-            id="description"
-            placeholder="Cuéntanos un poco sobre ti"
-            className="mt-2 resize-none"
-            {...register("description", {
-              minLength: 10,
-              maxLength: 150,
-              required: false,
-            })}
-          />
+          <div className="w-full  relative">
+            <Textarea
+              className="w-full"
+              {...register("description", {
+                minLength: 10,
+                maxLength: 150,
+                required: false,
+              })}
+            />
+            <div
+              className="absolute bottom-2 right-2 text-sm text-gray-500 bg-white px-1 rounded"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              <span>{(watch("description") as string)?.length}</span>
+              <span>/150</span>
+            </div>
+          </div>
           <p className="text-sm text-gray-500 mt-2">
-            Una breve descripción sobre ti. Máximo 500 caracteres.
+            Una breve descripción sobre ti.{" "}
           </p>
           <div className="flex flex-col">
             {errors.description?.type == "minLength" && (
@@ -256,16 +342,34 @@ export function EditUserForm({ user }: { user: IUser }) {
 
         <div>
           <Label htmlFor="password">Contraseña</Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder="********"
-            className="mt-2"
-            {...register("password", {
-              minLength: 6,
-              pattern: passwordPattern,
-            })}
-          />
+          <div className="relative w-full ">
+            <Input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              placeholder="********"
+              className="mt-2"
+              {...register("password", {
+                minLength: 6,
+                pattern: passwordPattern,
+              })}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+              onClick={() => setShowPassword((actual) => !actual)}
+              aria-label={
+                showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+              }
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4 text-gray-500" />
+              ) : (
+                <Eye className="h-4 w-4 text-gray-500" />
+              )}
+            </Button>
+          </div>
           <p className="text-sm text-gray-500 mt-2">
             Ingresa una nueva contraseña si deseas cambiarla.
           </p>

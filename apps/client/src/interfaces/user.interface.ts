@@ -19,6 +19,7 @@ export interface IUpdateUser {
   name?: string;
   password?: string;
   description?: string;
+  validationPass?: string;
 }
 
 export interface IUser {
