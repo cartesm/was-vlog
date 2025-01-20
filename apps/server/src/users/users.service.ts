@@ -27,18 +27,21 @@ export class UsersService {
     private exceptions: ExceptionsService,
   ) {}
 
-  async getPublicUserData(userId: Types.ObjectId): Promise<UsersType> {
+  async getPublicUserData(
+    userToFind: Types.ObjectId,
+    yourUserId?: Types.ObjectId,
+  ): Promise<UsersType> {
     const userMatch: UsersType = (
       await this.UsersModel.aggregate([
         {
           $match: {
-            _id: new Types.ObjectId(userId),
+            _id: new Types.ObjectId(userToFind),
           },
         },
         {
           $lookup: {
             let: {
-              localUserId: { $toString: '_id' },
+              localUserId: { $toString: '$_id' },
             },
             from: 'followers',
             pipeline: [
@@ -63,10 +66,10 @@ export class UsersService {
             followerCount: {
               $size: '$followerCount',
             },
-            follow: userId
+            follow: yourUserId
               ? {
                   $in: [
-                    userId,
+                    yourUserId,
                     {
                       $map: {
                         input: '$followerCount',
@@ -89,7 +92,6 @@ export class UsersService {
         },
       ])
     )[0];
-
     if (!userMatch) this.exceptions.throwNotFound('test.users.notFound');
     return userMatch;
   }
@@ -107,7 +109,9 @@ export class UsersService {
     username?: string,
   ): Promise<UsersType | null> {
     const userMatch: UsersType = await this.UsersModel.findOne({
-      $or: [{ email, username }],
+      //$or: [{ email, username }],
+      ...(email && { email }),
+      ...(username && { username }),
     });
     if (!userMatch) return null;
     return userMatch;
@@ -169,10 +173,17 @@ export class UsersService {
     userId: Types.ObjectId,
     data: EditUserDto,
   ): Promise<ResponseWithMessage> {
-    console.log(data);
-    // si no hay contraseña se act ualiza y retorna
+    // busca si el user tiene contraseña creada o no
+    const userMatch: UsersType = await this.UsersModel.findById(userId);
+
+    // validar el nombre de usuario
+    if (userMatch.username != data.username) console.log('username difetente');
+    if (await this.userExists(undefined, data.username)) {
+      this.exceptions.throwConflict('test.auth.conflicWithUsername');
+    }
+
     if (!data.password) {
-      console.log('no contra');
+      // si no hay contraseña se act ualiza y retorna
       await this.UsersModel.findOneAndUpdate({ _id: userId }, data);
       return {
         message: this.i18n.t('test.users.changed', {
@@ -181,14 +192,11 @@ export class UsersService {
       };
     }
 
-    // busca si el user tiene contraseña creada o no
-    const userMatch: UsersType = await this.UsersModel.findById(userId);
     if (!userMatch.pass) {
       await this.UsersModel.findOneAndUpdate(
         { _id: userId },
         { ...data, pass: await bcrypt.hash(data.password, 12) },
       );
-      console.log('no existe contra');
       return {
         message: this.i18n.t('test.users.changed', {
           lang: I18nContext.current().lang,
@@ -201,12 +209,8 @@ export class UsersService {
       !(await bcrypt.compare(data.validationPass, userMatch.pass)) ||
       !data.validationPass
     ) {
-      console.log('retorna error de validacion');
       this.exceptions.throwUnauthorized('test.users.errorPass');
     }
-    // TODO: validar nombre de usuario
-    console.log('se va');
-
     // se retorna actualizar con los nuevos valores
     await this.UsersModel.findOneAndUpdate(
       { _id: userId },

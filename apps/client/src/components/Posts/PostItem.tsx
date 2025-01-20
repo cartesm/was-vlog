@@ -13,6 +13,7 @@ import { toast } from "@/hooks/use-toast";
 import { IRespData } from "@/interfaces/errorDataResponse.interface";
 import { manageLikePost } from "@/lib/api/posts/likeComment";
 import { DebouncedFuncLeading, throttle } from "lodash";
+import { validateIsLogedInClient } from "@/lib/validateIsLogedClient";
 export const PostItem = ({
   post,
   index,
@@ -29,16 +30,8 @@ export const PostItem = ({
   });
 
   const handleLike = async () => {
-    const Cookies = (await import("js-cookie")).default;
-    const authToken: string | undefined = Cookies.get("was_auth_token");
-    if (!authToken) {
-      toast({
-        title: "Sesion requerida",
-        description: "Inicia seseion para popder dar un like",
-      });
-      return;
-    }
-
+    const isLoged: boolean = validateIsLogedInClient();
+    if (!isLoged) return;
     const { error, data: resp }: IRespData<string> = await manageLikePost(
       post._id
     );
@@ -62,7 +55,6 @@ export const PostItem = ({
     throttle(handleLike, 1500, { trailing: false }),
     []
   );
-  // TODO: editar perfil
   // TODO: seguidores
 
   return (

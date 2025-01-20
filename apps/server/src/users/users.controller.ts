@@ -37,8 +37,11 @@ export class UsersController {
   @Public()
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async getOneUser(@Param(ParseidPipe) param: ParamId) {
-    return await this.usersService.getPublicUserData(param.id);
+  async getOneUser(
+    @Param(ParseidPipe) param: ParamId,
+    @Req() req: UserRequest,
+  ) {
+    return await this.usersService.getPublicUserData(param.id, req.user?.id);
   }
 
   @Get('private/:id')

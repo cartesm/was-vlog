@@ -4,21 +4,18 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { IUpdateUser, IUser } from "@/interfaces/user.interface";
 import { Textarea } from "../ui/textarea";
 import { useForm } from "react-hook-form";
 import { IRespData } from "@/interfaces/errorDataResponse.interface";
-import { updateProfileImage, updateUser } from "@/lib/api/user";
+import { updateUser } from "@/lib/api/user";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
 import { useTranslations } from "next-intl";
 import { passwordPattern } from "@/lib/utils/regex";
 import { toast } from "@/hooks/use-toast";
-import { Spinner } from "../ui/spiner";
-import Compressor from "compressorjs";
-import { Card, CardContent } from "../ui/card";
 import { Eye, EyeOff } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import ChangeImage from "./ChangeImage";
 
 export function EditUserForm({ user }: { user: IUser }) {
   const t = useTranslations();
@@ -28,57 +25,8 @@ export function EditUserForm({ user }: { user: IUser }) {
     ...(!user.description && { description: "" }),
   });
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [img, setImg] = useState<null | File>(null);
   const { errors: fetchErrors, removeAll, set: setError } = useFetchErrors();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-
-  const onSubmitImage = (e) => {
-    e.preventDefault();
-    if (!img)
-      return toast({
-        title: "Error",
-        description: "selecciona una imagen",
-        variant: "destructive",
-      });
-    setIsLoading(true);
-    new Compressor(img, {
-      quality: 0.6,
-      async success(result) {
-        const formData: FormData = new FormData();
-        formData.append("img", result);
-
-        const {
-          data: respData,
-          error: respError,
-        }: IRespData<{ data: string; message: string }> =
-          await updateProfileImage(formData);
-        setIsLoading(false);
-        if (respError) {
-          e.target.value = "";
-          return toast({
-            title: "Error",
-            description: respError,
-            variant: "destructive",
-          });
-        }
-
-        toast({
-          title: "image uploiad",
-          description: respData?.message,
-        });
-      },
-      error(error) {
-        setIsLoading(false);
-        console.error(error);
-        toast({
-          title: "Error",
-          description: "error al subir la imagen",
-          variant: "destructive",
-        });
-      },
-    });
-  };
 
   const onSubmit = async (data: IUpdateUser) => {
     setModalOpen(false);
@@ -92,9 +40,6 @@ export function EditUserForm({ user }: { user: IUser }) {
     const anyChange = fieldsToCheck.some(
       (field) => data[field] !== thisUser[field]
     );
-    console.log(data.password);
-    console.log(thisUser.password);
-
     if (!anyChange) {
       setError(["Primero modifica algo"]);
       return;
@@ -132,41 +77,7 @@ export function EditUserForm({ user }: { user: IUser }) {
 
   return (
     <div className="w-full mx-auto">
-      <form onSubmit={onSubmitImage} encType="multipart/form-data">
-        <div>
-          <Card className="w-full max-w-2xl mx-auto">
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <div className="w-full sm:w-1/3">
-                  <Avatar className="w-24 h-24 mx-auto">
-                    <AvatarImage
-                      src={img ? URL.createObjectURL(img) : user.img}
-                      alt={user.username}
-                    />
-                    <AvatarFallback>{user.username}</AvatarFallback>
-                  </Avatar>
-                </div>
-                <div className="w-full sm:w-2/3 space-y-2">
-                  <Input
-                    className="cursor-pointer"
-                    id="image"
-                    type="file"
-                    accept=".jpg , .png , .jpge "
-                    onChange={(e) => {
-                      setImg(e.target.files ? e.target.files[0] : null);
-                    }}
-                  />
-                  {isLoading && <Spinner size={"medium"} />}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <p className="text-sm text-gray-500 mt-2">
-            Sube una imagen para tu perfil.
-          </p>
-          <Button className="max-h-8 my-3">Cambiar</Button>
-        </div>
-      </form>
+      <ChangeImage userImage={user.img} username={user.username} />
       {/* data */}
       <Dialog
         open={modalOpen}
