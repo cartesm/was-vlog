@@ -58,9 +58,7 @@ export const PostItem = ({
   // TODO: seguidores
 
   return (
-    <Card
-      className={` my-4 p-4 ${index % 2 === 0 ? "bg-background" : "bg-muted"}`}
-    >
+    <Card className={` my-4 p-4 bg-background`}>
       <Link href={`/user/${post.user?._id}`}>
         <div className="flex items-center gap-3 mb-4">
           <Avatar>

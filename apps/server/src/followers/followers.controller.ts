@@ -60,15 +60,6 @@ export class FollowersController {
     return await this.followersService.deleteFollower(req.user.id, param.id);
   }
 
-  @Get('isFollow/:id')
-  @HttpCode(HttpStatus.OK)
-  async getIsFollow(
-    @Param(ParseidPipe) param: ParamId,
-    @Req() req: UserRequest,
-  ) {
-    return await this.followersService.isFollow(param.id, req.user.id);
-  }
-
   @Delete('unfollow/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async unfollowUser(

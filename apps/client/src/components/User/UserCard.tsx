@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { format } from "@formkit/tempo";
 import { IUser } from "@/interfaces/user.interface";
 import { IRespData } from "@/interfaces/errorDataResponse.interface";
@@ -12,9 +12,10 @@ import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { CalendarDays, Edit, Users } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { follow } from "@/lib/api/followers";
+import { follow, unFollow } from "@/lib/api/followers";
 import { toast } from "@/hooks/use-toast";
 import { validateIsLogedInClient } from "@/lib/validateIsLogedClient";
+import { DebouncedFuncLeading, throttle } from "lodash";
 
 function UserCard({
   id,
@@ -39,11 +40,14 @@ function UserCard({
     setUser(data);
   };
 
-  const followAuser = async (otherUserId: string, username: string) => {
-    console.log("first");
+  const manageFollow = async (otherUserId: string) => {
+    console.log("click");
     const isLoged: boolean = validateIsLogedInClient();
     if (!isLoged) return;
-    const resp: IRespData<string> = await follow(otherUserId);
+    if (!user) return;
+    const resp: IRespData<string> = await (user.follow
+      ? unFollow(otherUserId)
+      : follow(otherUserId));
     if (resp.error) {
       toast({
         title: "Follow status",
@@ -52,18 +56,23 @@ function UserCard({
       });
       return;
     }
-    setUser((actual) => ({ ...actual, follow: true }) as IUser);
     toast({
       title: "Follow status",
-      description: `Ahora sigues a ${username}`,
+      description: resp.data ? resp.data : "Ya no sigues a fulanito",
     });
+    setUser((actual) => ({ ...actual, follow: !actual?.follow }) as IUser);
   };
+  const onFollowThrottle: DebouncedFuncLeading<(otherUserId: string) => void> =
+    useCallback(
+      throttle((otherUserId: string) => manageFollow(otherUserId), 1000),
+      [manageFollow]
+    );
 
   useEffect(() => {
     fetchUserData();
   }, [id, attemps]);
   if (!user) return <UserCardSkeleton refreshComponent={refreshComponent} />;
-  //TODO: crear esqueleto
+
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader className="flex flex-col md:flex-row items-center gap-4">
@@ -96,25 +105,20 @@ function UserCard({
         </div>
       </CardContent>
       <CardFooter className="flex items-center justify-center md:justify-normal">
-        {String(user.follow)}
         {!isLogedUser && (
           <Button
             variant={user.follow ? "outline" : "default"}
-            onClick={
-              !user.follow
-                ? () => followAuser(user._id, user.username)
-                : () => {}
-            }
+            onClick={() => onFollowThrottle(user._id)}
           >
             {user.follow ? "Dejar de seguir" : "Seguir"}
           </Button>
         )}
         {isLogedUser && (
-          <Button>
-            <Link href={`/profile/${user._id}/edit`}>
+          <Link href={`/profile/${user._id}/edit`}>
+            <Button>
               <Edit />
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         )}
       </CardFooter>
     </Card>

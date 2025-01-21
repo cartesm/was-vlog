@@ -153,12 +153,13 @@ function Search() {
               </span>
             ))}
           </div>
-
           {posts?.map((data, index) => (
             <PostItem key={index} post={data} index={index} />
           ))}
           {posts.length <= 0 && (
-            <NotFound {...(searchQuery && { query: searchQuery })} />
+            <div className="min-h-[70vh] flex items-center justify-center">
+              <NotFound {...(searchQuery && { query: searchQuery })} />
+            </div>
           )}
           {haveMorePage && (
             <Button

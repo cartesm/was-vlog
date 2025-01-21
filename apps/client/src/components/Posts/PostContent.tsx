@@ -1,9 +1,8 @@
 "use client";
 import { ICompletePost, TypeRender } from "@/interfaces/posts.interface";
-import { Heart, Tag, ThumbsUp } from "lucide-react";
+import { Heart, Tag } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "@/i18n/routing";
-import { Badge } from "@/components/ui/badge";
 import Viewer from "@/components/Posts/Viewer";
 import { IRespData } from "@/interfaces/errorDataResponse.interface";
 import { toast } from "@/hooks/use-toast";
@@ -98,7 +97,15 @@ const UserPostContent = ({
         <AvatarFallback>{user.username}</AvatarFallback>
       </Avatar>
       <div>
-        <h3 className="font-bold text-xl">{user.username}</h3>
+        <h3 className="font-bold text-xl">
+          <Link
+            href={{
+              pathname: `/user/${user._id}`,
+            }}
+          >
+            {user.username}
+          </Link>{" "}
+        </h3>
         <p className="text-sm">{format(postInfo.createdAt, "long")}</p>
       </div>
     </div>

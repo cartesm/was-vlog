@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import React from "react";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardFooter } from "../ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 
 function UserCardSkeleton({
   refreshComponent,
@@ -12,43 +12,38 @@ function UserCardSkeleton({
 }) {
   const { errors } = useFetchErrors();
   return (
-    <div>
-      <Card>
-        <CardContent className="flex flex-col gap-3 items-center p-4">
-          <div className="flex items-center space-x-4">
-            <Skeleton className="w-32 h-32 rounded-full" />
-          </div>
-          <div className="flex gap-1 flex-col">
-            <div>
-              <Skeleton className="h-4 w-6 mx-auto" />
-              <Skeleton className="h-4 w-16 mx-auto" />
+    <Card className="w-full max-w-2xl mx-auto">
+      <CardHeader className="flex flex-col md:flex-row items-center gap-4">
+        <Skeleton className="w-24 h-24 sm:w-32 sm:h-32 rounded-full" />
+        <div className="flex flex-col items-center md:items-start mt-4 sm:mt-0 w-full sm:w-auto">
+          <Skeleton className="h-8 w-48 mb-2" />
+          <Skeleton className="h-4 w-full sm:w-64" />
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4 px-4 sm:px-6">
+        <div className="flex flex-col  justify-center items-center md:items-start gap-2 ">
+          <Skeleton className="h-4 w-40" />
+          <Skeleton className="h-4 w-32" />
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Skeleton className="h-10 w-full sm:w-40 md:mx-0 mx-auto" />
+        {errors.length > 0 && (
+          <>
+            <div className="flex flex-col gap-1 items-center justify-center">
+              {errors.map((err, index) => (
+                <span className="error-message" key={index}>
+                  {err}
+                </span>
+              ))}
             </div>
-            <div>
-              <Skeleton className="h-4 w-20 mx-auto" />
-              <Skeleton className="h-4 w-16 mx-auto" />
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter className="flex w-full flex-col gap-2">
-          <Skeleton className="h-8  w-full" />
-          <Skeleton className="h-4 w-12" />
-          {errors.length > 0 && (
-            <>
-              <div className="flex flex-col gap-1 items-center justify-center">
-                {errors.map((err, index) => (
-                  <span className="error-message" key={index}>
-                    {err}
-                  </span>
-                ))}
-              </div>
-              <Button variant={"destructive"} onClick={refreshComponent}>
-                Reload
-              </Button>
-            </>
-          )}
-        </CardFooter>
-      </Card>
-    </div>
+            <Button variant={"destructive"} onClick={refreshComponent}>
+              Reload
+            </Button>
+          </>
+        )}
+      </CardFooter>
+    </Card>
   );
 }
 

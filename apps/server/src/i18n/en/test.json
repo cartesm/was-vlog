@@ -44,7 +44,8 @@
     "exists": "Ahora sigues a este usuario",
     "follow": "You are now following this user",
     "unfollow": "You have unfollowed this user",
-    "deleteFollower": "You have removed this follower"
+    "deleteFollower": "You have removed this follower",
+    "followYourself": "You cannot follow yourself"
   },
   "posts": {
     "alraedyExists": "The name of this post is not available",

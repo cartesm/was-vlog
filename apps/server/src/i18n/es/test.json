@@ -44,7 +44,8 @@
     "exists": "Ya sigues a este usuario",
     "follow": "Ahora sigues a este usuario",
     "unfollow": "Has dejado de seguir a este usuario",
-    "deleteFollower": "Has eliminado a este seguidor"
+    "deleteFollower": "Has eliminado a este seguidor",
+    "followYourself": "No puedes seguirte a ti mismo"
   },
   "posts": {
     "alreadyExists": "El nombre de esta publicación no está disponible",

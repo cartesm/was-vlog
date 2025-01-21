@@ -20,6 +20,9 @@ export class FollowersService {
     user: Types.ObjectId,
     you: Types.ObjectId,
   ): Promise<ResponseWithMessage> {
+    if (user == you) {
+      this.exceptions.throwITeapot('test.followers.followYourself');
+    }
     const follow: FollowersType = await this.followersModel.findOne({
       user,
       follower: you,
@@ -34,28 +37,7 @@ export class FollowersService {
       }),
     };
   }
-  async getFollowersCount(user: Types.ObjectId): Promise<number> {
-    return await this.followersModel.countDocuments({ user });
-  }
-  async isFollow(follower: Types.ObjectId, you: Types.ObjectId) {
-    const followMatch: FollowersType = await this.followersModel
-      .findOne({
-        user: follower,
-        follower: you,
-      })
-      .populate('user', 'username img _id description')
-      .select('user');
-    if (!followMatch)
-      return {
-        user: await this.userService.getPublicUserData(follower),
-        isFollow: false,
-      };
-    return {
-      user: followMatch.user,
-      isFollow: true,
-      followersCount: await this.getFollowersCount(follower),
-    };
-  }
+
   async unfollowUser(
     you: Types.ObjectId,
     user: Types.ObjectId,
