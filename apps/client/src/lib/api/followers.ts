@@ -46,6 +46,7 @@ export const getFollowersOf = async ({
     const resp: AxiosResponse = await axios.get(
       `/followers/fu/${page}/${user}`
     );
+    console.log(resp.data);
     return { data: resp.data };
   } catch (e: any) {
     return {

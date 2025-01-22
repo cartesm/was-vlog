@@ -41,7 +41,6 @@ function UserCard({
   };
 
   const manageFollow = async (otherUserId: string) => {
-    console.log("click");
     const isLoged: boolean = validateIsLogedInClient();
     if (!isLoged) return;
     if (!user) return;
@@ -96,7 +95,16 @@ function UserCard({
         <div className="flex flex-col  justify-center items-center md:items-start gap-2 ">
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
             <Users className="w-4 h-4" />
-            <span>{user.followerCount} seguidores</span>
+            <Link
+              href={(window.location.href + "/followers").replace(
+                "profile",
+                "user"
+              )}
+            >
+              <span className="hover:underline">
+                {user.followerCount + " "} seguidores
+              </span>
+            </Link>
           </div>
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
             <CalendarDays className="w-4 h-4" />

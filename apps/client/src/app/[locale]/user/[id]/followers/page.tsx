@@ -1,19 +1,21 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spiner";
-import { useFetchErrors } from "@/hooks/useFetchErrors";
-import { IRespData } from "@/interfaces/errorDataResponse.interface";
 import { IFollowers } from "@/interfaces/followers.interface";
 import { IPaginationData } from "@/interfaces/pagination.interface";
 import { getFollowersOf } from "@/lib/api/followers";
-import { format } from "@formkit/tempo";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
+
+import { useEffect, useState } from "react";
+import { format } from "@formkit/tempo";
+import { IRespData } from "@/interfaces/errorDataResponse.interface";
+import { useFetchErrors } from "@/hooks/useFetchErrors";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/routing";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 function Page() {
   const t = useTranslations();
@@ -22,7 +24,7 @@ function Page() {
   const [page, setPage] = useState<number>(1);
   const [haveMorePage, setHaveMorePage] = useState<boolean>(true);
 
-  const { errors, removeAll, set: setErrors } = useFetchErrors();
+  const { errors, set: setErrors } = useFetchErrors();
 
   const fetchFollowers = async () => {
     const resp: IRespData<IPaginationData<IFollowers>> = await getFollowersOf({
@@ -41,10 +43,19 @@ function Page() {
   useEffect(() => {
     fetchFollowers();
   }, []);
-  // TODO: hacer que el followers funcione aqui, modularizando
-  // TODO: hacer que el nombre redirija
+
+  if (errors.length > 0)
+    return (
+      <section className="border-2 flex flex-col gap-3 bg-secondary max-w-2xl mx-auto p-3 ">
+        {errors.map((err, index) => (
+          <span key={index} className="error-message">
+            {err}
+          </span>
+        ))}
+      </section>
+    );
+
   // TODO: reutilizar este componente para el perfil del usuario y poder eliminar seguidores
-  // TODO: validar que no se borre un seguirdor de otra persona
   return (
     <section>
       <div className="border-2 flex flex-col gap-3 bg-secondary max-w-2xl mx-auto p-3 ">
@@ -75,7 +86,7 @@ function Page() {
             {followers?.map((follower, index) => (
               <Card
                 key={index}
-                className="flex items-center justify-between w-full"
+                className="flex items-center justify-between w-full my-2"
               >
                 <div className="flex items-center w-full p-6 gap-4">
                   <Avatar>
@@ -90,13 +101,20 @@ function Page() {
                   <div>
                     <CardTitle>{follower.follower.username}</CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      Desde el
+                      Desde el{" "}
                       {format(follower.createdAt, "medium", lang as string)}
                     </p>
                   </div>
                 </div>
-                <CardContent className="flex  justify-end mt-auto pb-6">
-                  <Button>Ver Perfil</Button>
+                <CardContent className="flex justify-end mt-auto pb-6">
+                  <Button>
+                    <Link
+                      className="text-nowrap"
+                      href={`/user/${follower.follower._id}`}
+                    >
+                      Ver perfil
+                    </Link>
+                  </Button>
                 </CardContent>
               </Card>
             ))}

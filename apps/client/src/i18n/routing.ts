@@ -8,6 +8,7 @@ export const publicRoutes = [
   "/sign-up",
   "/post/:nameId",
   "/user/:id",
+  "/user/:id/followers",
 ];
 export const routing = defineRouting({
   locales: locales,
