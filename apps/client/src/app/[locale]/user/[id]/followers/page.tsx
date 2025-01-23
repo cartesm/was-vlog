@@ -55,7 +55,6 @@ function Page() {
       </section>
     );
 
-  // TODO: reutilizar este componente para el perfil del usuario y poder eliminar seguidores
   return (
     <section>
       <div className="border-2 flex flex-col gap-3 bg-secondary max-w-2xl mx-auto p-3 ">

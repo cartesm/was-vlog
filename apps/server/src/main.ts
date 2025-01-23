@@ -20,8 +20,5 @@ async function bootstrap() {
     new I18nValidationExceptionFilter({ detailedErrors: false }),
   );
   await app.listen(PortApp);
-
-  // TODO: agregar readme.md
-  // TODO: crear descripcion en gh
 }
 bootstrap();

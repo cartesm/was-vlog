@@ -9,9 +9,16 @@ import { getAuthData, getAuthToken } from "@/lib/getAuthData";
 import dynamic from "next/dynamic";
 const CreateComment = dynamic(
   () => import("@/components/comments/CreateComment"),
-  { loading: () => <div>crear comentario</div> }
+  {
+    loading: () => (
+      <div className="p-6 flex items-center justify-center">
+        <Spinner size={"medium"} />
+      </div>
+    ),
+  }
 );
 import { IAuthData } from "@/interfaces/authData.interface";
+import { Spinner } from "@/components/ui/spiner";
 export const metadata: Metadata = {
   title: "post",
 };

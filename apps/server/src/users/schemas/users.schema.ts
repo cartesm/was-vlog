@@ -46,8 +46,6 @@ export class Users {
     maxlength: 250,
   })
   description: string;
-
-  //TODO: en futuras actualizaciones agregar mas campos personales como links a otros sitios
 }
 
 const schema = SchemaFactory.createForClass(Users);

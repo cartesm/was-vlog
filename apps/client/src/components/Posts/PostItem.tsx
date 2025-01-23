@@ -55,7 +55,6 @@ export const PostItem = ({
     throttle(handleLike, 1500, { trailing: false }),
     []
   );
-  // TODO: seguidores
 
   return (
     <Card className={` my-4 p-4 bg-background`}>

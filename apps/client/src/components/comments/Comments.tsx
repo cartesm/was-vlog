@@ -1,6 +1,6 @@
 "use client";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
-import { Heart, ThumbsUp } from "lucide-react";
+import { Heart, ThumbsUp, XCircle } from "lucide-react";
 import {
   Dispatch,
   SetStateAction,
@@ -169,6 +169,17 @@ function Comments({
             Mas Viejos
           </Button>
         </div>
+        {comments.length <= 0 && (
+          <div className="flex flex-col items-center justify-center p-10 text-center">
+            <XCircle className="w-12 h-12 text-gray-400 mb-4" />
+            <h2 className="text-2xl font-semibold text-gray-700 mb-2">
+              Fin del contenido
+            </h2>
+            <p className="text-gray-500">
+              No hay comentarios en esta publicacion
+            </p>
+          </div>
+        )}
         <div>
           {comments?.map((comment, index) => (
             <CommentItem
@@ -251,7 +262,11 @@ const CommentItem = ({
             : "Ver respuestas"}
         </Button>
 
-        <ModalCreateComment commentId={comment._id} postId={postId} />
+        <ModalCreateComment
+          respondTo={comment.user.username}
+          commentId={comment._id}
+          postId={postId}
+        />
       </div>
     </CardFooter>
     {visibleSubComments.some((comm) => comm == comment._id) && (

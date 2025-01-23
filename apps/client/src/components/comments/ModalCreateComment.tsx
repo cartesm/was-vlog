@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
+import { DialogTitle } from "@radix-ui/react-dialog";
 import { DebouncedFuncLeading, throttle } from "lodash";
 import { useCallback, useState } from "react";
 
@@ -23,13 +23,13 @@ interface ICreateComment {
 }
 
 function ModalCreateComment({
-  user,
   postId,
   commentId,
+  respondTo,
 }: {
-  user?: IAuthData | null;
   postId: string;
   commentId: string;
+  respondTo: string;
 }) {
   const {
     formState: { errors },
@@ -82,7 +82,11 @@ function ModalCreateComment({
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Respondiendo a : </DialogTitle>
+            <DialogTitle>
+              <span className="font-semibold">
+                Respondiendo a :{respondTo}{" "}
+              </span>
+            </DialogTitle>
             {/* <DialogDescription>
               This action cannot be undone. This will permanently delete your
               account and remove your data from our servers.
@@ -91,7 +95,7 @@ function ModalCreateComment({
           <form onSubmit={handleSubmit((data) => throttledOnclick(data))}>
             <div className="flex flex-col  items-center justify-between gap-2 p-2">
               <div className="flex gap-3 items-center justify-start w-full">
-                <Avatar>
+                {/* <Avatar>
                   <AvatarImage
                     src={
                       user?.img ??
@@ -100,7 +104,7 @@ function ModalCreateComment({
                     alt={user?.username ?? "user avatar"}
                   />
                   <AvatarFallback>{user?.username ?? "User"}</AvatarFallback>
-                </Avatar>
+                </Avatar> */}
                 <Label>Escribe un comentario</Label>
               </div>
               <Textarea
