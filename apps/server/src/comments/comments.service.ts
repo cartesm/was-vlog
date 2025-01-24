@@ -122,7 +122,8 @@ export class CommentsService {
 
     return await this.commentModel.aggregatePaginate(aggregate, {
       page: page,
-      limit: 30,
+      //TODO: retornar esto a 15
+      limit: 1,
       sort: { createdAt: orderBy },
     });
   }

@@ -1,4 +1,5 @@
 {
+  "locale": "en",
   "header": {
     "signIn": "Sign In",
     "signUp": "Sign Up",
@@ -29,6 +30,7 @@
       "passValidation": "The password must include a number, and an uppercase letter",
       "emailWrong": "The email is not valid"
     },
+    "loginRequired": "Login required",
     "signOut": "The session has been closed"
   },
   "signIn": {
@@ -55,10 +57,43 @@
       "new": "Newest",
       "endOfContent": "Oops, no more content available",
       "orderBy": "Sort by"
-    }
+    },
+    "profileImage": "User profile image",
+    "edite": "Update user profile details"
   },
   "tags": {
     "title": "Tag Search",
     "placeholder": "Type the name of a tag"
-  }
+  },
+  "posts": {
+    "notFound": "Content not available",
+    "noResults": "No results found for this search"
+  },
+  "comments": {
+    "title": "Comments",
+    "auth": "Log in to add a comment",
+    "error": "An error occurred while attempting to comment",
+    "success": "Comment successfully created",
+    "write": "Leave a comment",
+    "comment": "Comment",
+    "validation": {
+      "required": "Please write something first",
+      "minLength": "The minimum content length is 4 characters",
+      "maxLength": "The maximum content length is 400 characters"
+    },
+    "noMoreComments": "No comments yet on this post",
+    "noMoreReplies": "No replies have been made to this comment",
+    "edited": "Edited",
+    "hidden": "Hide the answers",
+    "show": "Reveal the answers",
+    "respond": "Respond",
+    "respondTo": "In response to"
+  },
+  "likes": {
+    "auth": "Log in to like this",
+    "error": "Error when trying to like"
+  },
+  "end": "End of available content",
+  "showMore": "Show more content",
+  "error": "Oops! Something went wrong"
 }

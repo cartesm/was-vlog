@@ -17,8 +17,10 @@ const CreateComment = dynamic(
     ),
   }
 );
+const ErrorComponent = dynamic(() => import("@/components/ErrorComponent"));
 import { IAuthData } from "@/interfaces/authData.interface";
 import { Spinner } from "@/components/ui/spiner";
+import { getTranslations } from "next-intl/server";
 export const metadata: Metadata = {
   title: "post",
 };
@@ -41,34 +43,26 @@ const getOnePost = async (name: string): Promise<IRespData<ICompletePost>> => {
   return { data: data as ICompletePost };
 };
 
-async function page({ params }: { params: Promise<{ postId: string }> }) {
+async function Page({ params }: { params: Promise<{ postId: string }> }) {
   const { postId } = await params;
   const { data, error } = await getOnePost(postId);
-
+  const t = await getTranslations();
   if (error && !data)
     return (
-      <section className="max-w-3xl mx-auto w-full bg-secondary  p-4 rounded-md">
-        <div className="flex items-center justify-center gap-3 flex-col">
-          <Image
-            src={"https://http.cat/404"}
-            width={400}
-            height={400}
-            alt="No Content"
-            className="rounded-md"
-          />
-          <span className="error-message">{error}</span>
-        </div>
-      </section>
+      <ErrorComponent
+        error={Array.isArray(error) ? error : [error]}
+        status={404}
+      />
     );
   const user: IAuthData | null = await getAuthData();
   return (
     <section className="max-w-3xl mx-auto w-full bg-secondary  p-4 rounded-md">
       <PostContent data={data as ICompletePost} />
-      <h3 className="font-semibold text-2xl py-3">Comentarios</h3>
+      <h3 className="font-semibold text-2xl py-3">{t("comments.title")}</h3>
       <CreateComment postId={(data as ICompletePost)._id} user={user} />
       <Comments postId={(data as ICompletePost)._id} />
     </section>
   );
 }
 
-export default page;
+export default Page;

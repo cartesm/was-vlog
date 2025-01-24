@@ -17,7 +17,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import ChangeImage from "./ChangeImage";
 
-export function EditUserForm({ user }: { user: IUser }) {
+export default function EditUserForm({ user }: { user: IUser }) {
   const t = useTranslations();
   const [thisUser, setThisUser] = useState<IUpdateUser>({
     ...user,
@@ -44,6 +44,7 @@ export function EditUserForm({ user }: { user: IUser }) {
       setError(["Primero modifica algo"]);
       return;
     }
+    //TODO: traducir este componente y los inputs anteriores que se me pasaron
 
     const { data: respData, error }: IRespData<string> = await updateUser(
       Object.fromEntries(

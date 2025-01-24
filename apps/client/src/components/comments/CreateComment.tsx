@@ -10,6 +10,7 @@ import { IRespData } from "@/interfaces/errorDataResponse.interface";
 import { createComment } from "@/lib/api/posts/comments";
 import { useCallback } from "react";
 import { DebouncedFuncLeading, throttle } from "lodash";
+import { useTranslations } from "next-intl";
 
 interface ICreateComment {
   content: string;
@@ -22,6 +23,7 @@ function CreateComment({
   user: IAuthData | null;
   postId: string;
 }) {
+  const t = useTranslations();
   const {
     formState: { errors },
     handleSubmit,
@@ -36,8 +38,8 @@ function CreateComment({
     const token: string | undefined = cookies.get("was_auth_token");
     if (!token)
       return toast({
-        title: "Inicio de sesion",
-        description: "Inicia sesion para poder agregar un comentario",
+        title: t("auth.loginRequired"),
+        description: t("comments.auth"),
         variant: "destructive",
       });
 
@@ -48,13 +50,13 @@ function CreateComment({
 
     if (error) {
       toast({
-        title: "Error al comentar",
+        title: t("comments.error"),
         description: error[0],
         variant: "destructive",
       });
       return;
     }
-    toast({ title: "Exito", description: respData });
+    toast({ title: t("comments.success"), description: respData });
     reset();
   };
 
@@ -72,11 +74,13 @@ function CreateComment({
                   user?.img ??
                   "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                 }
-                alt={user?.username ?? "user avatar"}
+                alt={user?.username ?? t("user.profileImage")}
               />
-              <AvatarFallback>{user?.username ?? "User"}</AvatarFallback>
+              <AvatarFallback>
+                {user?.username ?? t("auth.username")}
+              </AvatarFallback>
             </Avatar>
-            <Label>Escribe un comentario</Label>
+            <Label>{t("comments.write")}</Label>
           </div>
           <Textarea
             {...register("content", {
@@ -87,22 +91,24 @@ function CreateComment({
             className="ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0"
           />
           <Button type="submit" variant={"default"} className="max-h-8 ">
-            Comentar
+            {t("comments.comment")}
           </Button>
         </div>
       </form>
       <div className="flex items-center flex-col gap-2 justify-center">
         {errors.content?.type == "required" && (
-          <span className="error-message">escribe algo primero</span>
+          <span className="error-message">
+            {t("comments.validation.required")}
+          </span>
         )}
         {errors.content?.type == "minLength" && (
           <span className="error-message">
-            El conenido minimo es de 4 caracter
+            {t("comments.validation.minLength")}
           </span>
         )}
         {errors.content?.type == "maxLength" && (
           <span className="error-message">
-            El conenido maximo es de 400 caracter
+            {t("comments.validation.maxLength")}
           </span>
         )}
       </div>

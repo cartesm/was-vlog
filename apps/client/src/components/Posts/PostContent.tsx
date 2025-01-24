@@ -12,7 +12,9 @@ import { manageLikePost } from "@/lib/api/posts/likeComment";
 import { Button } from "../ui/button";
 import { ISubUser } from "@/interfaces/user.interface";
 import { format } from "@formkit/tempo";
+import { useTranslations } from "next-intl";
 function PostContent({ data }: { data: ICompletePost }) {
+  const t = useTranslations();
   const [isLiked, setIsLiked] = useState<{ like: boolean; count: number }>({
     count: data.likeCount,
     like: data.like,
@@ -23,8 +25,9 @@ function PostContent({ data }: { data: ICompletePost }) {
     const authToken: string | undefined = Cookies.get("was_auth_token");
     if (!authToken) {
       toast({
-        title: "Sesion requerida",
-        description: "Inicia seseion para popder dar un like",
+        title: t("auth.loginRequired"),
+        description: t("likes.auth"),
+        variant: "destructive",
       });
       return;
     }
@@ -35,7 +38,7 @@ function PostContent({ data }: { data: ICompletePost }) {
 
     if (error) {
       toast({
-        title: "Like",
+        title: t("likes.error"),
         description: error[0],
         variant: "destructive",
       });
@@ -93,7 +96,7 @@ const UserPostContent = ({
   <div className="mx-auto py-8 px-7">
     <div className="flex items-center space-x-4">
       <Avatar className="h-12 w-12 border-2 ">
-        <AvatarImage src={user.img} alt="@usuario" />
+        <AvatarImage src={user.img} alt={user.username} />
         <AvatarFallback>{user.username}</AvatarFallback>
       </Avatar>
       <div>
@@ -104,7 +107,7 @@ const UserPostContent = ({
             }}
           >
             {user.username}
-          </Link>{" "}
+          </Link>
         </h3>
         <p className="text-sm">{format(postInfo.createdAt, "long")}</p>
       </div>

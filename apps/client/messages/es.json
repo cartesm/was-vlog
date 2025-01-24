@@ -1,4 +1,5 @@
 {
+  "locale": "es",
   "header": {
     "signIn": "Iniciar Sesion",
     "signUp": "Registrate",
@@ -28,6 +29,7 @@
       "passMin": "La contraseña debe tener al menos 8 caracteres",
       "passValidation": "La contraseña debe incluir un número y una mayúscula"
     },
+    "loginRequired": "Inicio de sesión requerido",
     "signOut": "La sesión ha sido cerrada"
   },
   "signIn": {
@@ -54,10 +56,43 @@
       "new": "Más reciente",
       "endOfContent": "Vaya, no hay más contenido disponible",
       "orderBy": "Ordenar según"
-    }
+    },
+    "profileImage": "Imagen de perfil del usuario",
+    "edite": "Modificar los detalles del perfil de usuario"
   },
   "tags": {
     "title": "Búsqueda de etiquetas",
     "placeholder": "Escribe el nombre de una etiqueta"
-  }
+  },
+  "posts": {
+    "notFound": "Sin contenido",
+    "noResults": "No se encontraron resultados para esta búsqueda"
+  },
+  "comments": {
+    "title": "Comentarios",
+    "auth": "Inicia sesión para poder agregar un comentario",
+    "error": "Se produjo un error al intentar comentar",
+    "success": "Comentario creado con éxito",
+    "write": "Deja un comentario",
+    "comment": "Comentar",
+    "validation": {
+      "required": "Por favor, escribe algo primero",
+      "minLength": "El contenido mínimo debe ser de 4 caracteres",
+      "maxLength": "El contenido máximo permitido es de 400 caracteres"
+    },
+    "noMoreComments": "Aún no hay comentarios en esta publicación",
+    "noMoreReplies": "No se han recibido respuestas a este comentario",
+    "edited": "Editado",
+    "hidden": "Ocultar respuestas",
+    "show": "Mostrar respuestas",
+    "respond": "Responder",
+    "respondTo": "En respuesta a"
+  },
+  "likes": {
+    "auth": "Inicia sesión para poder dar me gusta",
+    "error": "Error al intentar dar me gusta"
+  },
+  "end": "Fin del contenido disponible",
+  "showMore": "Mostrar más contenido",
+  "error": "¡Vaya! Algo no salió como esperábamos"
 }

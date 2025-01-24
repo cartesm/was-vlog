@@ -1,6 +1,6 @@
 "use client";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
-import { Heart, ThumbsUp, XCircle } from "lucide-react";
+import { Heart, XCircle } from "lucide-react";
 import {
   Dispatch,
   SetStateAction,
@@ -21,7 +21,8 @@ import { toast } from "@/hooks/use-toast";
 import { manageLikeComment } from "@/lib/api/posts/likeComment";
 import { format } from "@formkit/tempo";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
-
+import { useTranslations } from "next-intl";
+const NoMoreComponent = dynamic(() => import("@/components/NoMoreContent"));
 const ModalCreateComment = dynamic(
   () => import("@/components/comments/ModalCreateComment")
 );
@@ -39,7 +40,7 @@ function Comments({
   const [order, setOrder] = useState<number | -1 | 1>(-1);
   const [page, setPage] = useState<number>(1);
   const [haveMorePage, setHaveMorePage] = useState<boolean>(true);
-
+  const t = useTranslations();
   const fetchComments = async () => {
     const { error, data }: IRespData<IPaginationData<IComment>> =
       await getCommentsOf({
@@ -52,7 +53,7 @@ function Comments({
       setErrors(error);
       return;
     }
-    if (!data) return alert("dick");
+    if (!data) return alert("No se suponde que debas de ver esto");
     setHaveMorePage(data.hasNextPage);
     setComments(data.docs);
   };
@@ -114,6 +115,7 @@ function Comments({
       []
     );
 
+  // TODO: hacer que el pedir mas comentarios funcione
   const fetchMoreComments = async () => {
     const { data, error }: IRespData<IPaginationData<IComment>> =
       await getCommentsOf({
@@ -157,7 +159,7 @@ function Comments({
             variant="outline"
             className="rounded-r-none focus:z-10"
           >
-            Mas Nuevos
+            {t("user.posts.new")}
           </Button>
           <Button
             onClick={() => {
@@ -166,23 +168,16 @@ function Comments({
             variant="outline"
             className="rounded-l-none focus:z-10"
           >
-            Mas Viejos
+            {t("user.posts.old")}
           </Button>
         </div>
         {comments.length <= 0 && (
-          <div className="flex flex-col items-center justify-center p-10 text-center">
-            <XCircle className="w-12 h-12 text-gray-400 mb-4" />
-            <h2 className="text-2xl font-semibold text-gray-700 mb-2">
-              Fin del contenido
-            </h2>
-            <p className="text-gray-500">
-              No hay comentarios en esta publicacion
-            </p>
-          </div>
+          <NoMoreComponent message={t("comments.noMoreComments")} />
         )}
         <div>
           {comments?.map((comment, index) => (
             <CommentItem
+              t={t}
               key={index}
               comment={comment}
               postId={postId}
@@ -193,7 +188,7 @@ function Comments({
           ))}
           {haveMorePage && (
             <Button onClick={fetchComments} variant={"link"}>
-              Cargar Mas
+              {t("showMore")}
             </Button>
           )}
         </div>
@@ -208,12 +203,14 @@ const CommentItem = ({
   visibleSubComments,
   setVisibleSubComments,
   postId,
+  t,
 }: {
   comment: IComment;
   throttledOnclick: DebouncedFuncLeading<(commentId: string) => void>;
   visibleSubComments: string[];
   setVisibleSubComments: Dispatch<SetStateAction<string[]>>;
   postId: string;
+  t: (string) => string;
 }) => (
   <Card className="my-2">
     <CardHeader className="flex flex-row items-center gap-4">
@@ -224,8 +221,9 @@ const CommentItem = ({
       <div>
         <h3 className="font-semibold">{comment.user.username}</h3>
         <p className="text-sm text-gray-500">
-          {format(comment.createdAt, "medium")}{" "}
-          {comment.createdAt != comment.updatedAt && " - Editado"}
+          {format(comment.createdAt, "medium", t("locale"))}
+          {comment.createdAt != comment.updatedAt &&
+            ` - ${t("comments.edited")}`}
         </p>
       </div>
     </CardHeader>
@@ -258,8 +256,8 @@ const CommentItem = ({
           }
         >
           {visibleSubComments.some((comm) => comm == comment._id)
-            ? "Mostrar Menos"
-            : "Ver respuestas"}
+            ? t("comments.hidden")
+            : t("comments.show")}
         </Button>
 
         <ModalCreateComment
