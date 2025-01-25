@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { ICompletePost } from "@/interfaces/posts.interface";
 import { IRespData } from "@/interfaces/errorDataResponse.interface";
 import PostContent from "@/components/Posts/PostContent";

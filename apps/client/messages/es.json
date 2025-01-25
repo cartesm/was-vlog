@@ -10,13 +10,17 @@
     "pass": "Contraseña",
     "username": "Nombre de usuario",
     "name": "Nombre ",
+    "description": "Descripción",
     "placeholder": {
+      "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sed, fugiat!",
       "pass": "contraseña123",
       "email": "email@ejemplo.com",
       "username": "pedro69",
       "name": "Pedro Perez Pereira"
     },
     "auth": {
+      "descriptionMaxLength": "La descripción no debe exceder las 150 palabras",
+      "descriptionMinLength": "La descripción debe tener al menos 10 palabras",
       "usernameEmpty": "El nombre de usuario es obligatorio",
       "usernameMin": "El nombre de usuario debe tener al menos 5 caracteres",
       "usernameMax": "El nombre de usuario no puede tener más de 27 caracteres",
@@ -30,7 +34,14 @@
       "passValidation": "La contraseña debe incluir un número y una mayúscula"
     },
     "loginRequired": "Inicio de sesión requerido",
-    "signOut": "La sesión ha sido cerrada"
+    "signOut": "La sesión ha sido cerrada",
+    "passValidation": "Introduce una nueva contraseña si deseas modificarla",
+    "validationPass": "Contraseña para verificación"
+  },
+  "password": {
+    "hide": "Esconder la contraseña",
+    "show": "Revelar la contraseña",
+    "validate": "Verificar"
   },
   "signIn": {
     "page": "Iniciar sesión",
@@ -58,7 +69,13 @@
       "orderBy": "Ordenar según"
     },
     "profileImage": "Imagen de perfil del usuario",
-    "edite": "Modificar los detalles del perfil de usuario"
+    "edite": "Modificar los detalles del perfil de usuario",
+    "descriptions": {
+      "name": "Este es tu nombre público",
+      "username": "Este es tu identificador único en la plataforma",
+      "description": "Una breve descripción sobre ti",
+      "pass": "Ingresa una nueva contraseña si deseas cambiarla"
+    }
   },
   "tags": {
     "title": "Búsqueda de etiquetas",
@@ -86,13 +103,23 @@
     "hidden": "Ocultar respuestas",
     "show": "Mostrar respuestas",
     "respond": "Responder",
-    "respondTo": "En respuesta a"
+    "respondTo": "En respuesta a",
+    "placeholder": "Escriba su comentario aquí"
   },
   "likes": {
     "auth": "Inicia sesión para poder dar me gusta",
     "error": "Error al intentar dar me gusta"
   },
+  "image": {
+    "imgProfile": "",
+    "imgProfileError": "Error al cambiar la foto de perfile",
+    "imageNotSelected": "Primero, selecciona una imagen",
+    "select": "Sube una imagen para personalizar tu perfil"
+  },
+  "status": "Estado",
+  "notAceptable": "Inaceptable",
   "end": "Fin del contenido disponible",
   "showMore": "Mostrar más contenido",
-  "error": "¡Vaya! Algo no salió como esperábamos"
+  "error": "¡Vaya! Algo no salió como esperábamos",
+  "update": "Modificar"
 }

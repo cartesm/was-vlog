@@ -9,6 +9,7 @@ import { IRespData } from "@/interfaces/errorDataResponse.interface";
 import { updateProfileImage } from "@/lib/api/user";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { useTranslations } from "next-intl";
 
 function ChangeImage({
   userImage,
@@ -17,14 +18,15 @@ function ChangeImage({
   username: string;
   userImage: string;
 }) {
+  const t = useTranslations();
   const [img, setImg] = useState<null | File>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const onSubmitImage = (e) => {
     e.preventDefault();
     if (!img)
       return toast({
-        title: "Error",
-        description: "selecciona una imagen",
+        title: t("notAceptable"),
+        description: t("image.imageNotSelected"),
         variant: "destructive",
       });
     setIsLoading(true);
@@ -43,23 +45,22 @@ function ChangeImage({
         if (respError) {
           e.target.value = "";
           return toast({
-            title: "Error",
+            title: t("image.imgProfileError"),
             description: respError,
             variant: "destructive",
           });
         }
 
         toast({
-          title: "image uploiad",
+          title: t("status"),
           description: respData?.message,
         });
       },
-      error(error) {
+      error() {
         setIsLoading(false);
-        console.error(error);
         toast({
-          title: "Error",
-          description: "error al subir la imagen",
+          title: t("error"),
+          description: "image.imgProfileError",
           variant: "destructive",
         });
       },
@@ -95,10 +96,8 @@ function ChangeImage({
             </div>
           </CardContent>
         </Card>
-        <p className="text-sm text-gray-500 mt-2">
-          Sube una imagen para tu perfil.
-        </p>
-        <Button className="max-h-8 my-3">Cambiar</Button>
+        <p className="text-sm text-gray-500 mt-2">{t("image.select")}</p>
+        <Button className="max-h-8 my-3">{t("update")}</Button>
       </div>
     </form>
   );

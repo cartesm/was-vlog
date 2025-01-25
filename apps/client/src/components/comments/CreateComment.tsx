@@ -88,6 +88,7 @@ function CreateComment({
               required: true,
               maxLength: 400,
             })}
+            placeholder={t("comments.placeholder")}
             className="ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0"
           />
           <Button type="submit" variant={"default"} className="max-h-8 ">

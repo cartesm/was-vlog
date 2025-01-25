@@ -29,6 +29,7 @@ export default function EditUserForm({ user }: { user: IUser }) {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const onSubmit = async (data: IUpdateUser) => {
+    console.log("nose que paas");
     setModalOpen(false);
     removeAll();
     const fieldsToCheck = [
@@ -41,6 +42,7 @@ export default function EditUserForm({ user }: { user: IUser }) {
       (field) => data[field] !== thisUser[field]
     );
     if (!anyChange) {
+      //TODO: traducir esto
       setError(["Primero modifica algo"]);
       return;
     }
@@ -60,7 +62,7 @@ export default function EditUserForm({ user }: { user: IUser }) {
     }
     setThisUser(data);
     reset({ password: undefined });
-    toast({ title: "Estado", description: respData });
+    toast({ title: t("status"), description: respData });
   };
   const {
     register,
@@ -79,7 +81,6 @@ export default function EditUserForm({ user }: { user: IUser }) {
   return (
     <div className="w-full mx-auto">
       <ChangeImage userImage={user.img} username={user.username} />
-      {/* data */}
       <Dialog
         open={modalOpen}
         onOpenChange={() => setModalOpen((actual) => !actual)}
@@ -87,9 +88,11 @@ export default function EditUserForm({ user }: { user: IUser }) {
         <DialogContent>
           <DialogHeader>
             <DialogContent>
-              <span>Ingresa una nueva contraseña si deseas cambiarla.</span>
+              <span>{t("auth.passValidation")}</span>
               <div>
-                <Label htmlFor="validationPass">Contraseña de validacion</Label>
+                <Label htmlFor="validationPass">
+                  {t("auth.validationPass")}
+                </Label>
                 <div className="relative w-full ">
                   <Input
                     type={showPassword ? "text" : "password"}
@@ -97,7 +100,7 @@ export default function EditUserForm({ user }: { user: IUser }) {
                     placeholder="********"
                     className="mt-2"
                     {...register("validationPass", {
-                      minLength: 6,
+                      required: true,
                     })}
                     form="formData"
                   />
@@ -108,7 +111,7 @@ export default function EditUserForm({ user }: { user: IUser }) {
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowPassword((actual) => !actual)}
                     aria-label={
-                      showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                      showPassword ? t("password.hide") : t("password.show")
                     }
                   >
                     {showPassword ? (
@@ -124,25 +127,25 @@ export default function EditUserForm({ user }: { user: IUser }) {
                       {t("auth.auth.passEmpty")}
                     </span>
                   )}
-                  {errors.validationPass?.type == "minLength" && (
-                    <span className="error-message">min 6</span>
-                  )}
                 </div>
                 <Button className="my-3 " type="submit" form="formData">
-                  Validar
+                  {t("password.validate")}
                 </Button>
               </div>
             </DialogContent>
           </DialogHeader>
         </DialogContent>
       </Dialog>
-
+      {/*  */}
       <form
         onSubmit={handleSubmit((data: IUpdateUser) => {
+          console.log("sdsds");
           if (user.pass && data.password && !watch("validationPass")) {
             setModalOpen(true);
+            console.log("waza");
             return;
           }
+          console.log("paso");
           onSubmit(data);
         })}
         id="formData"
@@ -156,10 +159,10 @@ export default function EditUserForm({ user }: { user: IUser }) {
           ))}
         </div>
         <div>
-          <Label htmlFor="name">Nombre</Label>
+          <Label htmlFor="name">{t("auth.name")}</Label>
           <Input
             id="name"
-            placeholder="Tu nombre completo"
+            placeholder={t("auth.placeholder.name")}
             className="mt-2"
             {...register("name", {
               minLength: 6,
@@ -167,7 +170,7 @@ export default function EditUserForm({ user }: { user: IUser }) {
             })}
           />
           <p className="text-sm text-gray-500 mt-2">
-            Este es tu nombre público.
+            {t("user.descriptions.name")}
           </p>
           <div className="flex flex-col">
             {errors.name?.type == "required" && (
@@ -181,20 +184,19 @@ export default function EditUserForm({ user }: { user: IUser }) {
             )}
           </div>
         </div>
-
         <div>
-          <Label htmlFor="username">Nombre de usuario</Label>
+          <Label htmlFor="username">{t("auth.username")}</Label>
           <Input
             id="username"
             {...register("username", {
               minLength: 5,
               maxLength: 27,
             })}
-            placeholder="tunombredeusuario"
+            placeholder={t("auth.placeholder.username")}
             className="mt-2"
           />
           <p className="text-sm text-gray-500 mt-2">
-            Este es tu identificador único en la plataforma.
+            {t("user.descriptions.username")}
           </p>
           <div className="flex flex-col">
             {errors.username?.type == "required" && (
@@ -216,7 +218,7 @@ export default function EditUserForm({ user }: { user: IUser }) {
         </div>
 
         <div>
-          <Label htmlFor="description">Descripción</Label>
+          <Label htmlFor="description">{t("auth.description")}</Label>
           <div className="w-full  relative">
             <Textarea
               className="w-full"
@@ -225,35 +227,32 @@ export default function EditUserForm({ user }: { user: IUser }) {
                 maxLength: 150,
                 required: false,
               })}
+              placeholder={t("auth.placeholder.description")}
             />
-            <div
-              className="absolute bottom-2 right-2 text-sm text-gray-500 bg-white px-1 rounded"
-              aria-live="polite"
-              aria-atomic="true"
-            >
+            <div className="absolute bottom-2 right-2 text-sm text-gray-500 bg-white px-1 rounded">
               <span>{(watch("description") as string)?.length}</span>
               <span>/150</span>
             </div>
           </div>
           <p className="text-sm text-gray-500 mt-2">
-            Una breve descripción sobre ti.{" "}
+            {t("user.descriptions.description")}
           </p>
           <div className="flex flex-col">
             {errors.description?.type == "minLength" && (
               <span className="error-message">
-                La descripción debe ser de minimo 10
+                {t("auth.auth.descriptionMinLength")}
               </span>
             )}
             {errors.description?.type == "maxLength" && (
               <span className="error-message">
-                La descripción debe ser de maximo 150
+                {t("auth.auth.descriptionMaxLength")}
               </span>
             )}
           </div>
         </div>
 
         <div>
-          <Label htmlFor="password">Contraseña</Label>
+          <Label htmlFor="password">{t("auth.pass")}</Label>
           <div className="relative w-full ">
             <Input
               type={showPassword ? "text" : "password"}
@@ -283,7 +282,7 @@ export default function EditUserForm({ user }: { user: IUser }) {
             </Button>
           </div>
           <p className="text-sm text-gray-500 mt-2">
-            Ingresa una nueva contraseña si deseas cambiarla.
+            {t("user.descriptions.pass")}
           </p>
           <div className="flex flex-col">
             {errors.password?.type == "required" && (
@@ -299,8 +298,10 @@ export default function EditUserForm({ user }: { user: IUser }) {
             )}
           </div>
         </div>
-
-        <Button type="submit">Guardar cambios</Button>
+        {/* //TODO: esto no sumbitea */}
+        <Button form="formData" formTarget="formData">
+          {t("update")}
+        </Button>
       </form>
     </div>
   );

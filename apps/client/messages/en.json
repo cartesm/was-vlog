@@ -5,19 +5,22 @@
     "signUp": "Sign Up",
     "write": "Write"
   },
-
   "auth": {
     "continueWith": "Or continue with",
     "pass": "Password",
     "username": "Username",
     "name": "Name ",
+    "description": "Description",
     "placeholder": {
+      "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sed, fugiat!",
       "pass": "password123",
       "email": "email@example.com",
       "username": "John69",
       "name": "John Doe"
     },
     "auth": {
+      "descriptionMaxLength": "The description must not exceed 150 words",
+      "descriptionMinLength": "The description must contain at least 10 words",
       "usernameEmpty": "Username is required",
       "usernameMin": "Username must be at least 5 characters long",
       "usernameMax": "Username cannot be longer than 27 characters",
@@ -31,7 +34,14 @@
       "emailWrong": "The email is not valid"
     },
     "loginRequired": "Login required",
-    "signOut": "The session has been closed"
+    "signOut": "The session has been closed",
+    "passValidation": "Enter a new password if you wish to change it",
+    "validationPass": "Validation password"
+  },
+  "password": {
+    "hide": "Hide password",
+    "show": "Show password",
+    "validate": "Validate"
   },
   "signIn": {
     "page": "Log in",
@@ -59,7 +69,13 @@
       "orderBy": "Sort by"
     },
     "profileImage": "User profile image",
-    "edite": "Update user profile details"
+    "edite": "Update user profile details",
+    "descriptions": {
+      "name": "This is your public name",
+      "username": "This is your unique identifier on the platform",
+      "description": "A brief description about you",
+      "pass": "Enter a new password if you'd like to change it"
+    }
   },
   "tags": {
     "title": "Tag Search",
@@ -87,13 +103,23 @@
     "hidden": "Hide the answers",
     "show": "Reveal the answers",
     "respond": "Respond",
-    "respondTo": "In response to"
+    "respondTo": "In response to",
+    "placeholder": "Enter your comment here"
   },
   "likes": {
     "auth": "Log in to like this",
     "error": "Error when trying to like"
   },
+  "image": {
+    "imgProfile": "",
+    "imgProfileError": "Error while changing profile picture",
+    "imageNotSelected": "First, select an image",
+    "select": "Upload an image to customize your profile"
+  },
+  "notAceptable": "Unacceptable",
   "end": "End of available content",
   "showMore": "Show more content",
-  "error": "Oops! Something went wrong"
+  "error": "Oops! Something went wrong",
+  "status": "Status",
+  "update": "Change"
 }
