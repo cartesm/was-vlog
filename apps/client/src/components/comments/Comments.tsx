@@ -36,11 +36,12 @@ function Comments({
 }) {
   const { errors, set: setErrors, removeAll } = useFetchErrors();
   const [visibleSubComments, setVisibleSubComments] = useState<string[]>([""]);
-  const [comments, setComments] = useState<IComment[] | null>(null);
+  const [comments, setComments] = useState<IComment[]>([]);
   const [order, setOrder] = useState<number | -1 | 1>(-1);
   const [page, setPage] = useState<number>(1);
   const [haveMorePage, setHaveMorePage] = useState<boolean>(true);
   const t = useTranslations();
+
   const fetchComments = async () => {
     const { error, data }: IRespData<IPaginationData<IComment>> =
       await getCommentsOf({
@@ -55,12 +56,12 @@ function Comments({
     }
     if (!data) return alert("No se suponde que debas de ver esto");
     setHaveMorePage(data.hasNextPage);
-    setComments(data.docs);
+    setComments(page == 1 ? data.docs : comments.concat(data.docs));
   };
+
   useEffect(() => {
     fetchComments();
-  }, [order]);
-
+  }, [page, order]);
   const handleLike = async (commentId: string) => {
     const Cookies = (await import("js-cookie")).default;
     const authToken: string | undefined = Cookies.get("was_auth_token");
@@ -85,7 +86,6 @@ function Comments({
       });
       return;
     }
-    console.log(commentId);
     if (resp == "Create") {
       setComments(
         (actual) =>
@@ -114,26 +114,6 @@ function Comments({
       }),
       []
     );
-
-  // TODO: hacer que el pedir mas comentarios funcione
-  const fetchMoreComments = async () => {
-    const { data, error }: IRespData<IPaginationData<IComment>> =
-      await getCommentsOf({
-        page,
-        postId,
-        order,
-      });
-    if (data) {
-      setComments((actual) => (actual as IComment[]).concat(data.docs));
-      setPage(data.page);
-      setHaveMorePage(data.hasNextPage);
-    }
-    setErrors(error as string[]);
-    const clearErrorsTimeout = setTimeout(() => {
-      removeAll();
-      return clearTimeout(clearErrorsTimeout);
-    }, 5000);
-  };
 
   if (!comments)
     return (
@@ -187,7 +167,12 @@ function Comments({
             />
           ))}
           {haveMorePage && (
-            <Button onClick={fetchComments} variant={"link"}>
+            <Button
+              onClick={() => {
+                setPage((actual) => actual + 1);
+              }}
+              variant={"link"}
+            >
               {t("showMore")}
             </Button>
           )}

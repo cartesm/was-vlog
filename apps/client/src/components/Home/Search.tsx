@@ -48,7 +48,7 @@ function Search() {
         ...(tags?.length > 0 && { tags: tags.map((data) => data._id) }),
       });
 
-    if (resp.error && !!resp.data) {
+    if (resp.error) {
       setFetchErrors(resp.error);
       return;
     }

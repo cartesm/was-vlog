@@ -30,18 +30,14 @@ export default function EditUserForm({ user }: { user: IUser }) {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const validationOnSubmit = (data) => {
-    console.log("sdsds");
     if (user.pass && data.password && !watch("validationPass")) {
       setModalOpen(true);
-      console.log("waza");
       return;
     }
-    console.log("paso");
     onSubmit(data);
   };
 
   const onSubmit = async (data: IUpdateUser) => {
-    console.log("nose que paas");
     setModalOpen(false);
     removeAll();
     const fieldsToCheck = [
@@ -148,7 +144,7 @@ export default function EditUserForm({ user }: { user: IUser }) {
       </Dialog>
       {/*  */}
       <form
-        onSubmit={handleSubmit(validationOnSubmit, (ee) => console.log(ee))}
+        onSubmit={handleSubmit(validationOnSubmit)}
         id="formData"
         className="space-y-8 w-full"
       >
