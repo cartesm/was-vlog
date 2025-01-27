@@ -58,10 +58,9 @@ function Page() {
   return (
     <section>
       <div className="border-2 flex flex-col gap-3 bg-secondary max-w-2xl mx-auto p-3 ">
-        <h3 className="w-full text-start text-xl font-semibold">
-          Seguidores de
+        <h3 className="w-full text-start text-2xl font-semibold">
+          {t("follows.followsOf")}
         </h3>
-
         {followers.length < 0 ? (
           <div className="mx-auto flex items-center justify-center overflow-hidden p-4">
             <Spinner size={"medium"} />
@@ -98,9 +97,11 @@ function Page() {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <CardTitle>{follower.follower.username}</CardTitle>
+                    <CardTitle className="text-xl">
+                      {follower.follower.username}
+                    </CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      Desde el{" "}
+                      {t("follows.sinceAt") + " "}
                       {format(follower.createdAt, "medium", lang as string)}
                     </p>
                   </div>
@@ -111,7 +112,7 @@ function Page() {
                       className="text-nowrap"
                       href={`/user/${follower.follower._id}`}
                     >
-                      Ver perfil
+                      {t("user.visit")}
                     </Link>
                   </Button>
                 </CardContent>

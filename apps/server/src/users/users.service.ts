@@ -177,10 +177,10 @@ export class UsersService {
     const userMatch: UsersType = await this.UsersModel.findById(userId);
 
     // validar el nombre de usuario
-    if (userMatch.username != data.username) console.log('username difetente');
-    if (await this.userExists(undefined, data.username)) {
-      this.exceptions.throwConflict('test.auth.conflicWithUsername');
-    }
+    if (userMatch.username != data.username)
+      if (await this.userExists(undefined, data.username)) {
+        this.exceptions.throwConflict('test.auth.conflicWithUsername');
+      }
 
     if (!data.password) {
       // si no hay contraseña se act ualiza y retorna

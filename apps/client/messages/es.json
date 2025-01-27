@@ -75,7 +75,9 @@
       "username": "Este es tu identificador único en la plataforma",
       "description": "Una breve descripción sobre ti",
       "pass": "Ingresa una nueva contraseña si deseas cambiarla"
-    }
+    },
+    "visit": "Visitar perfil",
+    "notModified": "Primero realiza alguna modificación"
   },
   "tags": {
     "title": "Búsqueda de etiquetas",
@@ -115,6 +117,10 @@
     "imgProfileError": "Error al cambiar la foto de perfile",
     "imageNotSelected": "Primero, selecciona una imagen",
     "select": "Sube una imagen para personalizar tu perfil"
+  },
+  "follows": {
+    "followsOf": "Seguidores de esta cuenta",
+    "sinceAt": "Activo/a desde el"
   },
   "status": "Estado",
   "notAceptable": "Inaceptable",

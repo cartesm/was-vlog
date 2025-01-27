@@ -75,7 +75,9 @@
       "username": "This is your unique identifier on the platform",
       "description": "A brief description about you",
       "pass": "Enter a new password if you'd like to change it"
-    }
+    },
+    "visit": "View full profile",
+    "notModified": "Start by making a modification first"
   },
   "tags": {
     "title": "Tag Search",
@@ -115,6 +117,10 @@
     "imgProfileError": "Error while changing profile picture",
     "imageNotSelected": "First, select an image",
     "select": "Upload an image to customize your profile"
+  },
+  "follows": {
+    "followsOf": "Followers of this profile",
+    "sinceAt": "Active since"
   },
   "notAceptable": "Unacceptable",
   "end": "End of available content",

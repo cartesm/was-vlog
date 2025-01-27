@@ -16,6 +16,7 @@ import { toast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import ChangeImage from "./ChangeImage";
+import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 
 export default function EditUserForm({ user }: { user: IUser }) {
   const t = useTranslations();
@@ -27,6 +28,17 @@ export default function EditUserForm({ user }: { user: IUser }) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const { errors: fetchErrors, removeAll, set: setError } = useFetchErrors();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+
+  const validationOnSubmit = (data) => {
+    console.log("sdsds");
+    if (user.pass && data.password && !watch("validationPass")) {
+      setModalOpen(true);
+      console.log("waza");
+      return;
+    }
+    console.log("paso");
+    onSubmit(data);
+  };
 
   const onSubmit = async (data: IUpdateUser) => {
     console.log("nose que paas");
@@ -42,12 +54,9 @@ export default function EditUserForm({ user }: { user: IUser }) {
       (field) => data[field] !== thisUser[field]
     );
     if (!anyChange) {
-      //TODO: traducir esto
-      setError(["Primero modifica algo"]);
+      setError([t("user.notModified")]);
       return;
     }
-    //TODO: traducir este componente y los inputs anteriores que se me pasaron
-
     const { data: respData, error }: IRespData<string> = await updateUser(
       Object.fromEntries(
         Object.entries(data).filter(
@@ -87,6 +96,8 @@ export default function EditUserForm({ user }: { user: IUser }) {
       >
         <DialogContent>
           <DialogHeader>
+            <DialogTitle>{t("auth.validationPass")}</DialogTitle>
+            <DialogDescription>{t("user.descriptions.pass")}</DialogDescription>
             <DialogContent>
               <span>{t("auth.passValidation")}</span>
               <div>
@@ -96,11 +107,10 @@ export default function EditUserForm({ user }: { user: IUser }) {
                 <div className="relative w-full ">
                   <Input
                     type={showPassword ? "text" : "password"}
-                    id="validationPass"
                     placeholder="********"
                     className="mt-2"
                     {...register("validationPass", {
-                      required: true,
+                      required: modalOpen,
                     })}
                     form="formData"
                   />
@@ -138,16 +148,7 @@ export default function EditUserForm({ user }: { user: IUser }) {
       </Dialog>
       {/*  */}
       <form
-        onSubmit={handleSubmit((data: IUpdateUser) => {
-          console.log("sdsds");
-          if (user.pass && data.password && !watch("validationPass")) {
-            setModalOpen(true);
-            console.log("waza");
-            return;
-          }
-          console.log("paso");
-          onSubmit(data);
-        })}
+        onSubmit={handleSubmit(validationOnSubmit, (ee) => console.log(ee))}
         id="formData"
         className="space-y-8 w-full"
       >
@@ -256,7 +257,6 @@ export default function EditUserForm({ user }: { user: IUser }) {
           <div className="relative w-full ">
             <Input
               type={showPassword ? "text" : "password"}
-              id="password"
               placeholder="********"
               className="mt-2"
               {...register("password", {
@@ -298,8 +298,7 @@ export default function EditUserForm({ user }: { user: IUser }) {
             )}
           </div>
         </div>
-        {/* //TODO: esto no sumbitea */}
-        <Button form="formData" formTarget="formData">
+        <Button type="submit" variant={"default"}>
           {t("update")}
         </Button>
       </form>
