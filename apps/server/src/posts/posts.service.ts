@@ -466,4 +466,13 @@ export class PostsService {
       }),
     };
   }
+
+  async getMetadata(postName: string): Promise<PostsType> {
+    const postMatch: PostsType = await this.postModel
+      .findOne({ name: postName })
+      .populate('user tags', 'username _id name')
+      .select('languaje tags _id name description user');
+    if (!postMatch) this.exceptions.throwNotFound('test.posts.notExists');
+    return postMatch;
+  }
 }

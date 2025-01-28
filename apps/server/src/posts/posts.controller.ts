@@ -26,6 +26,8 @@ import { IsAuhtorGuard } from './guards/is-auhtor.guard';
 import { PageAndIdPipe } from 'src/utils/pipes/page-and-id.pipe';
 import { IPageAndId } from 'src/utils/interfaces/pageAndId.interface';
 import { GetPostQueryPipe } from './pipes/get-post-query.pipe';
+import { ParseidPipe } from 'src/utils/pipes/parseid.pipe';
+import { ParamId } from 'src/utils/interfaces/paramId.interface';
 
 @UseGuards(JwtGuard)
 @Controller('posts')
@@ -112,5 +114,12 @@ export class PostsController {
     @Req() req: UserRequest,
   ): Promise<ResponseWithMessage> {
     return await this.postsService.createPost(body, req.user.id);
+  }
+
+  @Public()
+  @Get('/metadata/:name')
+  @HttpCode(HttpStatus.OK)
+  async getPostMetadata(@Param() params: { name: string }) {
+    return await this.postsService.getMetadata(params.name);
   }
 }
