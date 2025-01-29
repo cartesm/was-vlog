@@ -7,7 +7,7 @@ import ControlPanel from "@/components/Write/ControlPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { createPost, getOnePost, updatePost } from "@/lib/api/posts/posts";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "@/i18n/routing";
@@ -37,12 +37,12 @@ const Previewer = dynamic(() => import("@/components/Posts/Viewer"), {
   loading: () => (
     <section className="container-html max-w-3xl mx-auto w-full py-12 mt-3 rounded-md px-6 bg-secondary flex items-center justify-center">
       <Loader />
-      <span>Cargando</span>
     </section>
   ),
 });
 
 function Write() {
+  const t = useTranslations();
   const { nameId: param }: { nameId: string } = useParams();
   const { tags, set: setTags } = useWriteTags();
   const { set: setErrors, removeAll } = useFetchErrors();
@@ -92,7 +92,7 @@ function Write() {
       }, 3000);
       setErrors(resp.error);
     }
-    toast({ title: "Exito", description: resp.data });
+    toast({ title: t("posts.modified"), description: resp.data });
     return;
   };
   const throttledSubmit: DebouncedFuncLeading<(data: IData) => void> =
@@ -136,8 +136,10 @@ function Write() {
                 className="w-full rounded-md p-2 bg-secondary"
               >
                 <TabsList>
-                  <TabsTrigger value="write">Write</TabsTrigger>
-                  <TabsTrigger value="preview">Preview</TabsTrigger>
+                  <TabsTrigger value="write">{t("write.write")}</TabsTrigger>
+                  <TabsTrigger value="preview">
+                    {t("write.preview")}
+                  </TabsTrigger>
                 </TabsList>
                 <TabsContent value="write">
                   <Textarea
@@ -147,7 +149,7 @@ function Write() {
                     })}
                     form="write-form"
                     spellCheck={false}
-                    placeholder="Escribe tu texto aquí..."
+                    placeholder={t("write.placeholder")}
                     className=" py-3 text-area-data w-full bg-secondary  h-full min-h-[500px] ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0"
                   />
                 </TabsContent>
@@ -165,8 +167,8 @@ function Write() {
             className="w-full lg:w-1/3 rounded-md p-2 bg-secondary"
           >
             <TabsList>
-              <TabsTrigger value="seo">SEO</TabsTrigger>
-              <TabsTrigger value="info">DOCS</TabsTrigger>
+              <TabsTrigger value="seo">{t("write.info")}</TabsTrigger>
+              <TabsTrigger value="info">{t("write.docs")}</TabsTrigger>
             </TabsList>
             <TabsContent value="info">
               <Info />

@@ -66,7 +66,8 @@
       "old": "Oldest",
       "new": "Newest",
       "endOfContent": "Oops, no more content available",
-      "orderBy": "Sort by"
+      "orderBy": "Sort by",
+      "best": "Best"
     },
     "profileImage": "User profile image",
     "edite": "Update user profile details",
@@ -77,7 +78,8 @@
       "pass": "Enter a new password if you'd like to change it"
     },
     "visit": "View full profile",
-    "notModified": "Start by making a modification first"
+    "notModified": "Start by making a modification first",
+    "joinedAt": "Joined on"
   },
   "tags": {
     "title": "Tag Search",
@@ -85,7 +87,8 @@
   },
   "posts": {
     "notFound": "Content not available",
-    "noResults": "No results found for this search"
+    "noResults": "No results found for this search",
+    "modified": "Modification of the correct publication"
   },
   "comments": {
     "title": "Comments",
@@ -116,16 +119,92 @@
     "imgProfile": "",
     "imgProfileError": "Error while changing profile picture",
     "imageNotSelected": "First, select an image",
-    "select": "Upload an image to customize your profile"
+    "select": "Upload an image to customize your profile",
+    "imagePostError": "Error uploading the image",
+    "errorToOptimize": "Error optimizing the image",
+    "uploadCorrect": "The image was uploaded successfully",
+    "badUrl": "Enter a valid URL",
+    "panel": {
+      "add": "Add an image",
+      "or": "Or enter the link to an image",
+      "paste": "Paste a URL here"
+    }
   },
   "follows": {
     "followsOf": "Followers of this profile",
-    "sinceAt": "Active since"
+    "sinceAt": "Active since",
+    "status": "Status response",
+    "unfollowStatus": "You have unfollowed this user",
+    "error": "An error occurred while attempting to follow this user",
+    "follow": "Follow",
+    "unfollow": "Unfollow",
+    "followers": "Followers",
+    "auth": "Log in to follow someone"
   },
   "notAceptable": "Unacceptable",
   "end": "End of available content",
   "showMore": "Show more content",
   "error": "Oops! Something went wrong",
   "status": "Status",
-  "update": "Change"
+  "update": "Change",
+  "write": {
+    "info": "Details",
+    "docs": "Guide",
+    "write": "Write",
+    "preview": "Preview",
+    "placeholder": "Compose your text here...",
+    "panel": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "list": "List",
+      "ordered_list": "Ordered list",
+      "quote": "Quote",
+      "image": "Image",
+      "title": "Title",
+      "subtitle": "Subtitle",
+      "link": "Link"
+    },
+    "text": {
+      "paragraph1": "We use Markworn to render post content, ensuring a clean, organized, and visually appealing format for users.",
+      "paragraph2": "Basic elements:",
+      "items": {
+        "title": {
+          "label": "Title:",
+          "example": "### Title"
+        },
+        "subtitle": {
+          "label": "Subtitle:",
+          "example": "## Subtitle"
+        },
+        "italic": {
+          "label": "Italic:",
+          "example": "_Italic text_"
+        },
+        "bold": {
+          "label": "Bold:",
+          "example": "**Bold text**"
+        },
+        "quote": {
+          "label": "Quote:",
+          "example": "> Quote"
+        },
+        "link": {
+          "label": "Link:",
+          "example": "[Name](url)"
+        },
+        "image": {
+          "label": "Image:",
+          "example": "![Name](image-url)"
+        },
+        "unorderedList": {
+          "label": "List:",
+          "example": "- First item\n- Second item ..."
+        },
+        "orderedList": {
+          "label": "Ordered list:",
+          "example": "1. First item\n2. Second item ..."
+        }
+      }
+    }
+  }
 }

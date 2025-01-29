@@ -66,7 +66,8 @@
       "old": "Más antiguo",
       "new": "Más reciente",
       "endOfContent": "Vaya, no hay más contenido disponible",
-      "orderBy": "Ordenar según"
+      "orderBy": "Ordenar según",
+      "best": "Mejores"
     },
     "profileImage": "Imagen de perfil del usuario",
     "edite": "Modificar los detalles del perfil de usuario",
@@ -77,7 +78,8 @@
       "pass": "Ingresa una nueva contraseña si deseas cambiarla"
     },
     "visit": "Visitar perfil",
-    "notModified": "Primero realiza alguna modificación"
+    "notModified": "Primero realiza alguna modificación",
+    "joinedAt": "Se unió el"
   },
   "tags": {
     "title": "Búsqueda de etiquetas",
@@ -85,7 +87,8 @@
   },
   "posts": {
     "notFound": "Sin contenido",
-    "noResults": "No se encontraron resultados para esta búsqueda"
+    "noResults": "No se encontraron resultados para esta búsqueda",
+    "modified": "Modificación de la publicación correcta"
   },
   "comments": {
     "title": "Comentarios",
@@ -116,16 +119,92 @@
     "imgProfile": "",
     "imgProfileError": "Error al cambiar la foto de perfile",
     "imageNotSelected": "Primero, selecciona una imagen",
-    "select": "Sube una imagen para personalizar tu perfil"
+    "select": "Sube una imagen para personalizar tu perfil",
+    "imagePostError": "Error al subir la imagen",
+    "errorToOptimize": "Error al optimizar la imagen",
+    "uploadCorrect": "La imagen se subió correctamente",
+    "badUrl": "Ingresa una URL válida",
+    "panel": {
+      "add": "Añadir una imagen",
+      "or": "O ingresa el enlace de una imagen",
+      "paste": "Pega una URL aquí"
+    }
   },
   "follows": {
     "followsOf": "Seguidores de esta cuenta",
-    "sinceAt": "Activo/a desde el"
+    "sinceAt": "Activo/a desde el",
+    "status": "Respuesta de estado",
+    "unfollowStatus": "Ya no estás siguiendo a este usuario",
+    "error": "Hubo un error al intentar seguir a este usuario",
+    "follow": "Seguir ",
+    "unfollow": "Dejar de seguir",
+    "followers": "Seguidores",
+    "auth": "Inicia sesión para seguir a alguien"
   },
   "status": "Estado",
   "notAceptable": "Inaceptable",
   "end": "Fin del contenido disponible",
   "showMore": "Mostrar más contenido",
   "error": "¡Vaya! Algo no salió como esperábamos",
-  "update": "Modificar"
+  "update": "Modificar",
+  "write": {
+    "info": "Detalles",
+    "docs": "Guía",
+    "write": "Escribir",
+    "preview": "Previsualización",
+    "placeholder": "Redacta tu texto aquí...",
+    "panel": {
+      "bold": "Negrita",
+      "italic": "Cursiva",
+      "list": "Lista",
+      "ordered_list": "Lista ordenada",
+      "quote": "Cita",
+      "title": "Título",
+      "subtitle": "Subtítulo",
+      "link": "Enlace",
+      "image": "Imagen"
+    },
+    "text": {
+      "paragraph1": "Usamos Markworn para renderizar el contenido de los posts, asegurando un formato limpio, organizado y visualmente atractivo para los usuarios.",
+      "paragraph2": "Elementos básicos:",
+      "items": {
+        "title": {
+          "label": "Título:",
+          "example": "### Título"
+        },
+        "subtitle": {
+          "label": "Subtítulo:",
+          "example": "## Subtítulo"
+        },
+        "italic": {
+          "label": "Cursiva:",
+          "example": "_Texto en cursiva_"
+        },
+        "bold": {
+          "label": "Negrita:",
+          "example": "**Texto en negrita**"
+        },
+        "quote": {
+          "label": "Cita:",
+          "example": "> Cita"
+        },
+        "link": {
+          "label": "Enlace:",
+          "example": "[Nombre](url)"
+        },
+        "image": {
+          "label": "Imagen:",
+          "example": "![Nombre](url-imagen)"
+        },
+        "unorderedList": {
+          "label": "Lista:",
+          "example": "- Primer item\n- Segundo item ..."
+        },
+        "orderedList": {
+          "label": "Lista ordenada:",
+          "example": "1. Primer item\n2. Segundo item ..."
+        }
+      }
+    }
+  }
 }

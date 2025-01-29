@@ -16,6 +16,7 @@ import { follow, unFollow } from "@/lib/api/followers";
 import { toast } from "@/hooks/use-toast";
 import { validateIsLogedInClient } from "@/lib/validateIsLogedClient";
 import { DebouncedFuncLeading, throttle } from "lodash";
+import { useTranslations } from "next-intl";
 
 function UserCard({
   id,
@@ -27,7 +28,7 @@ function UserCard({
   isLogedUser?: boolean;
 }) {
   const [user, setUser] = useState<IUser | undefined>(undefined);
-
+  const t = useTranslations();
   const { set: setErrors } = useFetchErrors();
   const fetchUserData = async () => {
     const { data, error }: IRespData<IUser> = await getLogedUser(id);
@@ -39,7 +40,10 @@ function UserCard({
   };
 
   const manageFollow = async (otherUserId: string) => {
-    const isLoged: boolean = validateIsLogedInClient();
+    const isLoged: boolean = validateIsLogedInClient(
+      t("auth.loginRequired"),
+      t("follows.auth")
+    );
     if (!isLoged) return;
     if (!user) return;
     const resp: IRespData<string> = await (user.follow
@@ -47,15 +51,15 @@ function UserCard({
       : follow(otherUserId));
     if (resp.error) {
       toast({
-        title: "Follow status",
+        title: t("follows.error"),
         description: resp.error,
         variant: "destructive",
       });
       return;
     }
     toast({
-      title: "Follow status",
-      description: resp.data ? resp.data : "Ya no sigues a fulanito",
+      title: t("follows.status"),
+      description: resp.data ? resp.data : t("follows.unfollowStatus"),
     });
     setUser((actual) => ({ ...actual, follow: !actual?.follow }) as IUser);
   };
@@ -100,14 +104,18 @@ function UserCard({
               )}
             >
               <span className="hover:underline">
-                {user.followerCount + " "} seguidores
+                {user.followerCount + ` ${t("follows.followers")}`}
               </span>
             </Link>
           </div>
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
             <CalendarDays className="w-4 h-4" />
-            {/* //TODO: traducir */}
-            <span>Se unió el {format(user.createdAt, "medium", locale)}</span>
+
+            <span>
+              {t("user.joinedAt") +
+                " " +
+                format(user.createdAt, "medium", locale)}
+            </span>
           </div>
         </div>
       </CardContent>
@@ -117,7 +125,7 @@ function UserCard({
             variant={user.follow ? "outline" : "default"}
             onClick={() => onFollowThrottle(user._id)}
           >
-            {user.follow ? "Dejar de seguir" : "Seguir"}
+            {user.follow ? t("follows.unfollow") : t("follows.follow")}
           </Button>
         )}
         {isLogedUser && (

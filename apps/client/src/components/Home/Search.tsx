@@ -21,7 +21,7 @@ import SearchTags from "../Write/SearchTags";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
 import NotFound from "../NotFound";
 import { PostItem } from "../Posts/PostItem";
-
+// TODO: traducir esto
 function Search() {
   const { tags, delete: deleteTag } = useWriteTags();
   const {

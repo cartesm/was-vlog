@@ -7,7 +7,6 @@ import { getLocaleToken } from "@/lib/getLocaleCookie";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 const UserContent = dynamic(() => import("@/components/User/UserContent"));
-//TODO: traducir el componente de escribir
 
 export async function generateMetadata({
   params,
@@ -24,19 +23,20 @@ export async function generateMetadata({
       }),
     }
   ).then((res) => res.json());
-  if (userData.statusCode == 404 || 406)
+
+  if (userData.statusCode)
     return {
       title: `${userData.statusCode} | ${userData.error}`,
       description: userData.message,
     };
   return {
-    title: `${userData.statusCode} | ${userData.error}`,
+    title: `WAS | ${userData.username}`,
     ...(userData.description && { description: userData.description }),
     openGraph: {
       title: `WAS | ${userData.username}`,
       ...(userData.description && { description: userData.description }),
       images: [userData.img],
-      //locale: "",
+      locale,
       type: "profile",
     },
     authors: [

@@ -3,12 +3,15 @@
 import { toast } from "@/hooks/use-toast";
 import Cookies from "js-cookie";
 
-export const validateIsLogedInClient = (): boolean => {
+export const validateIsLogedInClient = (
+  title: string,
+  description: string
+): boolean => {
   const authToken: string | undefined = Cookies.get("was_auth_token");
   if (!authToken) {
     toast({
-      title: "Sesion requerida",
-      description: "Inicia seseion para popder dar un like",
+      title,
+      description,
     });
     return false;
   }

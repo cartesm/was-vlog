@@ -46,8 +46,7 @@ export async function generateMetadata({
       }),
     }
   ).then((res) => res.json());
-  console.log(post);
-  if (post.statusCode == 404) {
+  if (post.statusCode) {
     return {
       title: `${post.statusCode} | ${id.replaceAll("%20", " ")}`,
       description: post.message,

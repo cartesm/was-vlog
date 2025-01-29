@@ -1,6 +1,9 @@
 import { Info as InfoIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { useTranslations } from "next-intl";
 function Info() {
+  const t = useTranslations();
+  //TODO: seguir traduciendo
   return (
     <div>
       <Card>

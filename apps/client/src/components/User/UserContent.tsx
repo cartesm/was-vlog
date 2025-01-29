@@ -59,7 +59,6 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
     }
   };
 
-  // TODO: traducir
   return (
     <div className=" max-w-2xl w-full mx-auto">
       <div className="flex -space-x-px">
@@ -71,7 +70,7 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
           variant="outline"
           className="rounded-r-none focus:z-10"
         >
-          Mas Nuevos
+          {t("user.posts.new")}
         </Button>
         <Button
           onClick={() => {
@@ -80,7 +79,7 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
           variant="outline"
           className="rounded-none focus:z-10"
         >
-          Mejores
+          {t("user.posts.best")}
         </Button>
         <Button
           onClick={() => {
@@ -90,7 +89,7 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
           variant="outline"
           className="rounded-l-none focus:z-10"
         >
-          Mas Viejos
+          {t("user.posts.old")}
         </Button>
       </div>
       <div className="overflow-hidden">

@@ -2,7 +2,7 @@
 import { Link } from "@/i18n/routing";
 import { Card } from "@/components/ui/card";
 import { Badge } from "../ui/badge";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Edit, Heart, MessageCircle } from "lucide-react";
 import { Button } from "../ui/button";
 import { ISimplePostContent } from "@/interfaces/posts.interface";
@@ -24,13 +24,17 @@ export const PostItem = ({
   edit?: boolean;
 }): React.ReactElement => {
   const lang = useLocale();
+  const t = useTranslations();
   const [isLiked, setIsLiked] = useState<{ isLike: boolean; count: number }>({
     count: post.likeCount,
     isLike: post.like,
   });
 
   const handleLike = async () => {
-    const isLoged: boolean = validateIsLogedInClient();
+    const isLoged: boolean = validateIsLogedInClient(
+      t("auth.loginRequired"),
+      t("likes.auth")
+    );
     if (!isLoged) return;
     const { error, data: resp }: IRespData<string> = await manageLikePost(
       post._id

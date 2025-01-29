@@ -5,14 +5,11 @@ import {
   Italic,
   List,
   ListOrdered,
-  Save,
   Heading1,
   Heading2,
   ImageIcon,
   LinkIcon,
   MessageSquareQuote,
-  Redo,
-  Undo,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Tooltip, TooltipContent, TooltipProvider } from "../ui/tooltip";
@@ -28,18 +25,19 @@ import { Label } from "../ui/label";
 import { IRespondImage, uploadImage } from "@/lib/api/images";
 import { Spinner } from "../ui/spiner";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
   const [modalState, setModalState] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const openModal = () => setModalState(!modalState);
-
+  const t = useTranslations();
   const handleChange = (e) => {
     const img: File | null = e.target.files ? e.target.files[0] : null;
     if (!img)
       return toast({
-        title: "Error",
-        description: "selecciona una imagen",
+        title: t("notAceptable"),
+        description: t("image.imageNotSelected"),
         variant: "destructive",
       });
     setIsLoading(true);
@@ -59,7 +57,7 @@ function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
           });
         }
         toast({
-          title: "image uploiad",
+          title: t("image.uploadCorrect"),
           description: resp.message,
         });
         handleEdit(`\n![Image](${resp.url})  `);
@@ -67,10 +65,9 @@ function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
       },
       error(error) {
         setIsLoading(false);
-        console.error(error);
         toast({
           title: "Error",
-          description: "error al subir la imagen",
+          description: t("image.errorToOptimize"),
           variant: "destructive",
         });
       },
@@ -91,7 +88,7 @@ function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
     if (!isValidUrl) {
       toast({
         title: "Error",
-        description: "Ingresa una url valida",
+        description: t("image.badUrl"),
         variant: "destructive",
       });
       return;
@@ -115,7 +112,7 @@ function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Negrita</p>
+            <p>{t("write.panel.bold")}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -132,7 +129,7 @@ function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Cursiva</p>
+            <p>{t("write.panel.italic")}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -149,7 +146,7 @@ function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Lista</p>
+            <p>{t("write.panel.list")}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -166,7 +163,7 @@ function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Lista Ordenada</p>
+            <p>{t("write.panel.ordered_list")}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -183,7 +180,7 @@ function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Titulo</p>
+            <p>{t("write.panel.title")}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -200,7 +197,7 @@ function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Subtitulo</p>
+            <p>{t("write.panel.subtitle")}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -217,7 +214,7 @@ function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Cita</p>
+            <p>{t("write.panel.quote")}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -232,19 +229,19 @@ function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Imagen</p>
+                <p>{t("write.panel.image")}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </DialogTrigger>
         <DialogContent className="max-w-md w-full">
-          <DialogTitle className="py-3">Añade una imagen</DialogTitle>
+          <DialogTitle className="py-3">{t("image.panel.add")}</DialogTitle>
           <form
             onSubmit={(e) => e.preventDefault()}
             encType="multipart/form-data"
           >
             <div className=" flex gap-3 flex-col">
-              <Label htmlFor="imageInput">Sube una imagen</Label>
+              <Label htmlFor="imageInput">{t("image.panel.add")}</Label>
               <Input
                 autoComplete="off"
                 type="file"
@@ -252,9 +249,9 @@ function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
                 accept=".jpg , .png , .jpge "
                 onChange={handleChange}
               />
-              <Label htmlFor="textInputImage">O ingresa el enlace de una</Label>
+              <Label htmlFor="textInputImage">{t("image.panel.or")}</Label>
               <Input
-                placeholder="PEGA una url aqui"
+                placeholder={t("image.panel.paste")}
                 type="text"
                 autoComplete="off"
                 id="textInputImage"
@@ -284,7 +281,7 @@ function ControlPanel({ handleEdit }: { handleEdit: (value: string) => void }) {
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Enlace</p>
+            <p>{t("write.panel.link")}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
