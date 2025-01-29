@@ -2,14 +2,9 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import React from "react";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
-import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 
-function UserCardSkeleton({
-  refreshComponent,
-}: {
-  refreshComponent: () => void;
-}) {
+function UserCardSkeleton() {
   const { errors } = useFetchErrors();
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -28,21 +23,18 @@ function UserCardSkeleton({
       </CardContent>
       <CardFooter>
         <Skeleton className="h-10 w-full sm:w-40 md:mx-0 mx-auto" />
-        {errors.length > 0 && (
-          <>
-            <div className="flex flex-col gap-1 items-center justify-center">
-              {errors.map((err, index) => (
-                <span className="error-message" key={index}>
-                  {err}
-                </span>
-              ))}
-            </div>
-            <Button variant={"destructive"} onClick={refreshComponent}>
-              Reload
-            </Button>
-          </>
-        )}
       </CardFooter>
+      {errors.length > 0 && (
+        <>
+          <div className="flex flex-col gap-1 items-center">
+            {errors.map((err, index) => (
+              <span className="error-message" key={index}>
+                {err}
+              </span>
+            ))}
+          </div>
+        </>
+      )}
     </Card>
   );
 }

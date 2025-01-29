@@ -226,4 +226,14 @@ export class UsersService {
       }),
     };
   }
+
+  async getMetadata(userId: Types.ObjectId): Promise<UsersType> {
+    // titulo, descripcion , img
+
+    const userMatch: UsersType = await this.UsersModel.findOne({
+      _id: userId,
+    }).select('username name img _id description');
+    if (!userMatch) this.exceptions.throwNotFound('users.notFound');
+    return userMatch;
+  }
 }

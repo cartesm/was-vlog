@@ -25,6 +25,7 @@ import { ResponseWithMessage } from 'src/utils/interfaces/message.interface';
 import { ValidatePasswordGuard } from './guards/validatePassword.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ExceptionsService } from 'src/utils/exceptions.service';
+import { UsersType } from './schemas/users.schema';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -72,5 +73,12 @@ export class UsersController {
     @UploadedFile(ParseFilePipe) file: Express.Multer.File,
   ): Promise<ResponseWithMessage> {
     return await this.usersService.changeUserProfileImage(file, req.user.id);
+  }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Get('metadata/:id')
+  async getMetadata(@Param(ParseidPipe) param: ParamId): Promise<UsersType> {
+    return await this.usersService.getMetadata(param.id);
   }
 }

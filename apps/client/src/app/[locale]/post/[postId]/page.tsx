@@ -11,7 +11,7 @@ import Comments from "@/components/comments/Comments";
 import { baseUrl } from "@/lib/configs";
 import { getAuthData, getAuthToken } from "@/lib/getAuthData";
 import dynamic from "next/dynamic";
-import type { Metadata, ResolvingMetadata } from "next";
+import type { Metadata } from "next";
 const CreateComment = dynamic(
   () => import("@/components/comments/CreateComment"),
   {
@@ -26,22 +26,31 @@ const ErrorComponent = dynamic(() => import("@/components/ErrorComponent"));
 import { IAuthData } from "@/interfaces/authData.interface";
 import { Spinner } from "@/components/ui/spiner";
 import { getTranslations } from "next-intl/server";
-import { Props } from "@/interfaces/seo.inmterface";
+import { Props } from "@/interfaces/props.interface";
+import { getLocaleToken } from "@/lib/getLocaleCookie";
+import { getLocale } from "next-intl/server";
 
-// TODO: componentes del lado del servidor deberian leer el idioma
-
-export async function generateMetadata(
-  { params }: Props,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: Props<{ postId: string }>): Promise<Metadata> {
   const id = (await params).postId;
+  const locale: string | undefined = await getLocaleToken();
+  console.log(locale);
   const post: ISimplePostContent & IErrorResp = await fetch(
-    `${baseUrl}/posts/metadata/${id}`
+    `${baseUrl}/posts/metadata/${id}`,
+    {
+      ...(locale && {
+        headers: {
+          "Accept-Language": locale,
+        },
+      }),
+    }
   ).then((res) => res.json());
-
+  console.log(post);
   if (post.statusCode == 404) {
     return {
-      title: post.statusCode + " | " + post.message,
+      title: `${post.statusCode} | ${id.replaceAll("%20", " ")}`,
+      description: post.message,
     };
   }
 
@@ -69,14 +78,16 @@ export async function generateMetadata(
 
 const getOnePost = async (name: string): Promise<IRespData<ICompletePost>> => {
   const token: string | undefined = await getAuthToken();
+  const locale: string = await getLocale();
   const resp: Response = await fetch(`${baseUrl}/posts/${name}`, {
     method: "GET",
     credentials: "include",
-    ...(token && {
-      headers: {
+    headers: {
+      ...(token && {
         Authorization: `Bearer ${token}`,
-      },
-    }),
+      }),
+      "Accept-Language": locale,
+    },
   });
   const data = await resp.json();
   if (resp.status == 404) {

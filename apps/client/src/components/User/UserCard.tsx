@@ -27,9 +27,7 @@ function UserCard({
   isLogedUser?: boolean;
 }) {
   const [user, setUser] = useState<IUser | undefined>(undefined);
-  const [attemps, setAttemps] = useState<number>(0);
 
-  const refreshComponent = () => setAttemps(attemps + 1);
   const { set: setErrors } = useFetchErrors();
   const fetchUserData = async () => {
     const { data, error }: IRespData<IUser> = await getLogedUser(id);
@@ -69,8 +67,8 @@ function UserCard({
 
   useEffect(() => {
     fetchUserData();
-  }, [id, attemps]);
-  if (!user) return <UserCardSkeleton refreshComponent={refreshComponent} />;
+  }, [id]);
+  if (!user) return <UserCardSkeleton />;
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -108,6 +106,7 @@ function UserCard({
           </div>
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
             <CalendarDays className="w-4 h-4" />
+            {/* //TODO: traducir */}
             <span>Se unió el {format(user.createdAt, "medium", locale)}</span>
           </div>
         </div>

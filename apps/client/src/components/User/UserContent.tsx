@@ -59,6 +59,7 @@ function UserContent({ userId }: { userId: string }): React.ReactElement {
     }
   };
 
+  // TODO: traducir
   return (
     <div className=" max-w-2xl w-full mx-auto">
       <div className="flex -space-x-px">

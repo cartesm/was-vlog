@@ -1,28 +1,50 @@
 import UserCard from "@/components/User/UserCard";
-import { Props } from "@/interfaces/seo.inmterface";
-import { Metadata, ResolvingMetadata } from "next";
+import { IErrorResp } from "@/interfaces/errorDataResponse.interface";
+import { Props } from "@/interfaces/props.interface";
+import { ISubUser } from "@/interfaces/user.interface";
+import { baseUrl } from "@/lib/configs";
+import { getLocaleToken } from "@/lib/getLocaleCookie";
+import { Metadata } from "next";
 import dynamic from "next/dynamic";
 const UserContent = dynamic(() => import("@/components/User/UserContent"));
+//TODO: traducir el componente de escribir
 
-export async function generateMetadata(
-  { params, searchParams }: Props,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  // read route params
+export async function generateMetadata({
+  params,
+}: Props<{ id: string }>): Promise<Metadata> {
   const id = (await params).id;
-  // TODO: hacer el props dynamico
-  //TODO: reparar el nomnre
-  // fetch data
-  const product = await fetch(`https://.../${id}`).then((res) => res.json());
-
-  // optionally access and extend (rather than replace) parent metadata
-  const previousImages = (await parent).openGraph?.images || [];
-
+  const locale: string | undefined = await getLocaleToken();
+  const userData: IErrorResp & ISubUser = await fetch(
+    `${baseUrl}/users/metadata/${id}`,
+    {
+      ...(locale && {
+        headers: {
+          "Accept-Language": locale,
+        },
+      }),
+    }
+  ).then((res) => res.json());
+  if (userData.statusCode == 404 || 406)
+    return {
+      title: `${userData.statusCode} | ${userData.error}`,
+      description: userData.message,
+    };
   return {
-    title: product.title,
+    title: `${userData.statusCode} | ${userData.error}`,
+    ...(userData.description && { description: userData.description }),
     openGraph: {
-      images: ["/some-specific-page-image.jpg", ...previousImages],
+      title: `WAS | ${userData.username}`,
+      ...(userData.description && { description: userData.description }),
+      images: [userData.img],
+      //locale: "",
+      type: "profile",
     },
+    authors: [
+      {
+        name: userData.username,
+        url: `http://localhost:3000/user/${userData._id}`,
+      },
+    ],
   };
 }
 

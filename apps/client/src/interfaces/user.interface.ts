@@ -3,6 +3,7 @@ export interface ISubUser {
   _id: string;
   username: string;
   createdAt: string;
+  description?: string;
 }
 
 // ni idea donde se usa pero weno
