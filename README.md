@@ -1,4 +1,4 @@
-# 🎥 Write Any Sh\*t: Your Ultimate Vlogging Companion
+# 🎥 Write Any Sh\*t: Your Ultimate Vlogging Web
 
 Write any sh\*t is a simple vlogging platform that allows you to create content, manage, edit and publish your vlogs with ease. From video editing to analysis, Write any has you covered!.
 
