@@ -1,4 +1,4 @@
-# 🎥 VlogMaster: Your Ultimate Vlogging Companion
+# 🎥 Write Any Sh\*t: Your Ultimate Vlogging Companion
 
 Write any sh\*t is a simple vlogging platform that allows you to create content, manage, edit and publish your vlogs with ease. From video editing to analysis, Write any has you covered!.
 
@@ -15,9 +15,6 @@ Write any sh\*t is a simple vlogging platform that allows you to create content,
 - [Technologies](#tec)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
 
 ## ✨ Features
 
@@ -55,7 +52,7 @@ To get Write any up and running on your local machine, follow these steps:
 2. Navigate to the project directory:
 
    ```
-   cd vlogmaster
+   cd was_vlog
    ```
 
 3. Install dependencies:
@@ -103,7 +100,7 @@ npm run dev
 
 ## 💻 Usage
 
-Here's a quick guide to get you started with VlogMaster:
+Here's a quick guide to get you started with Write any:
 
 1. **Login/Sign Up**: Access the platform at `http://localhost:4000/en/sign-in` and create an account or log in.
 
