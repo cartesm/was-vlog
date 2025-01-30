@@ -17,6 +17,7 @@ import { Spinner } from "../ui/spiner";
 import { IData } from "@/interfaces/IWriteData.interface";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
 import { IRespData } from "@/interfaces/errorDataResponse.interface";
+import { useTranslations } from "next-intl";
 interface Inputs {
   name: string;
 }
@@ -37,7 +38,7 @@ function UpdateName({
     formState: { errors },
   } = useForm<Inputs>();
   const { errors: submitErrors, removeAll, set: setErrors } = useFetchErrors();
-
+  const t = useTranslations();
   const [loading, setLoading] = useState<boolean>(false);
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
@@ -74,11 +75,8 @@ function UpdateName({
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Actualizar nombre</DialogTitle>
-          <DialogDescription>
-            El nombre se actualiza aparte del contenido por la logica que
-            conlleva detras. Asegurate de guardar cambios antes.
-          </DialogDescription>
+          <DialogTitle>{t("posts.message2")}</DialogTitle>
+          <DialogDescription>{t("posts.message1")}</DialogDescription>
         </DialogHeader>
         <div>
           <form id="update-name-form" onSubmit={handleSubmit(onSubmit)}>
@@ -90,33 +88,36 @@ function UpdateName({
                   maxLength: 150,
                   pattern: /^[a-zA-Z0-9\s]+$/,
                 })}
+                placeholder={t("posts.message3")}
                 defaultValue={id.replaceAll("%20", " ")}
                 type="text"
                 autoComplete="off"
               />
               <Button variant={"default"} type="submit" form="update-name-form">
-                Actualizar
+                {t("update")}
               </Button>
               <div className="flex items-center justify-center mx-auto">
                 {loading && <Spinner size={"small"} />}
               </div>
               <div className="flex flex-col gap-2 items-center justify-center mx-auto">
                 {errors.name?.type == "required" && (
-                  <span className="error-message">El titulo es requerido</span>
+                  <span className="error-message">
+                    {t("posts.validations.requiredError")}
+                  </span>
                 )}
                 {errors.name?.type == "minLength" && (
                   <span className="error-message">
-                    El titulo es de minimo 10 caracteres
+                    {t("posts.validations.minLengthError")}
                   </span>
                 )}
                 {errors.name?.type == "pattern" && (
                   <span className="error-message">
-                    El titulo puede ser solo texto y numeros
+                    {t("posts.validations.patternError")}
                   </span>
                 )}
                 {errors.name?.type == "maxLength" && (
                   <span className="error-message">
-                    El titulo es de maximo 150 caracteres
+                    {t("posts.validations.maxLengthError")}
                   </span>
                 )}
                 {submitErrors?.map((err, index) => (

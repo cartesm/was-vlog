@@ -3,83 +3,65 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useTranslations } from "next-intl";
 function Info() {
   const t = useTranslations();
-  //TODO: seguir traduciendo
   return (
     <div>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
             <InfoIcon className="mr-2 h-5 w-5" />
-            Información
+            {t("write.info")}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="mb-4">
-            Usamos Markworn para renderizar el contenido de los posts,
-            asegurando un formato limpio, organizado y visualmente atractivo
-            para los usuarios.
-          </p>
-          <p className="mb-4">Elementos basicos:</p>
+          <p className="mb-4">{t("write.text.paragraph1")}</p>
+          <p className="mb-4">{t("write.text.paragraph2")}</p>
           <ul className="list-disc list-inside max-h-44 overflow-y-scroll flex gap-4 flex-col">
             <li>
-              Titulo :
+              {t("write.text.items.title.label")}
               <div className="bg-secondary px-2 py-1 rounded-md">
-                <code> ### Titulo</code>
+                <code> {t("write.text.items.title.example")}</code>
               </div>
             </li>
             <li>
-              Subtitulo :
+              {t("write.text.items.subtitle.label")}
               <div className="bg-secondary px-2 py-1 rounded-md">
-                <code> ## Subtitulo</code>
+                <code> {t("write.text.items.subtitle.example")}</code>
               </div>
             </li>
             <li>
-              Cursiva :
+              {t("write.text.items.italic.label")}
               <div className="bg-secondary px-2 py-1 rounded-md">
-                <code> _Texto en cursiva_</code>
+                <code> {t("write.text.items.italic.example")}</code>
               </div>
             </li>
             <li>
-              Nergita :
+              {t("write.text.items.bold.label")}
               <div className="bg-secondary px-2 py-1 rounded-md">
-                <code> **Texto en negrita**</code>
+                <code> {t("write.text.items.bold.example")}</code>
               </div>
             </li>
             <li>
-              Cita :
+              {t("write.text.items.quote.label")}
               <div className="bg-secondary px-2 py-1 rounded-md">
-                <code> {"> "}Cita </code>
+                <code> {t("write.text.items.quote.example")}</code>
               </div>
             </li>
             <li>
-              Enlace :
+              {t("write.text.items.image.label")}
               <div className="bg-secondary px-2 py-1 rounded-md">
-                <code> [Nombre](url) </code>
+                <code> {t("write.text.items.image.example")}</code>
               </div>
             </li>
             <li>
-              Imagen :
+              {t("write.text.items.unorderedList.label")}
               <div className="bg-secondary px-2 py-1 rounded-md">
-                <code> ![Nombre](url-imagen) </code>
+                <code> {t("write.text.items.unorderedList.example")}</code>
               </div>
             </li>
             <li>
-              Lista :
+              {t("write.text.items.orderedList.label")}
               <div className="bg-secondary px-2 py-1 rounded-md">
-                <code>
-                  - Primer item
-                  <br />- Segundo item ...
-                </code>
-              </div>
-            </li>
-            <li>
-              Lista Ordenada :
-              <div className="bg-secondary px-2 py-1 rounded-md">
-                <code>
-                  1. Primer item
-                  <br />
-                  2. Segundo item...
-                </code>
+                <code> {t("write.text.items.orderedList.example")}</code>
               </div>
             </li>
           </ul>

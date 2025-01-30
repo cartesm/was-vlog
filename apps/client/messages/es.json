@@ -83,12 +83,47 @@
   },
   "tags": {
     "title": "Búsqueda de etiquetas",
-    "placeholder": "Escribe el nombre de una etiqueta"
+    "placeholder": "Escribe el nombre de una etiqueta",
+    "selectedTags": "Etiquetas seleccionadas",
+    "add": "Añadir",
+    "search": "Buscar",
+    "create": "Crear",
+    "searchTags": "Buscar etiquetas...",
+    "createTag": "Crear etiqueta",
+    "view_edit_tags": "Ver y editar etiquetas",
+    "tag_guidance": "Las etiquetas adecuadas deben ser términos que otros usuarios consideren útiles al explorar contenido.",
+    "tag_creation_error": "Error al crear la etiqueta",
+    "tag_created_success": "Etiqueta creada exitosamente",
+    "validations": {
+      "requiredError": "Debes escribir algo primero.",
+      "minLengthError": "El nombre debe tener al menos 3 caracteres.",
+      "maxLengthError": "El nombre no puede tener más de 15 caracteres.",
+      "patternError": "El nombre solo puede contener letras y/o números."
+    },
+    "siguiente": "Siguiente",
+    "anterior": "Anterior",
+    "page": "Pagina",
+    "of": "de",
+    "no_se_han_elegido_etiquetas": "Todavía no se han seleccionado etiquetas",
+    "tags": "Etiquetas"
   },
   "posts": {
     "notFound": "Sin contenido",
     "noResults": "No se encontraron resultados para esta búsqueda",
-    "modified": "Modificación de la publicación correcta"
+    "modified": "Modificación de la publicación correcta",
+    "validations": {
+      "requiredError": "El título es obligatorio",
+      "minLengthError": "El título debe tener al menos 10 caracteres",
+      "patternError": "El título solo puede contener texto y números",
+      "maxLengthError": "El título no puede superar los 150 caracteres",
+      "submitErrors": "Ha ocurrido un error durante el envío"
+    },
+    "message1": "El nombre se actualiza por separado del contenido debido a la lógica que hay detrás. Asegúrate de guardar los cambios antes de continuar.",
+    "message2": "Actualizar nombre",
+    "message3": "Nuevo nombre de la publicación",
+    "search_posts": "Buscar publicaciones relevantes",
+    "no_results": "No se han encontrado resultados.",
+    "no_results_found_for_search": "No se han encontrado resultados para esta búsqueda."
   },
   "comments": {
     "title": "Comentarios",
@@ -152,8 +187,10 @@
     "docs": "Guía",
     "write": "Escribir",
     "preview": "Previsualización",
+    "previewVoid": "No hay nada para mostrar",
     "placeholder": "Redacta tu texto aquí...",
     "panel": {
+      "description": "Escribe una breve descripción",
       "bold": "Negrita",
       "italic": "Cursiva",
       "list": "Lista",
@@ -162,7 +199,18 @@
       "title": "Título",
       "subtitle": "Subtítulo",
       "link": "Enlace",
-      "image": "Imagen"
+      "image": "Imagen",
+      "validations": {
+        "titleRequired": "El título es obligatorio.",
+        "titlePattern": "El título solo puede contener letras y números.",
+        "titleMinLength": "El título debe tener al menos 10 caracteres.",
+        "titleMaxLength": "El título no puede superar los 150 caracteres.",
+        "descriptionMaxLength": "La descripción no puede superar los 150 caracteres.",
+        "descriptionMinLength": "La descripción debe tener al menos 10 caracteres.",
+        "descriptionRequired": "La descripción es obligatoria.",
+        "contentRequired": "El contenido no puede estar vacío.",
+        "contentMinLength": "El contenido debe tener al menos 200 caracteres."
+      }
     },
     "text": {
       "paragraph1": "Usamos Markworn para renderizar el contenido de los posts, asegurando un formato limpio, organizado y visualmente atractivo para los usuarios.",
@@ -206,5 +254,6 @@
         }
       }
     }
-  }
+  },
+  "save": "Guardar/Actualizar"
 }

@@ -83,12 +83,47 @@
   },
   "tags": {
     "title": "Tag Search",
-    "placeholder": "Type the name of a tag"
+    "placeholder": "Type the name of a tag",
+    "selectedTags": "Selected tags",
+    "add": "Add",
+    "search": "Search",
+    "create": "Create",
+    "searchTags": "Search tags...",
+    "createTag": "Create tag",
+    "view_edit_tags": "View and edit tags",
+    "tag_guidance": "Relevant tags should be terms that other users find useful when exploring content.",
+    "tag_creation_error": "Error creating tag",
+    "tag_created_success": "Tag created successfully",
+    "validations": {
+      "requiredError": "You must write something first.",
+      "minLengthError": "The name must be at least 3 characters long.",
+      "maxLengthError": "The name cannot be longer than 15 characters.",
+      "patternError": "The name can only contain letters and/or numbers."
+    },
+    "next": "Next",
+    "previous": "Previous",
+    "page": "Page",
+    "of": "of",
+    "no_tags_selected": "No tags have been selected yet",
+    "tags": "Tags"
   },
   "posts": {
     "notFound": "Content not available",
     "noResults": "No results found for this search",
-    "modified": "Modification of the correct publication"
+    "modified": "Modification of the correct publication",
+    "validations": {
+      "requiredError": "The title is required",
+      "minLengthError": "The title must be at least 10 characters long",
+      "patternError": "The title can only contain text and numbers",
+      "maxLengthError": "The title must not exceed 150 characters",
+      "submitErrors": "An error occurred during submission"
+    },
+    "message1": "The name is updated separately from the content due to the underlying logic. Make sure to save your changes before proceeding.",
+    "message2": "Update name",
+    "message3": "New publication name",
+    "search_posts": "Search relevant posts",
+    "no_results": "No results found.",
+    "no_results_found_for_search": "No results were found for this search."
   },
   "comments": {
     "title": "Comments",
@@ -152,8 +187,10 @@
     "docs": "Guide",
     "write": "Write",
     "preview": "Preview",
+    "previewVoid": "Nothing to display",
     "placeholder": "Compose your text here...",
     "panel": {
+      "description": "Write a brief description",
       "bold": "Bold",
       "italic": "Italic",
       "list": "List",
@@ -162,7 +199,18 @@
       "image": "Image",
       "title": "Title",
       "subtitle": "Subtitle",
-      "link": "Link"
+      "link": "Link",
+      "validations": {
+        "titleRequired": "The title is required.",
+        "titlePattern": "The title can only contain letters and numbers.",
+        "titleMinLength": "The title must be at least 10 characters long.",
+        "titleMaxLength": "The title cannot exceed 150 characters.",
+        "descriptionMaxLength": "The description cannot exceed 150 characters.",
+        "descriptionMinLength": "The description must be at least 10 characters long.",
+        "descriptionRequired": "The description is required.",
+        "contentRequired": "The content cannot be empty.",
+        "contentMinLength": "The content must be at least 200 characters long."
+      }
     },
     "text": {
       "paragraph1": "We use Markworn to render post content, ensuring a clean, organized, and visually appealing format for users.",
@@ -202,9 +250,10 @@
         },
         "orderedList": {
           "label": "Ordered list:",
-          "example": "1. First item\n2. Second item ..."
+          "example": "1. First item \n 2. Second item ..."
         }
       }
     }
-  }
+  },
+  "save": "Save/Update"
 }

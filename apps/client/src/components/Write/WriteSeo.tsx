@@ -18,6 +18,7 @@ import { IData } from "@/interfaces/IWriteData.interface";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
 import { useWriteTags } from "@/hooks/write/useTags";
 import SearchTags from "./SearchTags";
+import { useTranslations } from "next-intl";
 const UpdateName = dynamic(() => import("@/components/Posts/UpdateName"), {
   ssr: false,
 });
@@ -25,6 +26,8 @@ const UpdateName = dynamic(() => import("@/components/Posts/UpdateName"), {
 export default function CompactSection({ nameId }: { nameId: string }) {
   const { errors: submitErrors } = useFetchErrors();
   const { delete: deleteTag, tags } = useWriteTags();
+
+  const t = useTranslations();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [tagsVisible, setTagsVisible] = useState<boolean>(false);
@@ -44,7 +47,7 @@ export default function CompactSection({ nameId }: { nameId: string }) {
         >
           <Input
             form="write-form"
-            placeholder="TITULO"
+            placeholder={t("write.panel.title")}
             autoFocus
             {...register("name", {
               required: true,
@@ -75,12 +78,15 @@ export default function CompactSection({ nameId }: { nameId: string }) {
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Guardar</p>
+              <p>{t("save")}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </div>
 
+      <span className=" font-semibold text-primary pb-3 pl-2 block ">
+        {t("tags.selectedTags")}
+      </span>
       <div className="flex items-center flex-wrap gap-2">
         {tags?.map((tag) => (
           <Badge
@@ -115,49 +121,54 @@ export default function CompactSection({ nameId }: { nameId: string }) {
           maxLength: 200,
         })}
         form="write-form"
-        placeholder="Descripción breve..."
+        placeholder={t("write.panel.description")}
         className="h-full my-2  outline-none ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0"
+        rows={7}
       />
       <div className=" grid grid-cols-1 gap-3 items-center justify-start">
         {errors.name?.type == "required" && (
-          <span className="error-message">El titulo es requerido</span>
+          <span className="error-message">
+            {t("write.panel.validations.titleRequired")}
+          </span>
         )}
         {errors.name?.type == "pattern" && (
           <span className="error-message">
-            El titulo puede ser solo texto y numeros
+            {t("write.panel.validations.titlePattern")}
           </span>
         )}
         {errors.name?.type == "minLength" && (
           <span className="error-message">
-            El titulo es de minimo 10 caracteres
+            {t("write.panel.validations.titleMinLength")}
           </span>
         )}
         {errors.name?.type == "maxLength" && (
           <span className="error-message">
-            El titulo es de maximo 150 caracteres
+            {t("write.panel.validations.titleMaxLength")}
           </span>
         )}
         {errors.description?.type == "maxLength" && (
           <span className="error-message">
-            La descripcion es de maximo 150 caracteres
+            {t("write.panel.validations.descriptionMaxLength")}
           </span>
         )}
         {errors.description?.type == "minLength" && (
           <span className="error-message">
-            La descripcion es de minimo 10 caracteres
+            {t("write.panel.validations.descriptionMinLength")}
           </span>
         )}
         {errors.description?.type == "required" && (
-          <span className="error-message">La descripcion no es opcional</span>
+          <span className="error-message">
+            {t("write.panel.validations.descriptionRequired")}
+          </span>
         )}
         {errors.content?.type == "required" && (
           <span className="error-message">
-            El contenido no puede quedar vacio
+            {t("write.panel.validations.contentRequired")}
           </span>
         )}
         {errors.content?.type == "minLength" && (
           <span className="error-message">
-            El contenido debe tener un minimo de 200 caracteres
+            {t("write.panel.validations.contentMinLength")}
           </span>
         )}
       </div>

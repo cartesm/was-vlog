@@ -21,8 +21,10 @@ import SearchTags from "../Write/SearchTags";
 import { useFetchErrors } from "@/hooks/useFetchErrors";
 import NotFound from "../NotFound";
 import { PostItem } from "../Posts/PostItem";
-// TODO: traducir esto
+import { useTranslations } from "next-intl";
+
 function Search() {
+  const t = useTranslations();
   const { tags, delete: deleteTag } = useWriteTags();
   const {
     errors: fetchErrors,
@@ -80,7 +82,7 @@ function Search() {
           <form onSubmit={(e) => e.preventDefault()}>
             <div className="flex-grow">
               <Input
-                placeholder="Buscar posts..."
+                placeholder={t("posts.search_posts")}
                 onChange={({ target: { value } }) => {
                   submmitHandler(value);
                   setSearchQuery(value);
@@ -105,13 +107,13 @@ function Search() {
                 <SelectItem value="asc">
                   <div className="flex items-center">
                     <SortAsc className="mr-2 h-4 w-4" />
-                    Mas Nuevos
+                    {t("user.posts.new")}
                   </div>
                 </SelectItem>
                 <SelectItem value="desc">
                   <div className="flex items-center">
                     <SortDesc className="mr-2 h-4 w-4" />
-                    mas Viejos
+                    {t("user.posts.old")}
                   </div>
                 </SelectItem>
               </SelectContent>
@@ -122,7 +124,7 @@ function Search() {
               onClick={() => setIsOpen((actual) => !actual)}
               variant={"default"}
             >
-              <Plus size={15} /> tags
+              <Plus size={15} /> {t("tags.tags")}
             </Button>
             <div>
               <SearchTags
@@ -158,7 +160,11 @@ function Search() {
           ))}
           {posts.length <= 0 && (
             <div className="min-h-[70vh] flex items-center justify-center">
-              <NotFound {...(searchQuery && { query: searchQuery })} />
+              <NotFound
+                t={t}
+                message={t("posts.no_results_found_for_search")}
+                {...(searchQuery && { query: searchQuery })}
+              />
             </div>
           )}
           {haveMorePage && (
@@ -170,7 +176,7 @@ function Search() {
               }}
               variant={"link"}
             >
-              Cargar mas
+              {t("showMore")}
             </Button>
           )}
         </div>

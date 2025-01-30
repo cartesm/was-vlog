@@ -32,6 +32,7 @@ const WriteSeo = dynamic(() => import("@/components/Write/WriteSeo"), {
     </div>
   ),
 });
+
 const Previewer = dynamic(() => import("@/components/Posts/Viewer"), {
   ssr: false,
   loading: () => (
@@ -108,6 +109,7 @@ function Write() {
     );
 
   useEffect(() => {
+    setTags([]);
     if (param == "new") return setLoading(false);
     if (param.length < 10) return router.push("/");
     fetchPost();

@@ -16,6 +16,7 @@ import { TabsContent, TabsTrigger } from "../ui/tabs";
 import { ScrollArea } from "../ui/scroll-area";
 import { useForm } from "react-hook-form";
 import { toast } from "@/hooks/use-toast";
+import { useTranslations } from "next-intl";
 
 interface ICreateTag {
   name: string;
@@ -25,6 +26,7 @@ export default function SearchTags({ isOpen, changeOpen }) {
   const [page, setPage] = useState<number>(1);
   const { errors, set: setErrors } = useFetchErrors();
   const { add: addTag, tags: writeTags, delete: deleteTag } = useWriteTags();
+  const t = useTranslations();
   const [resultTags, setResultTags] = useState<IPaginationData<ITags> | null>(
     null
   );
@@ -50,11 +52,11 @@ export default function SearchTags({ isOpen, changeOpen }) {
     const { data: respData, error }: IRespData<string> = await createTag(data);
     if (error)
       return toast({
-        title: "Error al crear etiqueta",
+        title: t("tags.tag_creation_error"),
         description: error[0],
         variant: "destructive",
       });
-    toast({ title: "Etiqueta", description: respData });
+    toast({ title: t("tags.tag_created_success"), description: respData });
     handleSearch();
     reset();
   };
@@ -73,22 +75,23 @@ export default function SearchTags({ isOpen, changeOpen }) {
     <Dialog open={isOpen} onOpenChange={changeOpen}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Ver y editar etiquetas</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-primary">
+            {t("tags.view_edit_tags")}
+          </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
-            Las etiquetas adecuadas deberían ser términos que otros usuarios
-            verían como útiles a la hora de explorar contenido.
+            {t("tags.tag_guidance")}
           </DialogDescription>
         </DialogHeader>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-4">
             <Tabs defaultValue="search" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="search">Buscar</TabsTrigger>
-                <TabsTrigger value="create">Crear</TabsTrigger>
+                <TabsTrigger value="search">{t("tags.search")}</TabsTrigger>
+                <TabsTrigger value="create">{t("tags.create")}</TabsTrigger>
               </TabsList>
               <TabsContent value="search">
                 <Input
-                  placeholder="Buscar etiquetas..."
+                  placeholder={t("tags.searchTags")}
                   value={query}
                   onChange={(e) => {
                     setQuery(e.target.value);
@@ -104,7 +107,7 @@ export default function SearchTags({ isOpen, changeOpen }) {
                 >
                   <Input
                     autoComplete="off"
-                    placeholder="Nueva etiqueta"
+                    placeholder={t("tags.createTag")}
                     {...register("name", {
                       required: true,
                       minLength: 3,
@@ -112,25 +115,27 @@ export default function SearchTags({ isOpen, changeOpen }) {
                       pattern: /^[a-zA-Z0-9\s]+$/,
                     })}
                   />
-                  <Button type="submit">Añadir</Button>
+                  <Button type="submit">{t("tags.add")}</Button>
                 </form>
                 <div className="flex items-start justify-center flex-col gap-2">
                   {formErrors.name?.type == "required" && (
-                    <span className="error-message">Escribe algo primero</span>
+                    <span className="error-message">
+                      {t("tags.validations.requiredError")}
+                    </span>
                   )}
                   {formErrors.name?.type == "minLength" && (
                     <span className="error-message">
-                      El nombre debe ser de minimo 3
+                      {t("tags.validations.minLengthError")}
                     </span>
                   )}
                   {formErrors.name?.type == "maxLength" && (
                     <span className="error-message">
-                      El nombre debe ser de maximo 15
+                      {t("tags.validations.maxLengthError")}
                     </span>
                   )}
                   {formErrors.name?.type == "pattern" && (
                     <span className="error-message">
-                      EL nombre debe ser solo texto y/o numero
+                      {t("tags.validations.patternError")}
                     </span>
                   )}
                 </div>
@@ -167,7 +172,7 @@ export default function SearchTags({ isOpen, changeOpen }) {
                 ))
               ) : (
                 <div className="text-sm text-muted-foreground">
-                  No hay resultados
+                  {t("user.posts.endOfContent")}
                 </div>
               )}
             </ScrollArea>
@@ -183,7 +188,7 @@ export default function SearchTags({ isOpen, changeOpen }) {
                   disabled={page === resultTags?.page}
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" />
-                  Anterior
+                  {t("tags.previous")}
                 </Button>
 
                 <Button
@@ -192,23 +197,23 @@ export default function SearchTags({ isOpen, changeOpen }) {
                   onClick={() => setPage((actual) => actual + 1)}
                   disabled={page == resultTags?.totalPages}
                 >
-                  Siguiente
+                  {t("tags.next")}
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               </div>
               <span className="text-sm text-muted-foreground">
-                Página {page} de {resultTags?.totalPages}
+                {t("tags.page")} {page} {t("tags.of")} {resultTags?.totalPages}
               </span>
             </div>
           </div>
           {/* mostrar etiquetas seleccionadas */}
           <div className="space-y-4">
-            <h3 className="font-medium">Etiquetas seleccionadas</h3>
+            <h3 className="font-medium">{t("tags.selectedTags")}</h3>
             <ScrollArea className="h-[400px]">
               <div className="space-y-2">
                 {writeTags.length <= 0 ? (
                   <p className="text-sm text-muted-foreground">
-                    Todavía no se han aplicado etiquetas
+                    {t("tags.no_tags_selected")}
                   </p>
                 ) : (
                   writeTags.map((tag, index) => (

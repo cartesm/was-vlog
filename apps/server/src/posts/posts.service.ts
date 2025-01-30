@@ -400,7 +400,6 @@ export class PostsService {
     name: string,
     updatePostData: UpdateInfoPostDto,
   ): Promise<ResponseWithMessage> {
-    console.log(updatePostData);
     if (Object.keys(updatePostData).length <= 0)
       throw new NotAcceptableException(
         this.i18n.t('test.posts.minLengthUpdate', {
